@@ -6,8 +6,8 @@
     "survey"
   ],
   "homepage": "https://github.com/LanzaderaProyectos/iworking-survey",
-  "type": "library",
   "license": "MIT",
+  "type": "library",
   "authors": [
     {
       "name": "Carlos Bernuy Obregon",
@@ -40,6 +40,7 @@
       "tests/utilities/helpers.php"
     ]
   },
+  "minimum-stability": "dev",
   "extra": {
     "laravel": {
       "providers": [
