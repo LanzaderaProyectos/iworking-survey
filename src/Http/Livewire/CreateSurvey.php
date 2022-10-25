@@ -74,6 +74,16 @@ class CreateSurvey extends Component
         } else {
             $this->survey = new Survey();
         }
+        $this->optionES = [
+            'SI',
+            'NO',
+            'NP'
+        ];
+        $this->optionEN = [
+            'YES',
+            'NO',
+            'NA'
+        ];
     }
 
     public function render()
@@ -152,11 +162,8 @@ class CreateSurvey extends Component
             'question.order'        => 'nullable|numeric',
         ]);
         if ($this->typeSelected == 'radio') {
-            $this->question->options = [
-                'SI',
-                'NO',
-                'NP'
-            ];
+            $this->question->setTranslation('options', 'es', $this->optionES)
+                ->setTranslation('options', 'en', $this->optionEN);;
             $this->question->type = 'radio';
         }
         $this->question->survey_id = $this->survey->id;

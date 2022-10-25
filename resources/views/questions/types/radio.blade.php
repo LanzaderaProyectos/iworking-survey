@@ -9,7 +9,9 @@
     </label>
 </div>
 @endforeach
+@if($this->errorsBag ?? false)
 @if(in_array($question->id, $this->errorsBag))
 <span class="text-danger">Campo requerido</span>
+@endif
 @endif
 @endcomponent
