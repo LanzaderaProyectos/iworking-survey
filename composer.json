@@ -10,8 +10,9 @@
   "type": "library",
   "authors": [
     {
-      "name": "Carlos Bernuy Obregon",
-      "email": "carlos.bernuy.obregon@gmail.com"
+      "name": "Nico Penic",
+      "email": "ncanteli@strateying.com",
+      "role": "Developer"
     }
   ],
   "require": {
@@ -40,7 +41,11 @@
       "tests/utilities/helpers.php"
     ]
   },
+  "config": {
+    "sort-packages": true
+  },
   "minimum-stability": "dev",
+  "prefer-stable": true,
   "extra": {
     "laravel": {
       "providers": [
