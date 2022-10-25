@@ -1,22 +1,15 @@
 @component('survey::questions.base', compact('question'))
-    @foreach($question->options as $option)
-        <div class="custom-control custom-radio">
-            <input type="radio"
-                   name="{{ $question->key }}"
-                   id="{{ $question->key . '-' . Str::slug($option) }}"
-                   value="{{ $option }}"
-                   class="custom-control-input"
-                    {{ ($value ?? old($question->key)) == $option ? 'checked' : '' }}
-                    {{ ($disabled ?? false) ? 'disabled' : '' }}
-            >
-            <label class="custom-control-label"
-                   for="{{ $question->key . '-' . Str::slug($option) }}">{{ $option }}
-                @if($includeResults ?? false)
-                    <span class="text-success">
-                        ({{ number_format((new \MattDaneshvar\Survey\Utilities\Summary($question))->similarAnswersRatio($option) * 100, 2) }}%)
-                    </span>
-                @endif
-            </label>
-        </div>
-    @endforeach
+@foreach($question->options as $option)
+<div class="custom-control custom-radio">
+    <input type="radio" wire:model.defer="answers.{{$question->id}}" name="{{ $question->key }}"
+        id="{{ $question->key . '-' . Str::slug($option) }}" value="{{ $option }}" class="custom-control-input" {{
+        ($disabled ?? false) ? 'disabled' : '' }}>
+    <label class="custom-control-label" for="{{ $question->key . '-' . Str::slug($option) }}">
+        {{ $option }}
+    </label>
+</div>
+@endforeach
+@if(in_array($question->id, $this->errorsBag))
+<span class="text-danger">Campo requerido</span>
+@endif
 @endcomponent

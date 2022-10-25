@@ -100,7 +100,7 @@ When creating your survey, you may set some constraints
 to be enforced every time a new `Entry` is being created.
 
 #### Allowing Guest Entries
-By default, `Entry` models require a `participant_id` when being created. 
+By default, `Entry` models require a `participant` when being created. 
 If you wish to change this behaviour and accept guest entries,
 set the `accept-guest-entries` option on your `Survey` model.  
 ```php

@@ -3,13 +3,18 @@
 namespace MattDaneshvar\Survey\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Entry;
-use MattDaneshvar\Survey\Contracts\Question;
 use MattDaneshvar\Survey\Contracts\Section;
+use MattDaneshvar\Survey\Contracts\Question;
 use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
 
 class Survey extends Model implements SurveyContract
 {
+    use HasTranslations;
+
+    public $translatable = ['name'];
+
     /**
      * Survey constructor.
      *
@@ -17,7 +22,7 @@ class Survey extends Model implements SurveyContract
      */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.surveys'));
         }
 
@@ -29,7 +34,14 @@ class Survey extends Model implements SurveyContract
      *
      * @var array
      */
-    protected $fillable = ['name', 'settings'];
+    protected $fillable = [
+        'name',
+        'settings',
+        'author',
+        'status',
+        'expiration',
+        'survey_number'
+    ];
 
     /**
      * The attributes that should be casted.
@@ -47,7 +59,7 @@ class Survey extends Model implements SurveyContract
      */
     public function sections()
     {
-        return $this->hasMany(get_class(app()->make(Section::class)));
+        return $this->hasMany(get_class(app()->make(Section::class)))->orderBy('order');
     }
 
     /**
@@ -57,7 +69,7 @@ class Survey extends Model implements SurveyContract
      */
     public function questions()
     {
-        return $this->hasMany(get_class(app()->make(Question::class)));
+        return $this->hasMany(get_class(app()->make(Question::class)))->orderBy('section_id');
     }
 
     /**
@@ -68,6 +80,16 @@ class Survey extends Model implements SurveyContract
     public function entries()
     {
         return $this->hasMany(get_class(app()->make(Entry::class)));
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(config('iworking-survey.user-model'), 'author');
+    }
+
+    public function audit()
+    {
+        return $this->morphMany('App\Models\Audit', 'auditable')->orderBy('created_at');
     }
 
     /**
@@ -104,7 +126,7 @@ class Survey extends Model implements SurveyContract
      */
     public function entriesFrom(Model $participant)
     {
-        return $this->entries()->where('participant_id', $participant->id);
+        return $this->entries()->where('participant', $participant->id);
     }
 
     /**
