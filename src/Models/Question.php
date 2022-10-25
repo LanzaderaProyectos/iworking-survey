@@ -3,13 +3,19 @@
 namespace MattDaneshvar\Survey\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Answer;
-use MattDaneshvar\Survey\Contracts\Question as QuestionContract;
-use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Survey;
+use MattDaneshvar\Survey\Contracts\Section;
+use MattDaneshvar\Survey\Contracts\Question as QuestionContract;
 
 class Question extends Model implements QuestionContract
 {
+
+    use HasTranslations;
+
+    public $translatable = ['content', 'options'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -48,7 +54,7 @@ class Question extends Model implements QuestionContract
      */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.questions'));
         }
 

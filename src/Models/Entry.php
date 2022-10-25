@@ -17,7 +17,7 @@ class Entry extends Model implements EntryContract
      *
      * @var array
      */
-    protected $fillable = ['survey_id', 'participant_id'];
+    protected $fillable = ['survey_id', 'participant', 'lang','status'];
 
     /**
      * Boot the entry.
@@ -42,7 +42,7 @@ class Entry extends Model implements EntryContract
      */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.entries'));
         }
 
@@ -76,7 +76,7 @@ class Entry extends Model implements EntryContract
      */
     public function participant()
     {
-        return $this->belongsTo(User::class, 'participant_id');
+        return $this->belongsTo(User::class, 'participant');
     }
 
     /**
@@ -175,7 +175,7 @@ class Entry extends Model implements EntryContract
             return;
         }
 
-        if ($this->participant_id !== null) {
+        if ($this->participant !== null) {
             return;
         }
 
@@ -196,7 +196,7 @@ class Entry extends Model implements EntryContract
             return;
         }
 
-        $count = static::where('participant_id', $this->participant_id)
+        $count = static::where('participant', $this->participant)
             ->where('survey_id', $this->survey->id)
             ->count();
 

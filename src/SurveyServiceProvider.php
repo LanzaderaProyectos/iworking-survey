@@ -2,9 +2,15 @@
 
 namespace MattDaneshvar\Survey;
 
-use Illuminate\Contracts\View\Factory as ViewFactory;
-use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 use Illuminate\Support\Str;
+use Illuminate\Routing\Router;
+use Illuminate\Support\ServiceProvider;
+use MattDaneshvar\Survey\Http\Livewire\Table;
+use MattDaneshvar\Survey\Http\Livewire\Answers;
+use MattDaneshvar\Survey\Http\Livewire\CreateSurvey;
+use MattDaneshvar\Survey\Http\Middleware\UserSurvey;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use MattDaneshvar\Survey\Http\View\Composers\SurveyComposer;
 
 class SurveyServiceProvider extends ServiceProvider
@@ -16,17 +22,18 @@ class SurveyServiceProvider extends ServiceProvider
      */
     public function boot(ViewFactory $viewFactory)
     {
+        $this->registerRoutes();
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('user-survey', UserSurvey::class);
         $this->publishes([
-            __DIR__.'/../config/survey.php' => config_path('survey.php'),
+            __DIR__ . '/../config/survey.php' => config_path('survey.php'),
         ], 'config');
 
         $this->publishes([
-            __DIR__.'/../resources/views/' => base_path('resources/views/vendor/survey'),
+            __DIR__ . '/../resources/views/' => base_path('resources/views/vendor/survey'),
         ], 'views');
-
-        $this->mergeConfigFrom(__DIR__.'/../config/survey.php', 'survey');
-
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'survey');
+        $this->mergeConfigFrom(__DIR__ . '/../config/survey.php', 'survey');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'survey');
 
         $viewFactory->composer('survey::standard', SurveyComposer::class);
 
@@ -37,6 +44,8 @@ class SurveyServiceProvider extends ServiceProvider
             'create_answers_table',
             'create_sections_table',
         ]);
+
+        $this->bootLivewireComponents();
     }
 
     /**
@@ -51,6 +60,7 @@ class SurveyServiceProvider extends ServiceProvider
         $this->app->bind(\MattDaneshvar\Survey\Contracts\Question::class, \MattDaneshvar\Survey\Models\Question::class);
         $this->app->bind(\MattDaneshvar\Survey\Contracts\Section::class, \MattDaneshvar\Survey\Models\Section::class);
         $this->app->bind(\MattDaneshvar\Survey\Contracts\Survey::class, \MattDaneshvar\Survey\Models\Survey::class);
+        $this->mergeConfigFrom(__DIR__ . '/../config/iworking-survey.php', 'iworking-survey');
     }
 
     /**
@@ -68,9 +78,27 @@ class SurveyServiceProvider extends ServiceProvider
             }
 
             $this->publishes([
-                __DIR__."/../database/migrations/$migration.php.stub" => database_path('migrations/'.date('Y_m_d_His',
-                        time())."_$migration.php"),
+                __DIR__ . "/../database/migrations/$migration.php.stub" => database_path('migrations/' . date(
+                    'Y_m_d_His',
+                    time()
+                ) . "_$migration.php"),
             ], 'migrations');
         }
+    }
+
+    /**
+     * @return void
+     */
+    protected function registerRoutes(): void
+    {
+        // $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+    }
+
+    protected function bootLivewireComponents()
+    {
+        Livewire::component('iworking-survery::survey-list',    Table::class);
+        Livewire::component('iworking-survery::create-survey',  CreateSurvey::class);
+        Livewire::component('iworking-survery::survey-answers', Answers::class);
     }
 }
