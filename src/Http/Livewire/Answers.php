@@ -60,6 +60,7 @@ class Answers extends Component
         $values = [
             'NO' => 0,
             'SI' => 100,
+            'YES' => 100,
             'NP' => 100,
             'NA' => 100,
             'Partially' => 25,
