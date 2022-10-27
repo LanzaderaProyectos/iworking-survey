@@ -16,7 +16,7 @@ class Answer extends Model implements AnswerContract
      */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.answers'));
         }
 
@@ -28,7 +28,13 @@ class Answer extends Model implements AnswerContract
      *
      * @var array
      */
-    protected $fillable = ['value', 'question_id', 'entry_id'];
+    protected $fillable = [
+        'value',
+        'question_id',
+        'entry_id',
+        'comments',
+        'score'
+    ];
 
     /**
      * The entry the answer belongs to.

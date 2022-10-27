@@ -39,7 +39,7 @@
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-users-tab" data-toggle="tab" href="#survey-users" role="tab"
-                            aria-controls="survey-users" aria-selected="true" wire:click="uploadUsers">Destinatarios</a>
+                            aria-controls="survey-users" aria-selected="true">Destinatarios</a>
                     </li>
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
@@ -113,6 +113,14 @@
             </div>
         </div>
         <hr>
+        @if (session()->has('userListEmpty'))
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <span> {{ session('userListEmpty') }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
         @if($this->formEdit)
         <div class="row">
             <div class="col-12 col-md-6">
@@ -139,7 +147,8 @@
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
                             Guardar borrador
                         </button>
-                        <button class="btn btn-warning" {{ $this->survey->questions->count() ? '' : 'disabled'}}
+                        <button class="btn btn-warning" {{ $this->survey->questions->count() ?
+                            '' : 'disabled'}}
                             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
                             event.stopImmediatePropagation();"
                             wire:click="sendSurvey">

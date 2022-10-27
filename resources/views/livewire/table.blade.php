@@ -253,6 +253,7 @@
                                             <th>Idioma</th>
                                             <th>Responsable</th>
                                             <th>Estado</th>
+                                            <th>Puntuación</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -269,7 +270,7 @@
                                                     $entry->participant }}</a>
                                             </td>
                                             <td>
-                                                {{ $entry->surveyed->contact ?? ''}}
+                                                {{ $entry->surveyed->contact_person ?? ''}}
                                             </td>
                                             <td>
                                                 {{ $entry->lang }}
@@ -279,6 +280,9 @@
                                             </td>
                                             <td>
                                                 @lang('survey::status.entry.'.$entry->status ?? '')
+                                            </td>
+                                            <td>
+                                                {{$entry->answers->sum('score')}}
                                             </td>
                                         </tr>
                                         @endforeach

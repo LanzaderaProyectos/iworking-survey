@@ -17,6 +17,7 @@ class ShowEntry extends Component
     public $entry;
     public $survey;
     public $answers = [];
+    public $comments = [];
     public $lang;
 
     public function mount()
@@ -28,13 +29,18 @@ class ShowEntry extends Component
         $this->lang = $this->entry->lang;
         //Create array answers from questions
         foreach ($this->survey->questions as  $value) {
-            $this->answers[$value->id] = '';
+            $this->answers[$value->id]['value'] = '';
+            $this->answers[$value->id]['type'] = $value->type;
+            if ($value->comments) {
+                $this->comments[$value->id] = '';
+            }
         }
         //Get answers value
         $answers = Answer::where('entry_id', $this->entry->id)
             ->get();
         foreach ($answers as $item) {
-            $this->answers[$item->question_id] = $item->value;
+            $this->answers[$item->question_id]['value'] = $item->value;
+            $this->comments[$item->question_id] = $item->comments;
         }
     }
 

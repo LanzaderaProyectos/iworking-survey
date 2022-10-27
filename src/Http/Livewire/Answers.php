@@ -20,6 +20,7 @@ class Answers extends Component
     public $entry;
     public $survey;
     public $answers = [];
+    public $comments = [];
     public $errorsBag = [];
 
     public function mount()
@@ -35,12 +36,17 @@ class Answers extends Component
         }
         $this->survey = Survey::find($this->entry->survey_id);
         foreach ($this->survey->questions as  $value) {
-            $this->answers[$value->id] = '';
+            $this->answers[$value->id]['value'] = '';
+            $this->answers[$value->id]['type'] = $value->type;
+            if ($value->comments) {
+                $this->comments[$value->id] = '';
+            }
         }
         $answers = Answer::where('entry_id', $this->entry->id)
             ->get();
         foreach ($answers as $item) {
-            $this->answers[$item->question_id] = $item->value;
+            $this->answers[$item->question_id]['value'] = $item->value;
+            $this->comments[$item->question_id] = $item->comments;
         }
     }
 
@@ -51,13 +57,27 @@ class Answers extends Component
 
     public function saveAnswers()
     {
-        foreach ($this->answers as $key => $value) {
+        $values = [
+            'NO' => 0,
+            'SI' => 100,
+            'NP' => 100,
+            'NA' => 100,
+        ];
+        foreach ($this->answers as $key => $answer) {
+            $score = 0;
+            if ($answer['type'] == 'radio') {
+                $score = $values[$answer['value']];
+            }
             Answer::updateOrCreate(
                 [
                     'question_id' => $key,
                     'entry_id' => $this->entry->id
                 ],
-                ['value' => $value,]
+                [
+                    'value' => $answer['value'],
+                    'comments' => $this->comments[$key] ?? null,
+                    'score' => $score
+                ]
             );
         }
         $this->errorsBag = [];
@@ -91,6 +111,7 @@ class Answers extends Component
         if (empty($this->errorsBag)) {
             return true;
         }
+        session()->flash('answersAlert', 'Hay preguntas sin responder.');
         return false;
     }
 }

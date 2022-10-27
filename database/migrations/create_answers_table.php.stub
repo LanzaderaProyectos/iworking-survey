@@ -18,6 +18,8 @@ class CreateAnswersTable extends Migration
             $table->unsignedInteger('question_id');
             $table->unsignedInteger('entry_id')->nullable();
             $table->string('value');
+            $table->string('comments')->nullable();
+            $table->integer('score')->nullable();
             $table->timestamps();
         });
     }

@@ -50,10 +50,10 @@
         </div>
     </div>
     <div class="col-md-5 col-12">
-        <div class="form-group ">
+        <div class="form-group mb-3">
             <label for="numbers_format">Tipo*:</label>
             <select {{ $this->formEdit ? '' : 'disabled'}}
-                wire:model.defer="typeSelected" class="form-control " id="numbers_format_input" size="2">
+                wire:model="typeSelected" class="form-control " id="numbers_format_input" size="2">
                 @foreach ($typeAnwers as $key => $value)
                 <option value="{{$key}}">
                     {{ $value }}
@@ -61,9 +61,14 @@
                 @endforeach
             </select>
         </div>
+        <div class="form-group">
+            <input {{ $this->typeSelected != 'radio' ? 'disabled' : ''}} type="checkbox"
+            wire:model.defer="question.comments">
+            <label for="numbers_format">Comentarios</label>
+        </div>
     </div>
     <div class="col-md-2">
-        <div class="form-group ">
+        <div class="form-group">
             <label for="numbers_format">Orden:</label>
             <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="question.order" type="number" step="1"
             min="0" name="section-order"
