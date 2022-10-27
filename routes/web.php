@@ -8,6 +8,7 @@ Route::name('survey.')->group(function () {
         Route::view('survey/new', 'survey::surveys.form')->name('new');
         Route::view('survey/show/{surveyId}', 'survey::surveys.form')->name('show');
         Route::view('survey/{surveyId}', 'survey::surveys.form')->name('edit');
+        Route::view('survey/entry/{entryId}', 'survey::surveys.entry')->name('entry');
     });
     Route::view('survey/answers/{user}', 'survey::surveys.answers')
         ->name('answers')

@@ -42,7 +42,7 @@ class UserNotification extends Mailable
      */
     public function build(): static
     {
-        if ($this->user->idioma == 'en') {
+        if ($this->user->lang == 'en') {
             $subject = 'SURVEY ' . $this->survey->getTranslation('name', 'en');
             $viewNotification = 'survey::emails.survey-notification-en';
         } else {
@@ -54,8 +54,6 @@ class UserNotification extends Mailable
         return $this->subject($subject)
             ->from(config('iworking-survey.mail-from.address'), config('iworking-survey.mail-from.address'))
             ->view($viewNotification, [
-                'user'      => $this->user,
-                'survey'    => $this->survey,
                 'url'       => $url
             ]);
     }

@@ -70,11 +70,14 @@
                     <div class="tab-pane fade" id="survey-preview" role="tabpanel" aria-labelledby="survey-preview"
                         wire:ignore.self>
                         @include('survey::standard', ['survey' => $survey,
-                        'sendForm' => false])
+                        'sendForm' => false,
+                        'disabled' => true])
                     </div>
                     <div class="tab-pane fade" id="survey-users" role="tabpanel" aria-labelledby="survey-users"
                         wire:ignore.self>
-                        @include('survey::livewire.partials.addressee')
+                        @livewire('iworking-survery::addresses',[
+                        'survey' => $this->survey->id
+                        ])
                     </div>
                     <div class="tab-pane fade" id="survey-chat" role="tabpanel" aria-labelledby="survey-chat"
                         wire:ignore.self>
@@ -118,7 +121,8 @@
             <div class="col-12 col-md-6">
                 <div class="text-right">
                     <div class="btn-group my-1" role="group" aria-label="">
-                        @if($this->survey->status == 0 && $this->survey->author == auth()->user()->id)
+                        @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_DRAFT &&
+                        $this->survey->author == auth()->user()->id)
                         <button type="button" wire:click="deleteSurvey"
                             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
                             class="btn btn-sm btn-danger d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
@@ -146,6 +150,9 @@
                 </div>
             </div>
         </div>
+        @endif
+        @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_DRAFT)
+
         @endif
     </div>
 </div>

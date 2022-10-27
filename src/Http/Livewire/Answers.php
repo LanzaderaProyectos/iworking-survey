@@ -4,13 +4,16 @@ namespace MattDaneshvar\Survey\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
-use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Answer;
 use MattDaneshvar\Survey\Models\Survey;
+use MattDaneshvar\Survey\Library\Constants;
 use PHPUnit\TextUI\XmlConfiguration\Constant;
+use MattDaneshvar\Survey\Mail\SurveyCompleted;
 
 class Answers extends Component
 {
@@ -66,6 +69,12 @@ class Answers extends Component
         if ($this->customValidation()) {
             $this->entry->status = Constants::ENTRY_STATUS_COMPLETED;
             $this->entry->save();
+            try {
+                Mail::to($this->entry->participant)
+                    ->send(new SurveyCompleted($this->entry));
+            } catch (\Throwable $th) {
+                Log::error($th);
+            }
             return redirect('/');
         }
     }

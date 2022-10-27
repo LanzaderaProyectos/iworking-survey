@@ -169,6 +169,7 @@
                     class="table table-striped- table-bordered table-hover table-checkable mt-4" id="users_list_table">
                     <thead scope="col">
                         <tr class="text-uppercase">
+                            <th></th>
                             <th wire:click="sortBy('survey_number')" style="cursor: pointer">
                                 Nº Encuesta
                                 @include('iworking::partials._sort-icon',['field'=>'survey_number'])
@@ -191,12 +192,18 @@
                             <th>
                                 Vencimiento
                             </th>
-                            <th style="width: 20px">@lang('iworking::backend.crud.actions')</th>
+                            <th style="width: 20px">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($surveys as $survey)
                         <tr>
+                            <td>
+                                <a class="" href="#collapseRow-{{ $survey->id }}" data-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="collapseRow">
+                                    <i class="fa fa-caret-right"></i>
+                                </a>
+                            </td>
                             <td>
                                 {{ $survey->survey_number }}
                             </td>
@@ -207,7 +214,7 @@
                                 {{ $survey->user->first_name }} {{ $survey->user->last_name }}
                             </td>
                             <td>
-                                {{ $survey->status }}
+                                @lang('survey::status.survey.'.$survey->status ?? '')
                             </td>
                             <td>
                                 {{ auth()->user()->applyDateFormat($survey->created_at) }}
@@ -215,6 +222,7 @@
                             <td>
                                 {{ auth()->user()->applyDateFormat($survey->expiration) }}
                             </td>
+
                             <td class="text-center">
                                 @if($draft)
                                 <a href="{{ route('survey.edit',$survey->id) }}" type="button"
@@ -232,12 +240,59 @@
                                 </span>
                             </td>
                         </tr>
+                        <tr class="collapse" id="collapseRow-{{ $survey->id }}" wire:ignore.self>
+                            <td></td>
+                            <td colspan="10" class="px-1">
+                                <table class="table table-striped table-sm">
+                                    <thead>
+                                        <tr class="text-uppercase">
+                                            <th>Encuestado</th>
+                                            <th>ID</th>
+                                            <th>Email</th>
+                                            <th>Persona contacto</th>
+                                            <th>Idioma</th>
+                                            <th>Responsable</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($survey->entries as $entry)
+                                        <tr>
+                                            <td>
+                                                {{ $entry->surveyed->name ?? '' }}
+                                            </td>
+                                            <td>
+                                                {{ $entry->surveyed->vat_number ?? '' }}
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('survey.entry', ['entryId' => $entry->id])}}">{{
+                                                    $entry->participant }}</a>
+                                            </td>
+                                            <td>
+                                                {{ $entry->surveyed->contact ?? ''}}
+                                            </td>
+                                            <td>
+                                                {{ $entry->lang }}
+                                            </td>
+                                            <td>
+                                                {{ $entry->surveyed->manager ?? '' }}
+                                            </td>
+                                            <td>
+                                                @lang('survey::status.entry.'.$entry->status ?? '')
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+
+                                </table>
+                            </td>
+                        </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
             <div class="dataTables_info">
-                {{-- {{ $orders->links() }} --}}
+                {{-- {{ $surveys->links() }} --}}
             </div>
         </div>
     </div>

@@ -10,7 +10,6 @@
     @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)
     <div class="d-flex flex-row-reverse">
         @if ($this->entry->lang == 'en')
-
         <button class="btn btn-success my-3 mr-2"
             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
             wire:click="sendAnswers">

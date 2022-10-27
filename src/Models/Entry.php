@@ -17,7 +17,7 @@ class Entry extends Model implements EntryContract
      *
      * @var array
      */
-    protected $fillable = ['survey_id', 'participant', 'lang','status'];
+    protected $fillable = ['survey_id', 'participant', 'lang', 'status'];
 
     /**
      * Boot the entry.
@@ -77,6 +77,11 @@ class Entry extends Model implements EntryContract
     public function participant()
     {
         return $this->belongsTo(User::class, 'participant');
+    }
+
+    public function surveyed()
+    {
+        return $this->belongsTo(Surveyed::class, 'participant', 'email');
     }
 
     /**

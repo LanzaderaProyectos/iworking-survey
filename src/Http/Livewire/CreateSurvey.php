@@ -13,6 +13,7 @@ use MattDaneshvar\Survey\Models\Section;
 use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Mail\UserNotification;
+use MattDaneshvar\Survey\Models\Surveyed;
 
 class CreateSurvey extends Component
 {
@@ -165,6 +166,8 @@ class CreateSurvey extends Component
             $this->question->setTranslation('options', 'es', $this->optionES)
                 ->setTranslation('options', 'en', $this->optionEN);;
             $this->question->type = 'radio';
+        } else {
+            $this->question->type = 'text';
         }
         $this->question->survey_id = $this->survey->id;
         $this->question
@@ -193,16 +196,13 @@ class CreateSurvey extends Component
 
     public function sendSurvey()
     {
-        $prueba = [
-            (object)array("codigo" => "102852", "nombre" => "Carlos Bernuy", "nif" => "N2760536I", "tipo" => "no stock", "contacto" => "Maria Voß", "email" => "cbernuy@lanzaderaproyectos.com", "idioma" => "en", "empleado" => "E0387", "responsable" => "Alejandra Pedraza"),
-            (object)array("codigo" => "101256", "nombre" => "Fran Campos", "nif" => "W0065869J", "tipo" => "stock", "contacto" => "Nuria Moragues", "email" => "fcampos@strategying.com", "idioma" => "en", "empleado" => "E0186", "responsable" => "Gemma Giraut"),
-        ];
-        foreach ($prueba as $user) {
+        $users = Surveyed::where('survey_id', $this->survey->id)->get();
+        foreach ($users as $user) {
             try {
                 Entry::create([
                     'survey_id' => $this->survey->id,
                     'participant' => $user->email,
-                    'lang' => $user->idioma,
+                    'lang' => $user->lang,
                     'status' => Constants::ENTRY_STATUS_PENDING
                 ]);
                 Mail::to($user->email)->send(new UserNotification($this->survey, $user));
