@@ -62,10 +62,16 @@ class Answers extends Component
             'SI' => 100,
             'NP' => 100,
             'NA' => 100,
+            'Partially' => 25,
+            'Mainly' => 70,
+            'Totally' => 100,
+            'Parcialmente' => 25,
+            'Mayoritariamente' => 70,
+            'TotaTotalmentelly' => 100,
         ];
         foreach ($this->answers as $key => $answer) {
             $score = 0;
-            if ($answer['type'] == 'radio') {
+            if ($answer['type'] == 'radio' && $answer['value'] != '') {
                 $score = $values[$answer['value']];
             }
             Answer::updateOrCreate(

@@ -42,6 +42,8 @@ class ShowEntry extends Component
             $this->answers[$item->question_id]['value'] = $item->value;
             $this->comments[$item->question_id] = $item->comments;
         }
+        dd($this->answers, $this->comments);
+
     }
 
     public function render()
