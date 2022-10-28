@@ -9,6 +9,7 @@ use MattDaneshvar\Survey\Contracts\Entry as EntryContract;
 use MattDaneshvar\Survey\Contracts\Survey;
 use MattDaneshvar\Survey\Exceptions\GuestEntriesNotAllowedException;
 use MattDaneshvar\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
+use MattDaneshvar\Survey\Models\Answer as ModelsAnswer;
 
 class Entry extends Model implements EntryContract
 {
@@ -57,6 +58,11 @@ class Entry extends Model implements EntryContract
     public function answers()
     {
         return $this->hasMany(get_class(app()->make(Answer::class)));
+    }
+
+    public function sumScores()
+    {
+        return $this->hasMany(ModelsAnswer::class)->sum('score');
     }
 
     /**

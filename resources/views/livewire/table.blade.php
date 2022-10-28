@@ -192,6 +192,9 @@
                             <th>
                                 Vencimiento
                             </th>
+                            <th>
+                                Puntuación media
+                            </th>
                             <th style="width: 20px">Acciones</th>
                         </tr>
                     </thead>
@@ -222,7 +225,8 @@
                             <td>
                                 {{ auth()->user()->applyDateFormat($survey->expiration) }}
                             </td>
-
+                            <td>
+                            </td>
                             <td class="text-center">
                                 @if($draft)
                                 <a href="{{ route('survey.edit',$survey->id) }}" type="button"
