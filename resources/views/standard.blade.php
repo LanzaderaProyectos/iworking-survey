@@ -7,18 +7,18 @@
         @include('survey::sections.single')
         @endforeach
     </div>
+    @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)
     @if (session()->has('answersAlert'))
-    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+    <div id="answersAlert" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
         <span> {{ session('answersAlert') }}</span>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     @endif
-    @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)
     <div class="d-flex flex-row-reverse">
         @if ($this->entry->lang == 'en')
-        <button class="btn btn-success my-3 mr-2"
+        <button id="send-en" class="btn btn-success my-3 mr-2"
             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
             wire:click="sendAnswers">
             Send
@@ -27,7 +27,7 @@
             Save
         </button>
         @else
-        <button class="btn btn-success my-3"
+        <button id="send-es" class="btn btn-success my-3"
             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
             wire:click="sendAnswers">
             Enviar

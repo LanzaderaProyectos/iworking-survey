@@ -12,7 +12,6 @@ use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Answer;
 use MattDaneshvar\Survey\Models\Survey;
 use MattDaneshvar\Survey\Library\Constants;
-use PHPUnit\TextUI\XmlConfiguration\Constant;
 use MattDaneshvar\Survey\Mail\SurveyCompleted;
 
 class Answers extends Component
@@ -109,7 +108,7 @@ class Answers extends Component
     public function customValidation()
     {
         foreach ($this->answers as $key => $item) {
-            if (empty(trim($item))) {
+            if (empty(trim($item['value']))) {
                 $this->errorsBag[$key] = $key . "";
             } else {
                 unset($this->errorsBag[$key]);
