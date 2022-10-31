@@ -4,6 +4,10 @@
             <div class="row">
                 <div class="col-10">
                     <h1 class="mb-0 mt-2">{{ $this->survey->name }}</h1>
+                    @if($this->entry ?? false)
+                    <h3 class="mt-2"> {{ $this->entry->surveyed->name ?? '' }} - {{ $this->entry->surveyed->contact_person ?? '' }}
+                    </h3>
+                    @endif
                 </div>
                 <div class="col-2 text-right">
                     <img src="{{ asset('/img/logo_rubio.jpg') }}" style="max-height: 70px;" />

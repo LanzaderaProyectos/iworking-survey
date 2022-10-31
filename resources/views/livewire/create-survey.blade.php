@@ -96,7 +96,7 @@
                         '/' . now()->format('Y/m/d') . '/' . (string)$survey->id,
                         'modelId' => (string)$survey->id,
                         'model' => 'Models\Survey::class',
-                        'type' => 'order-attachment',
+                        'type' => 'surveys-attachment',
                         'enableUpload' => true,
                         'enableDelete' => true,
                         ], key(time() . 'file-uploader'))
@@ -160,8 +160,23 @@
             </div>
         </div>
         @endif
-        @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_DRAFT)
-
+        @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
+        auth()->user()->hasAnyRole(['gestor-encuestas']))
+        <div class="row">
+            <div class="col-12 col-md-6">
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="text-right">
+                    <div class="btn-group my-1" role="group" aria-label="">
+                        <button type="button" wire:click="closeSurvey"
+                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+                            class="btn btn-dark d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
+                            Cerrar encuesta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         @endif
     </div>
 </div>

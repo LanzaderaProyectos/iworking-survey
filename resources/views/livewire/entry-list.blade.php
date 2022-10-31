@@ -41,6 +41,7 @@
             <table class="table table-striped- table-bordered table-hover table-checkable">
                 <thead>
                     <tr class="text-uppercase">
+                        <th style="width: 20px">Acciones</th>
                         <th>Encuestado</th>
                         <th>ID</th>
                         <th>Email</th>
@@ -54,15 +55,21 @@
                 <tbody>
                     @foreach($surveyEntries as $entry)
                     <tr>
+                        <td class="text-center">
+                            <a href="{{ route('survey.entry',$entry->id) }}" type="button"
+                                class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
+                                data-placement="top" title="Visualizar">
+                                <i class="fas fa-search"></i>
+                            </a>
+                        </td>
                         <td>
                             {{ $entry->surveyed->name ?? '' }}
                         </td>
                         <td>
                             {{ $entry->surveyed->vat_number ?? '' }}
                         </td>
-                        <td>
-                            <a href="{{ route('survey.entry', ['entryId' => $entry->id])}}">{{
-                                $entry->participant }}</a>
+                        <td>{{
+                            $entry->participant }}
                         </td>
                         <td>
                             {{ $entry->surveyed->contact_person ?? ''}}

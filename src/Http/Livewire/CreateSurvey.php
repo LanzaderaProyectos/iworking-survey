@@ -240,4 +240,23 @@ class CreateSurvey extends Component
         $this->editModeQuestion = false;
     }
 
+    public function closeSurvey()
+    {
+        $this->survey->audit()->create([
+            'user_id'   => auth()->id(),
+            'status'    => Constants::SURVEY_STATUS_CLOSED,
+            'text'      => 'Encuesta cerrada'
+        ]);
+        $this->survey->status = Constants::SURVEY_STATUS_CLOSED;
+        $this->survey->save();
+        session()->flash('surveySended',  'Encuesta cerrada');
+        return redirect(route('survey.list'));
+    }
+
+    public function updatedSurveyExpiration()
+    {
+        if ($this->survey->status ==  Constants::SURVEY_STATUS_PROCESS) {
+            $this->survey->save();
+        }
+    }
 }

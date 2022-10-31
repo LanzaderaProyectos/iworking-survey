@@ -125,6 +125,7 @@
                     class="table table-striped- table-bordered table-hover table-checkable mt-4" id="users_list_table">
                     <thead scope="col">
                         <tr class="text-uppercase">
+                            <th style="width: 20px">Acciones</th>
                             <th wire:click="sortBy('survey_number')" style="cursor: pointer">
                                 Nº Encuesta
                                 @include('iworking::partials._sort-icon',['field'=>'survey_number'])
@@ -150,12 +151,31 @@
                             <th>
                                 Puntuación media
                             </th>
-                            <th style="width: 20px">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($surveys as $survey)
                         <tr>
+                            <td class="text-center">
+                                @if($draft)
+                                <a href="{{ route('survey.edit',$survey->id) }}" type="button"
+                                    class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
+                                    data-placement="top" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                @else
+                                <a href="{{ route('survey.show',$survey->id) }}" type="button"
+                                    class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
+                                    data-placement="top" title="Visualizar">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                                @endif
+                                <a href="{{ route('survey.entry.list',$survey->id) }}" type="button"
+                                    class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
+                                    data-placement="top" title="Visualizar entradas">
+                                    <i class="fas fa-users"></i>
+                                </a>
+                            </td>
                             <td>
                                 {{ $survey->survey_number }}
                             </td>
@@ -180,26 +200,6 @@
                                 $survey->entries->count()), 2, ',',
                                 '.')
                                 }}
-                            </td>
-                            <td class="text-center">
-                                @if($draft)
-                                <a href="{{ route('survey.edit',$survey->id) }}" type="button"
-                                    class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
-                                    data-placement="top" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                @else
-                                <a href="{{ route('survey.show',$survey->id) }}" type="button"
-                                    class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
-                                    data-placement="top" title="Visualizar">
-                                    <i class="fas fa-search"></i>
-                                </a>
-                                @endif
-                                <a href="{{ route('survey.entry.list',$survey->id) }}" type="button"
-                                    class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
-                                    data-placement="top" title="Visualizar entradas">
-                                    <i class="fas fa-users"></i>
-                                </a>
                             </td>
                         </tr>
                         @endforeach

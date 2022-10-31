@@ -44,7 +44,10 @@
     </div>
     <div class="col-12 col-md-6">
         <label class="form-control-label" for="survey.expiration">Fecha expiración*:</label>
-        <input {{ $this->formEdit ? '' : 'disabled'}} type="date" wire:model="survey.expiration" placeholder="Fecha de
+        <input {{ $this->formEdit || ($this->survey->status ==
+        MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
+        auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date" wire:model="survey.expiration"
+        placeholder="Fecha de
         factura" class="form-control" min="{{date("Y-m-d")}}">
         @error('survey.expiration') <span class="text-danger">{{ $message }}</span> @enderror
     </div>
