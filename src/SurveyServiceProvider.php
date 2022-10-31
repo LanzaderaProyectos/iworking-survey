@@ -13,6 +13,7 @@ use MattDaneshvar\Survey\Http\Livewire\ShowEntry;
 use MattDaneshvar\Survey\Http\Livewire\CreateSurvey;
 use MattDaneshvar\Survey\Http\Middleware\UserSurvey;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use MattDaneshvar\Survey\Http\Livewire\EntryList;
 use MattDaneshvar\Survey\Http\View\Composers\SurveyComposer;
 
 class SurveyServiceProvider extends ServiceProvider
@@ -106,5 +107,6 @@ class SurveyServiceProvider extends ServiceProvider
         Livewire::component('iworking-survery::survey-answers', Answers::class);
         Livewire::component('iworking-survery::show-entry',     ShowEntry::class);
         Livewire::component('iworking-survery::addresses',     Addresses::class);
+        Livewire::component('iworking-survery::entry-list',     EntryList::class);
     }
 }

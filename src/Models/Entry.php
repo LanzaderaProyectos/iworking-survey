@@ -20,6 +20,8 @@ class Entry extends Model implements EntryContract
      */
     protected $fillable = ['survey_id', 'participant', 'lang', 'status'];
 
+    protected $appends = ['sum_score'];
+
     /**
      * Boot the entry.
      *
@@ -58,11 +60,6 @@ class Entry extends Model implements EntryContract
     public function answers()
     {
         return $this->hasMany(get_class(app()->make(Answer::class)));
-    }
-
-    public function sumScores()
-    {
-        return $this->hasMany(ModelsAnswer::class)->sum('score');
     }
 
     /**
@@ -214,5 +211,10 @@ class Entry extends Model implements EntryContract
         if ($count >= $limit) {
             throw new MaxEntriesPerUserLimitExceeded();
         }
+    }
+
+    public function getSumScoreAttribute()
+    {
+        return $this->answers->sum('score');
     }
 }

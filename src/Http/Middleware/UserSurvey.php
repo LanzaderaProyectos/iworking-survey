@@ -36,7 +36,7 @@ class UserSurvey
             if ($entry) {
                 return $next($request);
             } else {
-                return redirect('/');
+                return redirect()->route('survey.not-available');
             }
         } catch (DecryptException $e) {
             Log::error($e);

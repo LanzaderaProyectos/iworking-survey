@@ -1,7 +1,14 @@
 <div>
     <div class="card mt-5">
         <div class="card-header bg-white p-4">
-            <h2 class="mb-0">{{ $this->survey->name }}</h2>
+            <div class="row">
+                <div class="col-10">
+                    <h1 class="mb-0 mt-2">{{ $this->survey->name }}</h1>
+                </div>
+                <div class="col-2 text-right">
+                    <img src="{{ asset('/img/logo_rubio.jpg') }}" style="max-height: 70px;" />
+                </div>
+            </div>
         </div>
         @foreach($this->survey->sections as $index => $section)
         @include('survey::sections.single')

@@ -140,13 +140,13 @@ class CreateSurvey extends Component
         }
         foreach ($this->users as $user) {
             try {
+                Mail::to($user->email)->send(new UserNotification($this->survey, $user));
                 Entry::create([
                     'survey_id' => $this->survey->id,
                     'participant' => $user->email,
                     'lang' => $user->lang,
                     'status' => Constants::ENTRY_STATUS_PENDING
                 ]);
-                Mail::to($user->email)->send(new UserNotification($this->survey, $user));
             } catch (\Exception $e) {
                 $this->survey->audit()->create([
                     'user_id'   => auth()->id(),
@@ -240,8 +240,4 @@ class CreateSurvey extends Component
         $this->editModeQuestion = false;
     }
 
-    public function updatedSurveyComments($value)
-    {
-        dd($value);
-    }
 }
