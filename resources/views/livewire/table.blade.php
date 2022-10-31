@@ -169,12 +169,12 @@
                                     data-placement="top" title="Visualizar">
                                     <i class="fas fa-search"></i>
                                 </a>
-                                @endif
                                 <a href="{{ route('survey.entry.list',$survey->id) }}" type="button"
                                     class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
                                     data-placement="top" title="Visualizar entradas">
                                     <i class="fas fa-users"></i>
                                 </a>
+                                @endif
                             </td>
                             <td>
                                 {{ $survey->survey_number }}
