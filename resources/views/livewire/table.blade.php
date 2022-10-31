@@ -176,7 +176,8 @@
                             </td>
                             <td>
                                 {{
-                                number_format($survey->entries->sum('sum_score') / $survey->entries->count(), 2, ',',
+                                number_format($survey->entries->sum('sum_score') / ($survey->entries->count() == 0 ? 1 :
+                                $survey->entries->count()), 2, ',',
                                 '.')
                                 }}
                             </td>
