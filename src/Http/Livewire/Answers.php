@@ -68,7 +68,7 @@ class Answers extends Component
             'Totally' => 100,
             'Parcialmente' => 25,
             'Mayoritariamente' => 70,
-            'TotaTotalmentelly' => 100,
+            'Totalmente' => 100,
         ];
         foreach ($this->answers as $key => $answer) {
             $score = 0;
