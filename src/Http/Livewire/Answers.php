@@ -111,7 +111,7 @@ class Answers extends Component
         foreach ($this->answers as $key => $item) {
             if (empty(trim($item['value']))) {
                 $this->errorsBag[$key] = $key . "";
-            } elseif (trim($item['value'] == 'SI' && $item['comments'])) {
+            } elseif ((trim($item['value'] == 'SI' || trim($item['value'] == 'YES')) && $item['comments'])) {
                 if (empty(trim($this->comments[$key]))) {
                     $this->errorsBag[$key] = $key . "";
                 }

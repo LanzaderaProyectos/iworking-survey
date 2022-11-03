@@ -46,6 +46,6 @@ class SurveyCompleted extends Mailable
         return $this->subject($subject)
             ->from(config('iworking-survey.mail-from.address'), config('iworking-survey.mail-from.address'))
             ->view($viewNotification)
-            ->attachData($pdf->output(), 'answers.pdf');
+            ->attachData($pdf->output(), $this->entry->survey->getTranslation('name', $this->entry->lang));
     }
 }
