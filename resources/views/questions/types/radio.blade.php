@@ -1,4 +1,7 @@
-@component('survey::questions.base', compact('question'))
+@component('survey::questions.base', [
+'question' => $question,
+'numberQuestion' => $numberQuestion
+])
 {{-- Admin view --}}
 @php($listQuestions = $lang ? $question->getTranslation('options',$lang) : $question->options)
 @foreach($listQuestions as $option)

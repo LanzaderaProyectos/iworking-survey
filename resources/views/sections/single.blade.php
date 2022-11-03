@@ -23,6 +23,7 @@
                     ]
                     )
                 </div>
+                @php($numberQuestion++)
                 @endforeach
             </div>
         </div>

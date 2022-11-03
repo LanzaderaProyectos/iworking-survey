@@ -36,6 +36,7 @@ class Answers extends Component
         $this->survey = Survey::find($this->entry->survey_id);
         foreach ($this->survey->questions as  $value) {
             $this->answers[$value->id]['value'] = '';
+            $this->answers[$value->id]['comments'] = $value->comments ?? '';
             $this->answers[$value->id]['type'] = $value->type;
             if ($value->comments) {
                 $this->comments[$value->id] = '';
@@ -110,6 +111,10 @@ class Answers extends Component
         foreach ($this->answers as $key => $item) {
             if (empty(trim($item['value']))) {
                 $this->errorsBag[$key] = $key . "";
+            } elseif (trim($item['value'] == 'SI' && $item['comments'])) {
+                if (empty(trim($this->comments[$key]))) {
+                    $this->errorsBag[$key] = $key . "";
+                }
             } else {
                 unset($this->errorsBag[$key]);
             }

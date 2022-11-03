@@ -15,8 +15,10 @@
                 </div>
             </div>
         </div>
+        @php($numberQuestion = 1)
         @foreach($this->survey->sections as $index => $section)
         @include('survey::sections.single')
+        @php($numberQuestion += $section->questions->count())
         @endforeach
     </div>
     @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)

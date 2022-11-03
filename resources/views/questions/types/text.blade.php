@@ -1,4 +1,7 @@
-@component('survey::questions.base', compact('question'))
+@component('survey::questions.base', [
+'question' => $question,
+'numberQuestion' => $numberQuestion
+])
 <input type="text" wire:model.defer="answers.{{$question->id}}.value" name="{{ $question->key }}" id="{{ $question->key }}"
     class="form-control" value="{{ $value ?? old($question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}>
 @if($this->errorsBag ?? false)

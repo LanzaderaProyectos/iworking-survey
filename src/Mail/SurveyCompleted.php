@@ -4,6 +4,9 @@ namespace MattDaneshvar\Survey\Mail;
 
 use Illuminate\Mail\Mailable;
 use MattDaneshvar\Survey\Models\Entry;
+use MattDaneshvar\Survey\Models\Survey;
+use Barryvdh\DomPDF\Facade as PDF;
+
 
 class SurveyCompleted extends Mailable
 {
@@ -25,6 +28,14 @@ class SurveyCompleted extends Mailable
      */
     public function build(): static
     {
+        $data = [
+            'answers' => $this->entry->answers,
+            'lang'  => $this->entry->lang,
+            'survey' => $this->entry->survey,
+            'entry' => $this->entry
+        ];
+        $pdf = PDF::loadView('survey::exports.pdf-entry', $data);
+
         if ($this->entry->lang == 'en') {
             $subject = 'SURVEY ' . $this->entry->survey->getTranslation('name', 'en');
             $viewNotification = 'survey::emails.survey-completed-message-en';
@@ -34,6 +45,7 @@ class SurveyCompleted extends Mailable
         }
         return $this->subject($subject)
             ->from(config('iworking-survey.mail-from.address'), config('iworking-survey.mail-from.address'))
-            ->view($viewNotification);
+            ->view($viewNotification)
+            ->attachData($pdf->output(), 'answers.pdf');
     }
 }
