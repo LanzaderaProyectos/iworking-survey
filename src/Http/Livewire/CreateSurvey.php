@@ -4,6 +4,7 @@ namespace MattDaneshvar\Survey\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
@@ -11,9 +12,9 @@ use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Survey;
 use MattDaneshvar\Survey\Models\Section;
 use MattDaneshvar\Survey\Models\Question;
+use MattDaneshvar\Survey\Models\Surveyed;
 use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Mail\UserNotification;
-use MattDaneshvar\Survey\Models\Surveyed;
 
 class CreateSurvey extends Component
 {
@@ -62,7 +63,7 @@ class CreateSurvey extends Component
     ];
 
     public function mount($draft = false)
-    {
+    {   
         $this->draft = $draft;
         $this->formEdit  = !Route::is('survey.show');
         $surveyId = Route::current()->parameter('surveyId');
@@ -137,10 +138,11 @@ class CreateSurvey extends Component
         if (!$this->users->count()) {
             session()->flash('userListEmpty', 'No hay usuarios');
             return;
-        }
+        }  
+        
         foreach ($this->users as $user) {
             try {
-                Mail::to($user->email)->send(new UserNotification($this->survey, $user));
+                Mail::mailer('custom')->to($user->email)->send(new UserNotification($this->survey, $user));
                 Entry::create([
                     'survey_id' => $this->survey->id,
                     'participant' => $user->email,
