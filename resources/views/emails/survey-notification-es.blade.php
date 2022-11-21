@@ -20,4 +20,6 @@
     Agradecemos de antemano su participación.
 </p>
 <br>
-<a href="{{ $url }}">Link</a></p>
+<a href="{{ $url }}" style="font-size: 20px">Link</a>
+<br>
+<br>
