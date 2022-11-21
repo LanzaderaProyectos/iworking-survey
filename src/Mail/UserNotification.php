@@ -52,7 +52,7 @@ class UserNotification extends Mailable
         $mailCrypted =  Crypt::encryptString($this->user->email . ';' . $this->survey->id);
         $url = config('iworking-survey.url') . '/survey/answers/' . $mailCrypted;
         return $this->subject($subject)
-            ->from('Lab Rubio', 'mejorespracticas@labrubio.com')
+            ->from('mejorespracticas@labrubio.com','Lab Rubio')
             ->view($viewNotification, [
                 'url'       => $url
             ]);
