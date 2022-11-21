@@ -97,7 +97,7 @@ class Answers extends Component
             $this->entry->status = Constants::ENTRY_STATUS_COMPLETED;
             $this->entry->save();
             try {
-                Mail::to($this->entry->participant)
+                Mail::mailer('custom')->to($this->entry->participant)
                     ->send(new SurveyCompleted($this->entry));
             } catch (\Throwable $th) {
                 Log::error($th);
