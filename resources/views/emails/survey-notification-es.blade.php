@@ -1,23 +1,26 @@
 <p>
-    El objetivo de LABORATORIOS RUBIÓ es extender su compromiso a proveedores para establecer relaciones comerciales
-    estables y duraderas basadas en la eficiencia, la calidad, la sostenibilidad, la transparencia, el respeto a los
-    Derechos Humanos, la no discriminación y la igualdad de oportunidades.
+    A la atención de quien corresponda,
 </p>
 <p>
-    Nuestro objetivo es asegurar el cumplimiento normativo, en particular en asuntos relacionados con la gestión
-    medioambiental, la seguridad y salud, la práctica laboral y la integridad en las conductas, así las buenas prácticas
-    de la empresa.
+    En Laboratorios Rubió estamos profundamente comprometidos con el cumplimiento de las mejores prácticas de la
+    industria farmacéutica. Además, nos esforzamos por alcanzar los más altos estándares en términos de desempeño social
+    y ambiental, responsabilidad y transparencia. Nuestra lógica trasciende la idea de que solo debemos medir los
+    resultados en términos económicos y financieros. Como empresa buscamos un impacto positivo en cada decisión, para
+    contribuir a transformar y beneficiar a todas las personas, comunidades y el planeta. Nuestra firme creencia de que
+    nuestras acciones de hoy ayudarán a dar forma a un mundo mejor para las próximas generaciones guía nuestros pasos.
 </p>
 <p>
-    Es un paso más para la transformación hacia la sostenibilidad, el buen hacer de nuestro desempeño y poner en valor
-    nuestro compromiso con el impacto social y medioambiental.
+    Dado que nuestro objetivo es garantizar que, como empresa, seamos una fuerza para el bien, nos gustaría saber si
+    nuestros socios, clientes, proveedores y otros grupos de interés también están comprometidos a ser parte de una
+    economía global que beneficia a todos.
+    <br>
+    Por este motivo, nos gustaría solicitarle que complete el siguiente
+    cuestionario, y queremos asegurarle que toda la información recopilada será tratada de manera confidencial.
 </p>
 <p>
-    Por ello, les hacemos llegar este cuestionario con la finalidad de que se adhieran a dicho compromiso, junto con el
-    Código Ético que hemos establecido.
-</p>
-<p>
-    Agradecemos de antemano su participación.
+    Gracias de antemano por su tiempo.
+    <br>
+    Muy cordialmente,
 </p>
 <br>
 <a href="{{ $url }}" style="font-size: 20px">Link</a>
