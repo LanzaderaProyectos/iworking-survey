@@ -22,6 +22,9 @@
     Best regards,
 </p>
 <br>
-<a href="{{ $url }}" style="font-size: 20px">Link</a>
+<a href="https://www.laboratoriosrubio.com/wp-content/themes/laboratoriosrubio/img/codigoetico-en.pdf">https://www.laboratoriosrubio.com/wp-content/themes/laboratoriosrubio/img/codigoetico-en.pdf</a>
+<br>
+<br>
+<a href="{{ $url }}" style="font-size: 20px">To access the survey click here</a>
 <br>
 <br>

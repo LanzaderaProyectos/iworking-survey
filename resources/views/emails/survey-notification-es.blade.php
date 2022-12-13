@@ -23,6 +23,9 @@
     Muy cordialmente,
 </p>
 <br>
-<a href="{{ $url }}" style="font-size: 20px">Link</a>
+<a href="https://www.laboratoriosrubio.com/wp-content/themes/laboratoriosrubio/img/codigoetico-es.pdf">https://www.laboratoriosrubio.com/wp-content/themes/laboratoriosrubio/img/codigoetico-es.pdf</a>
+<br>
+<br>
+<a href="{{ $url }}" style="font-size: 20px">Para acceder a la encuesta presione aquí</a>
 <br>
 <br>

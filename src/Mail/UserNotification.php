@@ -52,14 +52,12 @@ class UserNotification extends Mailable
             $viewNotification = 'survey::emails.survey-notification-es';
         }
         // $pdf = PDF::loadView('survey::exports.pdf-entry');
-        $pdf = resource_path('imports/pdfPrueba.pdf');
         $mailCrypted =  Crypt::encryptString($this->user->email . ';' . $this->survey->id);
         $url = config('iworking-survey.url') . '/survey/answers/' . $mailCrypted;
         return $this->subject($subject)
             ->from('mejorespracticas@labrubio.com', 'Lab Rubio')
             ->view($viewNotification, [
                 'url'       => $url
-            ])
-            ->attach($pdf);
+            ]);
     }
 }
