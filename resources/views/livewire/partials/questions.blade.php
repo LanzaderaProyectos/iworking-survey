@@ -110,14 +110,16 @@
                 @foreach ($this->survey->questions as $item)
                 <tr>
                     <td nowrap>
-                        <button wire:loading.delay.attr="disabled" wire:target="downloadExcel"
+                        <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ? '' :
+                            'disabled'}}
                             wire:click="editQuestion('{{ $item->id }}')" type="button"
                             class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip" data-placement="top"
                             title="Edit">
                             <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
-                        <button type="button"
-                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+                        <button type="button" {{ $this->formEdit ? '' : 'disabled'}}
+                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
+                            event.stopImmediatePropagation();"
                             wire:click="deleteQuestion('{{ $item->id }}')"
                             class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
                             <i class="fas fa-trash" aria-hidden="true"></i>

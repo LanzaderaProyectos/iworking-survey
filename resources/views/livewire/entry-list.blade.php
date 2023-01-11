@@ -9,6 +9,21 @@
                 <option value="100">Mostrar 100 filas</option>
             </select>
         </div>
+        <div class="btn-group">
+            @if (!$filtersMode)
+            <button wire:click="$toggle('filtersMode')" class="btn rounded-right btn-primary" type="button"
+                data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false"
+                aria-controls="collapseFilters">
+                Mostrar filtros
+            </button>
+            @else
+            <button wire:click="$toggle('filtersMode')" class="btn rounded-right btn-warning" type="button"
+                data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false"
+                aria-controls="collapseFilters">
+                Ocultar filtros
+            </button>
+            @endif
+        </div>
         <div class="btn-group ml-3">
             <button wire:loading.attr="disabled" wire:click="downloadExcel"
                 class="btn btn-success rounded-left pl-3 pr-2" type="button" data-toggle="tooltip" data-placement="top"
@@ -26,7 +41,58 @@
                 Descargando... </span>
         </div>
     </div>
-    <div class="row py-3">
+    <div class="collapse" id="collapseFilters" wire:ignore.self>
+        <div class="row mt-4">
+            <div class="col-6 col-lg-10">
+                <h5>Filtros:</h5>
+            </div>
+            <div class="col-6 col-lg-2">
+                @if (session()->has('surveysearch'))
+                <button wire:click="clearFilters()" class="btn btn-sm btn-danger btn-inline float-right"><i
+                        class="fas fa-times"></i> Eliminar filtros</button>
+                @endif
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-4 col-6">
+                <label for="vatNumber" class="font-weight-bold">Encuestado:</label>
+                <input wire:model.debounce.300ms="search.surveyed" type="search" class="form-control form-control-sm"
+                    name="survey_number" id="survey_number" placeholder="Nº Encuesta">
+            </div>
+            <div class="col-md-4 col-6">
+                <label for="provider" class="font-weight-bold">Responsable:</label>
+                <input wire:model.debounce.300ms="search.manager" type="search" class="form-control form-control-sm"
+                    name="name-survey" id="name-survey" placeholder="Nombre">
+            </div>
+            <div class="col-md-4 col-6">
+                <label for="statusCompany" class="font-weight-bold">Estado:</label>
+                <select wire:model.debounce.300ms="search.status" name="status" id="status"
+                    class="form-control form-control-sm">
+                    <option value=""> ---- </option>
+                    @foreach(MattDaneshvar\Survey\Helpers\Helpers::buildEntryStatusArray() as $status
+                    => $name)
+                    <option value="{{ $status }}">{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-4 col-6 mt-3">
+                <label for="provider" class="font-weight-bold">Puntuación:</label>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="dateFrom">Mínimo</label>
+                        <input wire:model.debounce.300ms="search.min" type="text" class="form-control form-control-sm"
+                            placeholder="Desde">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="dateTo">Máximo</label>
+                        <input wire:model.debounce.300ms="search.max" type="text" class="form-control form-control-sm"
+                            placeholder="Hasta">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- <div class="row py-3">
         <div class="col-md-4 col-12">
             <div class="has-search">
                 <span class="fa fa-search form-control-feedback pt-1" aria-hidden="true"></span>
@@ -34,9 +100,8 @@
                     class="form-control" placeholder="Buscar..." title="Buscar por palabra clave">
             </div>
         </div>
-    </div>
-
-    <div class="row">
+    </div> --}}
+    <div class="row mt-4">
         <div class="col">
             <table class="table table-striped- table-bordered table-hover table-checkable">
                 <thead>
@@ -49,7 +114,12 @@
                         <th>Idioma</th>
                         <th>Responsable</th>
                         <th>Estado</th>
-                        <th>Puntuación</th>
+                        <th>Puntuación
+                            <br>
+                            <span class="bg-warning rounded p-1">
+                                (Max. {{$this->totalPoints}})
+                            </span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,12 +154,13 @@
                             @lang('survey::status.entry.'.$entry->status ?? '')
                         </td>
                         <td>
-                            {{$entry->answers->sum('score')}}
+                            {{ $entry->sum_score }} - {{ number_format($entry->sum_score * 100 /
+                            $this->totalPoints , 2, ',',
+                            '.') }}%
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
-
             </table>
         </div>
     </div>

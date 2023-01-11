@@ -122,8 +122,9 @@
                 @foreach ($this->survey->sections as $section)
                 <tr>
                     <td nowrap>
-                        <button type="button"
-                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+                        <button type="button" {{ $this->formEdit ? '' : 'disabled'}}
+                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
+                            event.stopImmediatePropagation();"
                             wire:click="deleteSection('{{ $section->id }}')"
                             class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
                             <i class="fas fa-trash" aria-hidden="true"></i>

@@ -217,4 +217,43 @@ class Entry extends Model implements EntryContract
     {
         return $this->answers->sum('score');
     }
+
+    public function scopeTableSearch($query, $search): void
+    {
+        if (!empty($search['surveyed'])) {
+            $value = $search['surveyed'];
+            $query->whereHas('surveyed', function ($q) use ($value) {
+                $q->where('name', 'like', '%' . $value . '%');
+            });
+        }
+
+        if (!empty($search['manager'])) {
+            $value = $search['manager'];
+            $query->whereHas('surveyed', function ($q) use ($value) {
+                $q->where('manager', 'like', '%' . $value . '%');
+            });
+        }
+
+        if (!empty($search['status'])) {
+            $value = $search['status'];
+            $query->where('status', $value);
+        }
+
+        if (!empty($search['min'])) {
+            $value = $search['min'];
+            // $query->where('status', $value);
+            $query->whereHas('answers', function ($q) use ($value) {
+                $q->select(\DB::raw('SUM(score) as totalScore'))
+                    ->havingRaw('totalScore >= ?', [$value]);
+            });
+        }
+
+        if (!empty($search['max'])) {
+            $value = $search['max'];
+            $query->whereHas('answers', function ($q) use ($value) {
+                $q->select(\DB::raw('SUM(score) as totalScore'))
+                    ->havingRaw('totalScore <= ?', [$value]);
+            });
+        }
+    }
 }

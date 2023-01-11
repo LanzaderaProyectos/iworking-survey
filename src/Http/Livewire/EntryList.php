@@ -9,32 +9,46 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
 use MattDaneshvar\Survey\Models\Entry;
 use Barryvdh\DomPDF\Facade as PDF;
-
+use MattDaneshvar\Survey\Models\Question;
+use MattDaneshvar\Survey\Models\Survey;
 
 class EntryList extends Component
 {
     public $entries = 10;
     public $surveyId;
+    public $totalPoints = 0;
+    public $filtersMode = false;
     public $search = "";
 
     public function mount()
     {
+        $this->search = [
+            'surveyed'      => '',
+            'manager'       => '',
+            'status'        => '',
+            'min'           => '',
+            'max'           => ''
+        ];
         $this->surveyId = Route::current()->parameter('surveyId');
+        $this->totalPoints = Question::where('type', 'radio')
+            ->where('survey_id', $this->surveyId)
+            ->count() * 100;
     }
 
     public function render()
     {
         $entries = Entry::where('survey_id', $this->surveyId);
-        if ($this->search) {
-            $search = '%' . $this->search . '%';
-            $entries->whereHas('surveyed', function ($q) use ($search) {
-                $q->where('name', 'like', $search)
-                    ->orWhere('vat_number', 'like', $search)
-                    ->orWhere('contact_person', 'like', $search)
-                    ->orWhere('email', 'like', $search)
-                    ->orWhere('manager', 'like', $search);
-            });
-        }
+        // if ($this->search) {
+        //     $search = '%' . $this->search . '%';
+        //     $entries->whereHas('surveyed', function ($q) use ($search) {
+        //         $q->where('name', 'like', $search)
+        //             ->orWhere('vat_number', 'like', $search)
+        //             ->orWhere('contact_person', 'like', $search)
+        //             ->orWhere('email', 'like', $search)
+        //             ->orWhere('manager', 'like', $search);
+        //     });
+        // }
+        $entries->tableSearch($this->search);
         $entries->with(['surveyed']);
         return view('survey::livewire.entry-list', [
             'surveyEntries' => $entries->get()
@@ -108,7 +122,8 @@ class EntryList extends Component
         }
         $entries->with(['surveyed']);
         $data = [
-            'surveyEntries' => $entries->get()
+            'surveyEntries' => $entries->get(),
+            'totalPoints'   => $this->totalPoints
         ];
         $pdf = PDF::loadView('survey::exports.pdf-entries', $data)
             ->setPaper('a4', 'landscape')

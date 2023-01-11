@@ -40,15 +40,19 @@ class Addresses extends Component
     public function createSurveyeds()
     {
         foreach ($this->surveyedsFromExcel as $item) {
-            Surveyed::create([
-                'survey_id' => $this->survey->id,
-                'name' => $item['Nombre'],
-                'vat_number' => $item['NIF'],
-                'contact_person' => $item['Contacto'],
-                'email' => $item['Email'],
-                'lang' => $item['Idioma'],
-                'manager' => $item['Responsable']
-            ]);
+            Surveyed::updateOrCreate(
+                [
+                    'email' => $item['Email']
+                ],
+                [
+                    'survey_id' => $this->survey->id,
+                    'name' => $item['Nombre'],
+                    'vat_number' => $item['NIF'],
+                    'contact_person' => $item['Contacto'],
+                    'lang' => $item['Idioma'],
+                    'manager' => $item['Responsable']
+                ]
+            );
         }
         $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
     }

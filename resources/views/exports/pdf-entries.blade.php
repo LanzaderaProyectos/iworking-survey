@@ -8,7 +8,11 @@
             <th>Idioma</th>
             <th>Responsable</th>
             <th>Estado</th>
-            <th>Puntuación</th>
+            <th>
+                Puntuación
+                <br>
+                (Max. {{$totalPoints}})
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -37,7 +41,9 @@
                 @lang('survey::status.entry.'.$entry->status ?? '')
             </td>
             <td>
-                {{$entry->answers->sum('score')}}
+                {{ $entry->answers->sum('score')}} - {{ number_format($entry->answers->sum('score') * 100 /
+                $totalPoints , 2, ',',
+                '.') }}%
             </td>
         </tr>
         @endforeach
