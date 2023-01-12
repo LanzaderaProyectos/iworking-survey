@@ -46,12 +46,12 @@
             <div class="col-6 col-lg-10">
                 <h5>Filtros:</h5>
             </div>
-            <div class="col-6 col-lg-2">
+            {{-- <div class="col-6 col-lg-2">
                 @if (session()->has('surveysearch'))
                 <button wire:click="clearFilters()" class="btn btn-sm btn-danger btn-inline float-right"><i
                         class="fas fa-times"></i> Eliminar filtros</button>
                 @endif
-            </div>
+            </div> --}}
         </div>
         <div class="row mb-3">
             <div class="col-md-4 col-6">
