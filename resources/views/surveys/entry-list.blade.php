@@ -1,5 +1,5 @@
 @extends(config('iworking-survey.iworking-layout') . 'layouts.app', [
-'pageTitle' => 'Entradas'
+'pageTitle' => 'ENCUESTAS'
 ])
 
 @section('content')
@@ -10,7 +10,7 @@
                 <i class="kt-font-brand fas fa-shopping-cart fa-lg"></i>
             </span>
             <h3 class="kt-portlet__head-title text-uppercase">
-                Entradas
+                Encuestas
             </h3>
         </div>
         <div class="kt-portlet__head-toolbar">

@@ -1,7 +1,7 @@
 @extends(config('iworking-survey.iworking-layout') . 'layouts.app', [
-'pageTitle' => 'Listado de pedidos',
+'pageTitle' => 'Listado de encuestas',
 'pageBreadcrumbs' => [
-'Pedidos',
+'Encuestas',
 'Listado',
 ]
 ])
