@@ -14,6 +14,14 @@
     </button>
 </div>
 @endif
+@if (session()->has('survey-expiration-update'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <span> {!! session('survey-expiration-update') !!}</span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
 <div class="row">
     <div class="col-12 col-md-6">
         <div class="form-group">
@@ -46,9 +54,8 @@
         <label class="form-control-label" for="survey.expiration">Fecha expiración*:</label>
         <input {{ $this->formEdit || ($this->survey->status ==
         MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
-        auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date" wire:model="survey.expiration"
-        placeholder="Fecha de
-        factura" class="form-control" min="{{date("Y-m-d")}}">
+        auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date" wire:model.lazy="survey.expiration"
+        class="form-control" min="{{date("Y-m-d")}}">
         @error('survey.expiration') <span class="text-danger">{{ $message }}</span> @enderror
     </div>
 </div>

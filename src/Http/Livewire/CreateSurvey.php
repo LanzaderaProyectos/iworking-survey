@@ -15,6 +15,7 @@ use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Models\Surveyed;
 use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Mail\UserNotification;
+use MattDaneshvar\Survey\Mail\ReminderNotification;
 
 class CreateSurvey extends Component
 {
@@ -63,7 +64,7 @@ class CreateSurvey extends Component
     ];
 
     public function mount($draft = false)
-    {   
+    {
         $this->draft = $draft;
         $this->formEdit  = !Route::is('survey.show');
         $surveyId = Route::current()->parameter('surveyId');
@@ -138,8 +139,8 @@ class CreateSurvey extends Component
         if (!$this->users->count()) {
             session()->flash('userListEmpty', 'No hay usuarios');
             return;
-        }  
-        
+        }
+
         foreach ($this->users as $user) {
             try {
                 Mail::mailer('custom')->to($user->email)->send(new UserNotification($this->survey, $user));
@@ -259,6 +260,34 @@ class CreateSurvey extends Component
     {
         if ($this->survey->status ==  Constants::SURVEY_STATUS_PROCESS) {
             $this->survey->save();
+            $totalRemindersSent = 0;
+            if ($this->survey->id) {
+                $totalRemindersSent = $this->sendReminder();
+            }
+            session()->flash('survey-expiration-update', 'Se ha actualizado correctamente la fecha de expiración de la encuesta. <br> Se enviaron ' . $totalRemindersSent . ' recordatorios por mail.');
         }
+    }
+
+    /**
+     * Send reminder emails
+     * Return number of emails sent
+     * @return int
+     */
+    public function sendReminder(): int
+    {
+        $reminders =  Entry::where('survey_id', $this->survey->id)
+            ->where('status', Constants::ENTRY_STATUS_PENDING)
+            ->get();
+
+        $totalRemindersSent = 0;
+        foreach ($reminders as $reminder) {
+            try {
+                Mail::mailer('custom')->to($reminder->participant)->send(new ReminderNotification($reminder));
+                $totalRemindersSent++;
+            } catch (\Exception $e) {
+                Log::error($e);
+            }
+        }
+        return $totalRemindersSent;
     }
 }
