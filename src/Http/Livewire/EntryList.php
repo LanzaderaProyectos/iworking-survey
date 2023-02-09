@@ -3,14 +3,18 @@
 namespace MattDaneshvar\Survey\Http\Livewire;
 
 use Livewire\Component;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
 use MattDaneshvar\Survey\Models\Entry;
-use Barryvdh\DomPDF\Facade as PDF;
-use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Models\Survey;
+use MattDaneshvar\Survey\Models\Question;
+use MattDaneshvar\Survey\Library\Constants;
+use MattDaneshvar\Survey\Mail\ReminderNotification;
 
 class EntryList extends Component
 {
@@ -38,21 +42,29 @@ class EntryList extends Component
     public function render()
     {
         $entries = Entry::where('survey_id', $this->surveyId);
-        // if ($this->search) {
-        //     $search = '%' . $this->search . '%';
-        //     $entries->whereHas('surveyed', function ($q) use ($search) {
-        //         $q->where('name', 'like', $search)
-        //             ->orWhere('vat_number', 'like', $search)
-        //             ->orWhere('contact_person', 'like', $search)
-        //             ->orWhere('email', 'like', $search)
-        //             ->orWhere('manager', 'like', $search);
-        //     });
-        // }
+
         $entries->tableSearch($this->search);
         $entries->with(['surveyed']);
         return view('survey::livewire.entry-list', [
             'surveyEntries' => $entries->get()
         ]);
+    }
+
+    public function sendReminder()
+    {
+        $reminders =  Entry::where('survey_id', $this->surveyId)
+            ->where('status', Constants::ENTRY_STATUS_PENDING)
+            ->get();
+        $totalRemindersSent = 0;
+        foreach ($reminders as $reminder) {
+            try {
+                Mail::mailer('custom')->to($reminder->participant)->send(new ReminderNotification($reminder));
+                $totalRemindersSent++;
+            } catch (\Exception $e) {
+                Log::error($e);
+            }
+        }
+        session()->flash('reminderMails', 'Se enviaron ' . $totalRemindersSent . ' recordatorios por mail.');
     }
 
     public function exportToExcel($path)

@@ -1,4 +1,12 @@
 <div>
+    @if (session()->has('reminderMails'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <span> {!! session('reminderMails') !!}</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @endif
     <div class="dt-buttons btn-group">
         <div class="btn-group">
             <select wire:model="entries" class="custom-select" tabindex="0" aria-controls="users_list_table"
@@ -39,6 +47,14 @@
             </div>
             <span wire:loading.delay="" wire:target="downloadExcel" class="aling-middle ml-2 pt-2">
                 Descargando... </span>
+        </div>
+        <div class="btn-group ml-4">
+            <button wire:loading.attr="disabled"
+                onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+                wire:click="sendReminder" class="btn btn-warning rounded" type="button" data-toggle="tooltip"
+                data-placement="top" title="Enviar recordatorio">
+                Enviar recordatorio
+            </button>
         </div>
     </div>
     <div class="collapse" id="collapseFilters" wire:ignore.self>
