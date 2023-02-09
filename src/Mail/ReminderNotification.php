@@ -31,11 +31,11 @@ class ReminderNotification extends Mailable
     {
         if ($this->entry->lang == 'en') {
             setlocale(LC_ALL, 'english');
-            $subject = 'Recordatorio en ingles';
+            $subject = 'Reminder survey B-Corp - Laboratorios Rubio';
             $viewNotification = 'survey::emails.reminders.reminder-en';
         } else {
             setlocale(LC_ALL, 'spanish');
-            $subject = 'Recordatorio en español';
+            $subject = 'Recordatorio encuesta B-Corp - Laboratorios Rubio';
             $viewNotification = 'survey::emails.reminders.reminder-es';
         }
 
