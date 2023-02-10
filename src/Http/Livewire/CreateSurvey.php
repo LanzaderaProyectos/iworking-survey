@@ -259,12 +259,19 @@ class CreateSurvey extends Component
     public function updatedSurveyExpiration()
     {
         if ($this->survey->status ==  Constants::SURVEY_STATUS_PROCESS) {
+            session()->flash('survey-expiration-update', '');
+        }
+    }
+
+    public function updateExpirationSurvey()
+    {
+        if ($this->survey->status ==  Constants::SURVEY_STATUS_PROCESS) {
             $this->survey->save();
             $totalRemindersSent = 0;
             if ($this->survey->id) {
                 $totalRemindersSent = $this->sendReminder();
             }
-            session()->flash('survey-expiration-update', 'Se ha actualizado correctamente la fecha de expiración de la encuesta. <br> Se enviaron ' . $totalRemindersSent . ' recordatorios por mail.');
+            session()->flash('survey-expiration-updated', 'Se ha actualizado correctamente la fecha de expiración de la encuesta. <br> Se enviaron ' . $totalRemindersSent . ' recordatorios por mail.');
         }
     }
 

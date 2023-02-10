@@ -14,9 +14,9 @@
     </button>
 </div>
 @endif
-@if (session()->has('survey-expiration-update'))
+@if (session()->has('survey-expiration-updated'))
 <div class="alert alert-success alert-dismissible fade show" role="alert">
-    <span> {!! session('survey-expiration-update') !!}</span>
+    <span> {!! session('survey-expiration-updated') !!}</span>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -54,9 +54,17 @@
         <label class="form-control-label" for="survey.expiration">Fecha expiración*:</label>
         <input {{ $this->formEdit || ($this->survey->status ==
         MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
-        auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date" wire:model.lazy="survey.expiration"
+        auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date"
+        wire:model.lazy="survey.expiration"
         class="form-control" min="{{date("Y-m-d")}}">
         @error('survey.expiration') <span class="text-danger">{{ $message }}</span> @enderror
+        @if (session()->has('survey-expiration-update'))
+        <button class="mt-2 btn btn-warning btn-sm float-right"
+            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+            wire:click="updateExpirationSurvey">
+            Guardar y enviar recordatorio
+        </button>
+        @endif
     </div>
 </div>
 <div class="row">
