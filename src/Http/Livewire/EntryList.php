@@ -70,16 +70,8 @@ class EntryList extends Component
     public function exportToExcel($path)
     {
         $entries = Entry::where('survey_id', $this->surveyId);
-        if ($this->search) {
-            $search = '%' . $this->search . '%';
-            $entries->whereHas('surveyed', function ($q) use ($search) {
-                $q->where('name', 'like', $search)
-                    ->orWhere('vat_number', 'like', $search)
-                    ->orWhere('contact_person', 'like', $search)
-                    ->orWhere('email', 'like', $search)
-                    ->orWhere('manager', 'like', $search);
-            });
-        }
+        $entries->tableSearch($this->search)
+            ->with(['surveyed']);
 
         return (new FastExcel($entries->get()))->export($path, function ($entry) {
             return [
