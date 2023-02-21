@@ -41,10 +41,10 @@ class EntryList extends Component
 
     public function render()
     {
-        $entries = Entry::where('survey_id', $this->surveyId);
-
-        $entries->tableSearch($this->search);
-        $entries->with(['surveyed']);
+        $entries = Entry::where('survey_id', $this->surveyId)
+        ->tableSearch($this->search)
+        ->with(['surveyed']);
+        
         return view('survey::livewire.entry-list', [
             'surveyEntries' => $entries->get()
         ]);
@@ -114,24 +114,18 @@ class EntryList extends Component
     public function exportToPDF()
     {
         $entries = Entry::where('survey_id', $this->surveyId);
-        if ($this->search) {
-            $search = '%' . $this->search . '%';
-            $entries->whereHas('surveyed', function ($q) use ($search) {
-                $q->where('name', 'like', $search)
-                    ->orWhere('vat_number', 'like', $search)
-                    ->orWhere('contact_person', 'like', $search)
-                    ->orWhere('email', 'like', $search)
-                    ->orWhere('manager', 'like', $search);
-            });
-        }
-        $entries->with(['surveyed']);
+        $entries->tableSearch($this->search)
+            ->with(['surveyed']);
+
         $data = [
             'surveyEntries' => $entries->get(),
             'totalPoints'   => $this->totalPoints
         ];
+        
         $pdf = PDF::loadView('survey::exports.pdf-entries', $data)
             ->setPaper('a4', 'landscape')
             ->output();
+            
         return response()->streamDownload(
             fn () => print($pdf),
             'surveys.pdf'
