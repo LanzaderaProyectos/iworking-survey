@@ -23,6 +23,6 @@
 </p>
 <br>
 <br>
-<a href="{{ $url }}" style="font-size: 20px">Para acceder a la encuesta presione aquí</a>
+<a href="{{ $url }}" style="font-size: 20px">To access the survey click here</a>
 <br>
 <br>
