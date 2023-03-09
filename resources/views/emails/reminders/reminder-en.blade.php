@@ -21,3 +21,8 @@
     <br>
     Best regards.
 </p>
+<br>
+<br>
+<a href="{{ $url }}" style="font-size: 20px">Para acceder a la encuesta presione aquí</a>
+<br>
+<br>
