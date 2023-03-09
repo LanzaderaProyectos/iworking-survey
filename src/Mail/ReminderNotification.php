@@ -6,6 +6,7 @@ use DateTime;
 use Illuminate\Mail\Mailable;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Survey;
+use Illuminate\Support\Facades\Crypt;
 
 
 class ReminderNotification extends Mailable
@@ -45,12 +46,16 @@ class ReminderNotification extends Mailable
         //Nombre mes
         $dateObj   = DateTime::createFromFormat('!m', date('m', $date));
         $monthName = strftime('%B', $dateObj->getTimestamp());
+        //url
+        $mailCrypted =  Crypt::encryptString($this->entry->surveyed->email . ';' . $this->entry->survey->id);
+        $url = config('iworking-survey.url') . '/survey/answers/' . $mailCrypted;
 
         return $this->subject($subject)
             ->from(config('iworking-survey.mail-from.address'), config('iworking-survey.mail-from.address'))
             ->view($viewNotification, [
                 'day'       => $day,
-                'monthName' => ucfirst($monthName)
+                'monthName' => ucfirst($monthName),
+                'url'       => $url
             ]);
     }
 }

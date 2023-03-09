@@ -12,10 +12,12 @@
 
 <p>
     Dado que nuestro objetivo es garantizar que, como empresa, seamos una fuerza para el bien, nos gustaría saber si
-    nuestros socios, clientes, proveedores y otros grupos de interés también están comprometidos a ser parte de una economía
+    nuestros socios, clientes, proveedores y otros grupos de interés también están comprometidos a ser parte de una
+    economía
     global que beneficia a todos. Por este motivo, nos gustaría recordarle que es de vital importancia, que complete el
     siguiente cuestionario que le hicimos llegar el pasado 2022. Toda la información recopilada será tratada de manera
-    confidencial. Necesitamos que repsonda este cuestionario antes del {{$day}} de {{ $monthName }}, por lo que esperamos y le pedimos su
+    confidencial. Necesitamos que repsonda este cuestionario antes del {{$day}} de {{ $monthName }}, por lo que
+    esperamos y le pedimos su
     colaboración.
 </p>
 
@@ -25,3 +27,8 @@
     <br>
     Muy cordialmente.
 </p>
+<br>
+<br>
+<a href="{{ $url }}" style="font-size: 20px">Para acceder a la encuesta presione aquí</a>
+<br>
+<br>
