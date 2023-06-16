@@ -27,9 +27,10 @@ class Addresses extends Component
             ->where('fileable_type', 'App\Surveyed')
             ->where('type', 'surveyed-excel')
             ->first();
-        if ($this->file) {
-            $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
-        }
+        // if ($this->file) {
+        //     $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
+        // }
+        $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
     }
 
     public function render()

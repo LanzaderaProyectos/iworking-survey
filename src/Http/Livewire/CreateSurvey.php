@@ -61,6 +61,7 @@ class CreateSurvey extends Component
         'question.section_id'   => 'nullable',
         'question.order'        => 'nullable',
         'question.comments'     => 'nullable',
+        'question.value'        => 'nullable',
     ];
 
     public function mount($draft = false)

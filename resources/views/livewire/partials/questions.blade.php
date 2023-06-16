@@ -75,6 +75,14 @@
             id="survey-order" class="form-control form-control-alternative" placeholder="Orden">
         </div>
     </div>
+    <div class="col-md-2">
+        <div class="form-group">
+            <label for="numbers_format">Puntuación:</label>
+            <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="question.value" type="number" step="1"
+            min="0" max="100" name="section-value"
+            id="survey-value" class="form-control form-control-alternative" placeholder="Valor de la pregunta">
+        </div>
+    </div>
 </div>
 @if($this->formEdit)
 <div class="row justify-content-end mb-4">

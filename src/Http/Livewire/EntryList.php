@@ -23,6 +23,7 @@ class EntryList extends Component
     public $totalPoints = 0;
     public $filtersMode = false;
     public $search = "";
+    public $questions;
 
     public function mount()
     {
@@ -34,9 +35,13 @@ class EntryList extends Component
             'max'           => ''
         ];
         $this->surveyId = Route::current()->parameter('surveyId');
-        $this->totalPoints = Question::where('type', 'radio')
-            ->where('survey_id', $this->surveyId)
-            ->count() * 100;
+        $this->questions = Question::where('type', 'radio')
+            ->where('survey_id', $this->surveyId)->get();
+        foreach($this->questions as $question){
+            if ($question->value != null) {
+                $this->totalPoints += $question->value;
+            }
+        }
     }
 
     public function render()
@@ -44,9 +49,11 @@ class EntryList extends Component
         $entries = Entry::where('survey_id', $this->surveyId)
         ->tableSearch($this->search)
         ->with(['surveyed']);
+        //$entries = $entries->get();
         
         return view('survey::livewire.entry-list', [
-            'surveyEntries' => $entries->get()
+            'surveyEntries' => $entries->get(),
+            'questions'     => $this->questions,
         ]);
     }
 

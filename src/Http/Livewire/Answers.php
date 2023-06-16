@@ -38,6 +38,7 @@ class Answers extends Component
             $this->answers[$value->id]['value'] = '';
             $this->answers[$value->id]['comments'] = $value->comments ?? '';
             $this->answers[$value->id]['type'] = $value->type;
+            $this->answers[$value->id]['points'] = $value->value;
             if ($value->comments) {
                 $this->comments[$value->id] = '';
             }
@@ -59,21 +60,21 @@ class Answers extends Component
     {
         $values = [
             'NO' => 0,
-            'SI' => 100,
-            'YES' => 100,
-            'NP' => 100,
-            'NA' => 100,
-            'Partially' => 25,
-            'Mainly' => 70,
-            'Totally' => 100,
-            'Parcialmente' => 25,
-            'Mayoritariamente' => 70,
-            'Totalmente' => 100,
+            'SI' => 1,
+            'YES' => 1,
+            'NP' => 0,5,
+            'NA' => 0,5,
+            'Partially' => 0,25,
+            'Mainly' => 0,70,
+            'Totally' => 1,
+            'Parcialmente' => 0,25,
+            'Mayoritariamente' => 0,70,
+            'Totalmente' => 1,
         ];
         foreach ($this->answers as $key => $answer) {
             $score = 0;
             if ($answer['type'] == 'radio' && $answer['value'] != '') {
-                $score = $values[$answer['value']];
+                $score = $values[$answer['value']] * $answer['points'];
             }
             Answer::updateOrCreate(
                 [

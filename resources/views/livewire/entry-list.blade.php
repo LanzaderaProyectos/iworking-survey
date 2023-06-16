@@ -1,11 +1,11 @@
 <div>
     @if (session()->has('reminderMails'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <span> {!! session('reminderMails') !!}</span>
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span> {!! session('reminderMails') !!}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
     @endif
     <div class="dt-buttons btn-group">
         <div class="btn-group">
@@ -19,17 +19,17 @@
         </div>
         <div class="btn-group">
             @if (!$filtersMode)
-            <button wire:click="$toggle('filtersMode')" class="btn rounded-right btn-primary" type="button"
-                data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false"
-                aria-controls="collapseFilters">
-                Mostrar filtros
-            </button>
+                <button wire:click="$toggle('filtersMode')" class="btn rounded-right btn-primary" type="button"
+                    data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false"
+                    aria-controls="collapseFilters">
+                    Mostrar filtros
+                </button>
             @else
-            <button wire:click="$toggle('filtersMode')" class="btn rounded-right btn-warning" type="button"
-                data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false"
-                aria-controls="collapseFilters">
-                Ocultar filtros
-            </button>
+                <button wire:click="$toggle('filtersMode')" class="btn rounded-right btn-warning" type="button"
+                    data-toggle="collapse" data-target="#collapseFilters" aria-expanded="false"
+                    aria-controls="collapseFilters">
+                    Ocultar filtros
+                </button>
             @endif
         </div>
         <div class="btn-group ml-3">
@@ -42,7 +42,8 @@
                 data-toggle="tooltip" data-placement="top" title="Exportar tabla a PDF">
                 <i class="fas fa-file-pdf"></i>
             </button>
-            <div wire:loading.delay="" wire:target="downloadExcel" class="spinner-border ml-2 mt-1" role="status">
+            <div wire:loading.delay="" wire:target="downloadExcel" class="spinner-border ml-2 mt-1"
+                role="status">
                 <span class="sr-only"></span>
             </div>
             <span wire:loading.delay="" wire:target="downloadExcel" class="aling-middle ml-2 pt-2">
@@ -85,9 +86,8 @@
                 <select wire:model.debounce.300ms="search.status" name="status" id="status"
                     class="form-control form-control-sm">
                     <option value=""> ---- </option>
-                    @foreach(MattDaneshvar\Survey\Helpers\Helpers::buildEntryStatusArray() as $status
-                    => $name)
-                    <option value="{{ $status }}">{{ $name }}</option>
+                    @foreach (MattDaneshvar\Survey\Helpers\Helpers::buildEntryStatusArray() as $status => $name)
+                        <option value="{{ $status }}">{{ $name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -96,13 +96,13 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="dateFrom">Mínimo</label>
-                        <input wire:model.debounce.300ms="search.min" type="text" class="form-control form-control-sm"
-                            placeholder="Desde">
+                        <input wire:model.debounce.300ms="search.min" type="text"
+                            class="form-control form-control-sm" placeholder="Desde">
                     </div>
                     <div class="form-group col-md-6">
                         <label for="dateTo">Máximo</label>
-                        <input wire:model.debounce.300ms="search.max" type="text" class="form-control form-control-sm"
-                            placeholder="Hasta">
+                        <input wire:model.debounce.300ms="search.max" type="text"
+                            class="form-control form-control-sm" placeholder="Hasta">
                     </div>
                 </div>
             </div>
@@ -133,48 +133,45 @@
                         <th>Puntuación
                             <br>
                             <span class="bg-warning rounded p-1">
-                                (Max. {{$this->totalPoints}})
+                                (Max. {{ $this->totalPoints }})
                             </span>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($surveyEntries as $entry)
-                    <tr>
-                        <td class="text-center">
-                            <a href="{{ route('survey.entry',$entry->id) }}" type="button"
-                                class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
-                                data-placement="top" title="Visualizar">
-                                <i class="fas fa-search"></i>
-                            </a>
-                        </td>
-                        <td>
-                            {{ $entry->surveyed->name ?? '' }}
-                        </td>
-                        <td>
-                            {{ $entry->surveyed->vat_number ?? '' }}
-                        </td>
-                        <td>{{
-                            $entry->participant }}
-                        </td>
-                        <td>
-                            {{ $entry->surveyed->contact_person ?? ''}}
-                        </td>
-                        <td>
-                            {{ $entry->lang ?? '' }}
-                        </td>
-                        <td>
-                            {{ $entry->surveyed->manager ?? '' }}
-                        </td>
-                        <td>
-                            @lang('survey::status.entry.'.$entry->status ?? '')
-                        </td>
-                        <td>
-                            {{ $entry->sum_score }} - {{ number_format($entry->sum_score * 100 /
-                            $this->totalPoints , 2, ',',
-                            '.') }}%
-                        </td>
-                    </tr>
+                    @foreach ($surveyEntries as $entry)
+                        <tr>
+                            <td class="text-center">
+                                <a href="{{ route('survey.entry', $entry->id) }}" type="button"
+                                    class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
+                                    data-placement="top" title="Visualizar">
+                                    <i class="fas fa-search"></i>
+                                </a>
+                            </td>
+                            <td>
+                                {{ $entry->surveyed->name ?? '' }}
+                            </td>
+                            <td>
+                                {{ $entry->surveyed->vat_number ?? '' }}
+                            </td>
+                            <td>{{ $entry->participant }}
+                            </td>
+                            <td>
+                                {{ $entry->surveyed->contact_person ?? '' }}
+                            </td>
+                            <td>
+                                {{ $entry->lang ?? '' }}
+                            </td>
+                            <td>
+                                {{ $entry->surveyed->manager ?? '' }}
+                            </td>
+                            <td>
+                                @lang('survey::status.entry.' . $entry->status ?? '')
+                            </td>
+                            <td>
+                                {{ $entry->sum_score }} - {{ $this->totalPoints }}
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>
