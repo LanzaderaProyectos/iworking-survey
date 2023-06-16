@@ -13,9 +13,11 @@ use Iworking\IworkingBoilerplate\Models\File;
 class Addresses extends Component
 {
     public $surveyeds = [];
+    public $unregisteredSurveyeds = [];
     public $survey;
     public $surveyedsFromExcel;
     public $file;
+    public $shippingMail;
 
     protected $listeners = ['updatedSurveyed'];
 
@@ -30,12 +32,34 @@ class Addresses extends Component
         // if ($this->file) {
         //     $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
         // }
-        $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
+        $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get(); 
     }
 
     public function render()
     {
         return view('survey::livewire.addresses');
+    }
+
+    public function updated($updatedKey, $updatedValue){
+        if($updatedKey === "shippingMail"){
+            $newSurveyed = Surveyed::where(['email' => $this->shippingMail])->get();
+            if($newSurveyed->isEmpty()) {
+                $current = [
+                    'name'              => 'Desconocido',
+                    'vat_number'        => 'Desconocido',
+                    'contact_person'    => 'Desconocido',
+                    'email'             => $this->shippingMail,
+                    'lang'              =>  'Desconocido',
+                    'Manager'           => 'Desconocido'
+                ];
+                array_push($this->unregisteredSurveyeds, $current);
+            }else {
+                $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)
+                                   ->orWhere('email', $this->shippingMail)
+                                   ->get();
+            }
+            
+        }
     }
 
     public function createSurveyeds()

@@ -15,6 +15,13 @@
                 'enableDelete' => true,
                 'eventIdentifier' => 'updatedSurveyed'
                 ], key(time() . 'surveyeds-excel'))
+                
+                <div class="col-10" wire:ignore>
+                    <p><b>Destinatario</b></p>
+                    <select class="form-control mb-3" id="shippingMails" name="shippingMails" wire:model="shippingSelect.mail">
+                        <option value="">@lang('backend.forms.select-option')</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
@@ -66,8 +73,46 @@
                         </td>
                     </tr>
                     @endforeach
+                    @foreach ($this->unregisteredSurveyeds as $user)
+                    <tr>
+                        <td>
+                            {{ $user['name'] ?? '' }}
+                        </td>
+                        <td>
+                            {{ $user['vat_number'] ?? '' }}
+                        </td>
+                        <td>
+                            {{ $user['contact_person'] ?? '' }}
+                        </td>
+                        <td>
+                            {{ $user['email'] ?? '' }}
+                        </td>
+                        <td>
+                            {{ $user['lang'] ?? '' }}
+                        </td>
+                        <td>
+                            {{ $user['manager'] ?? '' }}
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
-</div>
+    
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script type="text/javascript">
+        $('#shippingMails').select2({
+            placeholder: "-- Seleccione una opción --",
+            theme: "bootstrap",
+            tags: true,
+            height: 100,
+            width: 'resolve'
+        })
+        .on('change', function(){
+            @this.set('shippingMail', $(this).val());
+        });
+        
+</script>
+@endpush
