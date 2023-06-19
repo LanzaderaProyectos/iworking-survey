@@ -19,6 +19,7 @@ class Addresses extends Component
     public $file;
     public $shippingMail;
     public $errorMessage;
+    public $successMessage;
 
     protected $listeners = ['updatedSurveyed'];
 
@@ -30,9 +31,6 @@ class Addresses extends Component
             ->where('fileable_type', 'App\Surveyed')
             ->where('type', 'surveyed-excel')
             ->first();
-        // if ($this->file) {
-        //     $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
-        // }
         $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
         $this->allSurveyeds = Surveyed::all();
         $this->unregisteredSurveyed['language'] = 'es';
@@ -46,31 +44,48 @@ class Addresses extends Component
     public function updated($updatedKey, $updatedValue){
         if($updatedKey === "shippingMail"){
             $newSurveyed = Surveyed::where(['email' => $this->shippingMail])->get();
-            $this->surveyeds = $this->surveyeds->concat($newSurveyed)->unique('id');
-            // $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)
-            //                     ->orWhere('email', $this->shippingMail)
-            //                     ->get(); 
+            $this->surveyeds = $this->surveyeds->concat($newSurveyed)->unique('id'); 
         }
     }
 
     public function createSurveyeds()
     {
-        foreach ($this->surveyedsFromExcel as $item) {
-            Surveyed::updateOrCreate(
-                [
-                    'email' => $item['Email']
-                ],
-                [
-                    'survey_id' => $this->survey->id,
-                    'name' => $item['Nombre'],
-                    'vat_number' => $item['NIF'],
-                    'contact_person' => $item['Contacto'],
-                    'lang' => $item['Idioma'],
-                    'manager' => $item['Responsable']
-                ]
-            );
+        if(isset($this->surveyedsFromExcel)) {
+            foreach ($this->surveyedsFromExcel as $item) {
+                Surveyed::updateOrCreate(
+                    [
+                        'email' => $item['Email']
+                    ],
+                    [
+                        'survey_id' => $this->survey->id,
+                        'name' => $item['Nombre'],
+                        'vat_number' => $item['NIF'],
+                        'contact_person' => $item['Contacto'],
+                        'lang' => $item['Idioma'],
+                        'manager' => $item['Responsable']
+                    ]
+                );
+            }
+        }
+        if(isset($this->surveyeds)){
+            foreach ($this->surveyeds as $item) {
+                if($item->survey_id != $this->survey->id){
+                    Surveyed::updateOrCreate(
+                        [
+                            'survey_id' => $this->survey->id,
+                            'name' => $item->name,
+                            'vat_number' => $item->vat_number,
+                            'email' => $item->email,
+                            'contact_person' => $item->contact_person,
+                            'lang' => $item->lang,
+                            'manager' => $item->manager
+                        ]
+                    );
+                }
+            }
         }
         $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
+        $this->successMessage = 'Los usuarios se cargaron con éxito.';
     }
 
 

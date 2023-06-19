@@ -188,6 +188,18 @@ class CreateSurvey extends Component
         $this->survey->refresh();
     }
 
+    public function editSection($id)
+    {
+        $section = Section::find($id);
+        $jsonString = $section->name;
+        $obj = json_decode($section->name);
+        dd($obj);
+        $this->sectionName['es'] = $obj->es;
+        $this->sectionName['en'] = $obj->en;
+        $this->section->order = $section->order;
+        dd($this->sectionName['es'], $this->sectionName['en'], $this->section->order);
+
+    }
     public function deleteSection($id)
     {
         $section = Section::find($id);

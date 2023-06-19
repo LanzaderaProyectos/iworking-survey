@@ -144,6 +144,11 @@
                             class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
+                        <button type="button" {{ $this->formEdit ? '' : 'disabled'}}
+                            wire:click="editSection('{{ $section->id }}')"
+                            class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Edit">
+                            <i class="fas fa-edit" aria-hidden="true"></i>
+                        </button>
                     </td>
                     <td>
                         {{ $section->order ?? '' }}

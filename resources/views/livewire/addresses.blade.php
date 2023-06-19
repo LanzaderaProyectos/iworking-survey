@@ -18,10 +18,9 @@
                 )
                 <div class="col-10" wire:ignore>
                     <p><b>Destinatario conocido</b></p>
-                    <select class="form-control mb-3" id="shippingMails" name="shippingMails"
-                        wire:model="shippingMail">
+                    <select class="form-control mb-3" id="shippingMails" name="shippingMails" wire:model="shippingMail">
                         <option value="">-- Seleccione una opción --</option>
-                        @foreach($this->allSurveyeds as $surveyed)
+                        @foreach ($this->allSurveyeds as $surveyed)
                             <option value="{{ $surveyed->email }}">{{ $surveyed->name }}</option>
                         @endforeach
                     </select>
@@ -90,6 +89,11 @@
             </div>
         </div>
     </div>
+    @if ($successMessage)
+        <div class="alert alert-success">
+            {{ $successMessage }}
+        </div>
+    @endif
     <div class="row">
         <div class="col">
             <table id="surveyedsTable" class="table table-striped table-bordered table-hover table-checkable mt-5">
@@ -138,8 +142,9 @@
                                 {{ $user->manager ?? '' }}
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-clean btn-icon btn-icon-md" wire:click="removeSurveyed({{ $user }})" 
-                                    data-toggle="tooltip" data-placement="top" title="DeleteSurveyed">
+                                <button class="btn btn-sm btn-clean btn-icon btn-icon-md"
+                                    wire:click="removeSurveyed({{ $user }})" data-toggle="tooltip"
+                                    data-placement="top" title="DeleteSurveyed">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -147,5 +152,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <button type="button" wire:click="createSurveyeds" class="btn btn-sm btn-primary d-flex p-4 py-lg-2 mr-2"
+                wire:loading.attr="disabled">
+                Cargar a la encuesta
+            </button>
         </div>
     </div>
