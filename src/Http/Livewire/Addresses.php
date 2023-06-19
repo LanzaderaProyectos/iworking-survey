@@ -9,15 +9,16 @@ use MattDaneshvar\Survey\Models\Surveyed;
 use Rap2hpoutre\FastExcel\Facades\FastExcel;
 use Iworking\IworkingBoilerplate\Models\File;
 
-
 class Addresses extends Component
 {
     public $surveyeds = [];
-    public $unregisteredSurveyeds = [];
+    public $allSurveyeds = [];
+    public $unregisteredSurveyed = [];
     public $survey;
     public $surveyedsFromExcel;
     public $file;
     public $shippingMail;
+    public $errorMessage;
 
     protected $listeners = ['updatedSurveyed'];
 
@@ -32,7 +33,9 @@ class Addresses extends Component
         // if ($this->file) {
         //     $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
         // }
-        $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get(); 
+        $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
+        $this->allSurveyeds = Surveyed::all();
+        $this->unregisteredSurveyed['language'] = 'es';
     }
 
     public function render()
@@ -43,22 +46,10 @@ class Addresses extends Component
     public function updated($updatedKey, $updatedValue){
         if($updatedKey === "shippingMail"){
             $newSurveyed = Surveyed::where(['email' => $this->shippingMail])->get();
-            if($newSurveyed->isEmpty()) {
-                $current = [
-                    'name'              => 'Desconocido',
-                    'vat_number'        => 'Desconocido',
-                    'contact_person'    => 'Desconocido',
-                    'email'             => $this->shippingMail,
-                    'lang'              =>  'Desconocido',
-                    'Manager'           => 'Desconocido'
-                ];
-                array_push($this->unregisteredSurveyeds, $current);
-            }else {
-                $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)
-                                   ->orWhere('email', $this->shippingMail)
-                                   ->get();
-            }
-            
+            $this->surveyeds = $this->surveyeds->concat($newSurveyed)->unique('id');
+            // $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)
+            //                     ->orWhere('email', $this->shippingMail)
+            //                     ->get(); 
         }
     }
 
@@ -98,6 +89,35 @@ class Addresses extends Component
         }
     }
 
+    public function addNewSurveyed()
+    {
+        $existingServeyed = Surveyed::where('email', $this->unregisteredSurveyed['email'])->get();
+        
+        if(!$existingServeyed->isEmpty()) {
+            $this->errorMessage = 'Este email corresponde a un encuestado conocido.';
+            return;
+        }
+        $newSurveyed = Surveyed::create([
+            'survey_id'         => $this->survey->id,
+            'name'              => $this->unregisteredSurveyed['name'],
+            'vat_number'        => $this->unregisteredSurveyed['nif'],
+            'contact_person'    => $this->unregisteredSurveyed['contactPerson'],
+            'email'             => $this->unregisteredSurveyed['email'],
+            'lang'              => $this->unregisteredSurveyed['language'],
+            'manager'           => $this->unregisteredSurveyed['manager'],
+            'created_at'        => now(),
+            'updated_at'        => now(),
+        ]);
+        $current_surveyed = Surveyed::where(['id' => $newSurveyed->id])->get();
+        $this->surveyeds = $this->surveyeds->concat($current_surveyed)->unique('id');
+    }
+
+    public function removeSurveyed($user)
+    {
+        $this->surveyeds = $this->surveyeds->reject(function ($current) use ($user) {
+            return $current->id === $user['id'];
+        });        
+    }
     public function createArrayFromFile()
     {
         $excel = Storage::disk('s3')->get($this->file->cmis_url);
