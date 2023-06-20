@@ -191,15 +191,12 @@ class CreateSurvey extends Component
     public function editSection($id)
     {
         $section = Section::find($id);
-        $jsonString = $section->name;
-        $obj = json_decode($section->name);
-        dd($obj);
-        $this->sectionName['es'] = $obj->es;
-        $this->sectionName['en'] = $obj->en;
+        $this->sectionName['es'] = $section->getTranslation('name', 'es');
+        $this->sectionName['en'] = $section->getTranslation('name', 'en');
         $this->section->order = $section->order;
-        dd($this->sectionName['es'], $this->sectionName['en'], $this->section->order);
-
+        $this->deleteSection($section->id);
     }
+    
     public function deleteSection($id)
     {
         $section = Section::find($id);

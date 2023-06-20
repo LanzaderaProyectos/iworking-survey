@@ -32,7 +32,7 @@ class Addresses extends Component
             ->where('type', 'surveyed-excel')
             ->first();
         $this->surveyeds = Surveyed::where('survey_id', $this->survey->id)->get();
-        $this->allSurveyeds = Surveyed::all();
+        $this->allSurveyeds = Surveyed::all()->unique('email');
         $this->unregisteredSurveyed['language'] = 'es';
     }
 
@@ -44,7 +44,7 @@ class Addresses extends Component
     public function updated($updatedKey, $updatedValue){
         if($updatedKey === "shippingMail"){
             $newSurveyed = Surveyed::where(['email' => $this->shippingMail])->get();
-            $this->surveyeds = $this->surveyeds->concat($newSurveyed)->unique('id'); 
+            $this->surveyeds = $this->surveyeds->concat($newSurveyed)->unique('email'); 
         }
     }
 
