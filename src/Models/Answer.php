@@ -2,6 +2,7 @@
 
 namespace MattDaneshvar\Survey\Models;
 
+use Iworking\IworkingBoilerplate\Traits\AutoGenerateUuid;
 use Illuminate\Database\Eloquent\Model;
 use MattDaneshvar\Survey\Contracts\Answer as AnswerContract;
 use MattDaneshvar\Survey\Contracts\Entry;
@@ -9,6 +10,17 @@ use MattDaneshvar\Survey\Contracts\Question;
 
 class Answer extends Model implements AnswerContract
 {
+    use AutoGenerateUuid;
+    /**
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string
+     */
+    protected $keyType = 'string';
+
     /**
      * Answer constructor.
      *
