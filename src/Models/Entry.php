@@ -3,6 +3,7 @@
 namespace MattDaneshvar\Survey\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Iworking\IworkingBoilerplate\Traits\AutoGenerateUuid;
 use Illuminate\Foundation\Auth\User;
 use MattDaneshvar\Survey\Contracts\Answer;
 use MattDaneshvar\Survey\Contracts\Entry as EntryContract;
@@ -13,6 +14,18 @@ use MattDaneshvar\Survey\Models\Answer as ModelsAnswer;
 
 class Entry extends Model implements EntryContract
 {
+    use AutoGenerateUuid;
+
+    /**
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string
+     */
+    protected $keyType = 'string';
+
     /**
      * The attributes that are mass assignable.
      *

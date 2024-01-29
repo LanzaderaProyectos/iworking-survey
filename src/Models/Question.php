@@ -7,12 +7,23 @@ use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Answer;
 use MattDaneshvar\Survey\Contracts\Survey;
 use MattDaneshvar\Survey\Contracts\Section;
+use Iworking\IworkingBoilerplate\Traits\AutoGenerateUuid;
 use MattDaneshvar\Survey\Contracts\Question as QuestionContract;
 
 class Question extends Model implements QuestionContract
 {
 
-    use HasTranslations;
+    use HasTranslations, AutoGenerateUuid;
+
+    /**
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string
+     */
+    protected $keyType = 'string';
 
     public $translatable = ['content', 'options'];
 
