@@ -21,6 +21,7 @@ class Table extends Component
     public $draft               = false;
     public $columsSelected = [];
     public $orderLinePA = null;
+    public $search = [];
 
 
     public function mount()

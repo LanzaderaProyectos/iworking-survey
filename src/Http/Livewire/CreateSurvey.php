@@ -44,6 +44,9 @@ class CreateSurvey extends Component
         // 'number' => 'Numero'
     ];
     public $editModeQuestion = false;
+    public $formEdit;
+    public $optionES = [];
+    public $optionEN = [];
 
     protected $rules = [
         //Survey
