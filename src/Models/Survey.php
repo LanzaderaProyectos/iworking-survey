@@ -73,6 +73,26 @@ class Survey extends Model implements SurveyContract
     }
 
     /**
+     * The survey main questions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function mainQuestions()
+    {
+        return $this->hasMany(get_class(app()->make(Question::class)))->whereNull('parent_id')->orderBy('section_id');
+    }
+
+      /**
+     * The survey sub questions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function subQuestions()
+    {
+        return $this->hasMany(get_class(app()->make(Question::class)))->whereNotNull('parent_id')->orderBy('section_id');
+    }
+
+    /**
      * The survey entries.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

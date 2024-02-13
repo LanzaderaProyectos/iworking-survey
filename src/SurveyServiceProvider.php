@@ -53,7 +53,8 @@ class SurveyServiceProvider extends ServiceProvider
             'create_entries_table',
             'create_answers_table',
             'create_sections_table',
-            'create_surveyeds_table'
+            'create_surveyeds_table',
+            'questions_parent_id_field',
         ]);
 
         $this->bootLivewireComponents();

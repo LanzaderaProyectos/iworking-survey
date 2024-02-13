@@ -7,7 +7,12 @@
 </div>
 @endif
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-12">
+        <h5>
+            Preguntas
+        </h5>
+    </div>
+    <div class="col-md-12 mt-3">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Pregunta*</label>
             <nav id="create-questions">
@@ -107,7 +112,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($this->survey->questions as $item)
+                @foreach ($this->survey->mainQuestions as $item)
                 <tr>
                     <td nowrap>
                         <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ? '' :
@@ -146,3 +151,4 @@
         </table>
     </div>
 </div>
+@include('survey::livewire.partials.subquestions')

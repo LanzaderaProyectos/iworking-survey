@@ -4,9 +4,7 @@ namespace MattDaneshvar\Survey\Http\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Survey;
@@ -14,39 +12,57 @@ use MattDaneshvar\Survey\Models\Section;
 use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Models\Surveyed;
 use MattDaneshvar\Survey\Library\Constants;
-use MattDaneshvar\Survey\Mail\UserNotification;
+use MattDaneshvar\Survey\Services\SurveyService;
+use MattDaneshvar\Survey\Services\SectionService;
+use MattDaneshvar\Survey\Services\QuestionService;
 use MattDaneshvar\Survey\Mail\ReminderNotification;
 
 class CreateSurvey extends Component
 {
-    public $survey = null;
-    public $surveyName = [
+    public $survey      = null;
+    public $surveyName  = [
         'es'    => '',
         'en'    => ''
     ];
-    public $section = null;
+    public $section     = null;
     public $sectionName = [
         'es'    => '',
         'en'    => ''
     ];
-    public $question = null;
-    public $questionName = [
+    public $question        = null;
+    public $questionName    = [
         'es'    => '',
         'en'    => ''
     ];
-    public $users = [];
-    public $typeSelected = null;
-    public $newSurvey = true;
+    public $subQuestion     = null;
+    public $subQuestionName = [
+        'es'    => '',
+        'en'    => ''
+    ];
+    public $users           = [];
+    public $typeSelected    = null;
+    public $subTypeSelected = null;
+    public $newSurvey       = true;
     public $draft;
     public $typeAnwers = [
         'text' => 'Texto',
         'radio' => 'Opción',
         // 'number' => 'Numero'
     ];
-    public $editModeQuestion = false;
+    public $subTypeAnwers = [
+        'text' => 'Texto',
+        'radio' => 'Opción',
+        // 'number' => 'Numero'
+    ];
+    public $editModeQuestion    = false;
+    public $subEditModeQuestion = false;
     public $formEdit;
     public $optionES = [];
     public $optionEN = [];
+
+    public $selectedParentQuestionId;
+    public $selectedParentQuestion;
+    public $parentQuestionRadio;
 
     protected $rules = [
         //Survey
@@ -64,20 +80,33 @@ class CreateSurvey extends Component
         'question.section_id'   => 'nullable',
         'question.order'        => 'nullable',
         'question.comments'     => 'nullable',
+        //SubQuestion
+
+        'subQuestionName.es'       => 'nullable',
+        'subQuestionName.en'       => 'nullable',
+        'subQuestion.section_id'   => 'nullable',
+        'subQuestion.order'        => 'nullable',
+        'subQuestion.comments'     => 'nullable',
     ];
 
     public function mount($draft = false)
     {
-        $this->draft = $draft;
-        $this->formEdit  = !Route::is('survey.show');
+        $this->draft        = $draft;
+        $this->formEdit     = !Route::is('survey.show');
+        $this->initComponent();
+    }
+
+    public function initComponent()
+    {
         $surveyId = Route::current()->parameter('surveyId');
         if ($surveyId) {
-            $this->survey = Survey::find($surveyId);
-            $this->surveyName['es'] = $this->survey->getTranslation('name', 'es');
-            $this->surveyName['en'] = $this->survey->getTranslation('name', 'en');
-            $this->newSurvey = false;
-            $this->question = new Question();
-            $this->section = new Section();
+            $this->survey               = Survey::find($surveyId);
+            $this->surveyName['es']     = $this->survey->getTranslation('name', 'es');
+            $this->surveyName['en']     = $this->survey->getTranslation('name', 'en');
+            $this->newSurvey            = false;
+            $this->question             = new Question();
+            $this->subQuestion          = new Question();
+            $this->section              = new Section();
         } else {
             $this->survey = new Survey();
         }
@@ -101,29 +130,29 @@ class CreateSurvey extends Component
     public function saveSurvey()
     {
         $this->validate();
-        $this->survey->author = auth()->user()->id;
-        if ($this->newSurvey) {
-            $lastSurveyNumber  = Survey::where('survey_number', '!=', null)->orderBy('survey_number', 'desc')->first();
-            $this->survey->survey_number    = ($lastSurveyNumber && $lastSurveyNumber->survey_number > 0) ? $lastSurveyNumber->survey_number + 1 : 10000;
-        }
-        $this->survey
-            ->setTranslation('name', 'es', $this->surveyName['es'])
-            ->setTranslation('name', 'en', $this->surveyName['en']);
-        $this->survey->save();
+        $surveyService          = new SurveyService();
+        $result                 = $surveyService->saveSurvey(
+            survey: $this->survey,
+            authorId: auth()->user()->id,
+            surveyName: $this->surveyName,
+            surveyStatus: Constants::SURVEY_STATUS_DRAFT,
+            auditText: 'Encuesta creada',
+            newSurvey: $this->newSurvey
+        );
 
-        if ($this->newSurvey) {
-            $this->survey->status = Constants::SURVEY_STATUS_DRAFT;
-            $this->survey->audit()->create([
-                'user_id'   => auth()->id(),
-                'status'    => Constants::SURVEY_STATUS_DRAFT,
-                'text'      => 'Encuesta creada'
-            ]);
-            session()->flash('draftSurveyCreated', 'Encuesta creada');
-            return redirect(route('survey.edit', [
-                'surveyId' => $this->survey->id
-            ]));
+        if ($result) {
+
+            if ($this->newSurvey) {
+                session()->flash('draftSurveyCreated', 'Encuesta creada');
+                return redirect(route('survey.edit', [
+                    'surveyId' => $this->survey->id
+                ]));
+            }
+
+            session()->flash('surveyUpdated', 'Cambios guardados');
+        } else {
+            session()->flash('surveyUpdated', 'Error al guardar los cambios');
         }
-        session()->flash('surveyUpdated', 'Cambios guardados');
     }
 
     public function deleteSurvey()
@@ -144,33 +173,20 @@ class CreateSurvey extends Component
             return;
         }
 
-        foreach ($this->users as $user) {
-            try {
-                Mail::mailer('custom')->to($user->email)->send(new UserNotification($this->survey, $user));
-                Entry::create([
-                    'survey_id' => $this->survey->id,
-                    'participant' => $user->email,
-                    'lang' => $user->lang,
-                    'status' => Constants::ENTRY_STATUS_PENDING
-                ]);
-            } catch (\Exception $e) {
-                $this->survey->audit()->create([
-                    'user_id'   => auth()->id(),
-                    'status'    => Constants::SURVEY_STATUS_SEND_ERROR,
-                    'text'      => $user->email
-                ]);
-                Log::error($e);
-            }
+        $surveyService  = new SurveyService();
+        $result         = $surveyService->sendSurvey(
+            users: $this->users,
+            survey: $this->survey,
+            audit: true,
+            auditText: 'Encuesta enviada'
+        );
+
+        if ($result) {
+            session()->flash('surveySended',  'Encuesta enviada');
+            return redirect(route('survey.list'));
+        } else {
+            session()->flash('surveySended',  'Error al enviar la encuesta');
         }
-        $this->survey->status = 1;
-        $this->survey->save();
-        $this->survey->audit()->create([
-            'user_id'   => auth()->id(),
-            'status'    => Constants::SURVEY_STATUS_PROCESS,
-            'text'      => 'Encuesta enviada'
-        ]);
-        session()->flash('surveySended',  'Encuesta enviada');
-        return redirect(route('survey.list'));
     }
 
     public function addSection()
@@ -180,14 +196,21 @@ class CreateSurvey extends Component
             'sectionName.en' => 'required',
             'section.order' =>  'nullable|numeric'
         ]);
-        $this->section->survey_id = $this->survey->id;;
-        $this->section
-            ->setTranslation('name', 'es', $this->sectionName['es'])
-            ->setTranslation('name', 'en', $this->sectionName['en']);
-        $this->section->save();
-        $this->reset('sectionName');
-        $this->section = new Section();
-        $this->survey->refresh();
+
+        $sectionService = new SectionService();
+        $result         = $sectionService->saveSection(
+            section: $this->section,
+            surveyId: $this->survey->id,
+            sectionName: $this->sectionName
+        );
+
+        if ($result) {
+            $this->reset('sectionName');
+            $this->section = new Section();
+            $this->survey->refresh();
+        } else {
+            session()->flash('sectionSaved', 'Error al guardar la sección');
+        }
     }
 
     public function deleteSection($id)
@@ -206,32 +229,90 @@ class CreateSurvey extends Component
             'question.section_id'   => 'required',
             'question.order'        => 'nullable|numeric',
         ]);
-        if ($this->typeSelected == 'radio') {
-            $this->question->setTranslation('options', 'es', $this->optionES)
-                ->setTranslation('options', 'en', $this->optionEN);;
-            $this->question->type = 'radio';
+
+        $questionService    = new QuestionService();
+        $result             = $questionService->saveQuestion(
+            question: $this->question,
+            surveyId: $this->survey->id,
+            questionType: $this->typeSelected,
+            questionName: $this->questionName,
+            optionES: $this->optionES,
+            optionEN: $this->optionEN
+        );
+
+
+        if ($result) {
+            $this->question->update(['original_id' => $this->question->id]);
+            $this->reset('questionName');
+            $this->resetValues();
+            session()->flash('questionSaved', 'Pregunta guardada');
+            $this->survey->refresh();
         } else {
-            $this->question->type = 'text';
+            session()->flash('questionSaved', 'Error al guardar la pregunta');
         }
-        $this->question->survey_id = $this->survey->id;
-        $this->question
-            ->setTranslation('content', 'es', $this->questionName['es'])
-            ->setTranslation('content', 'en', $this->questionName['en']);
-        $this->question->save();
-        $this->reset('questionName');
-        $this->resetValues();
-        session()->flash('questionSaved', 'Pregunta guardada');
-        $this->survey->refresh();
+    }
+
+    public function saveSubQuestion()
+    {
+
+        $this->validate([
+            'subQuestionName.es'       => 'required',
+            'subQuestionName.en'       => 'required',
+            'subQuestion.order'        => 'nullable|numeric',
+        ]);
+
+        // IDs
+        $parentId                       = $this->selectedParentQuestion->id;
+        $originalId                     = $this->selectedParentQuestion->original_id;
+        $sectionId                      = $this->selectedParentQuestion->section_id;
+
+        // SubQuestion Attributes
+        $this->subQuestion->survey_id   = $this->survey->id;
+        $this->subQuestion->section_id  = $sectionId;
+        $this->subQuestion->original_id = $originalId;
+        $this->subQuestion->parent_id   = $parentId;
+        $this->subQuestion->condition   = $this->parentQuestionRadio;
+
+        $questionService    = new QuestionService();
+        $result             = $questionService->saveQuestion(
+            question: $this->subQuestion,
+            surveyId: $this->survey->id,
+            questionType: $this->subTypeSelected,
+            questionName: $this->subQuestionName,
+            optionES: $this->optionES,
+            optionEN: $this->optionEN
+        );
+
+        if ($result) {
+            $this->reset('subQuestionName');
+            $this->resetValues();
+            session()->flash('subQuestionSaved', 'Pregunta guardada');
+            $this->survey->refresh();
+        } else {
+            session()->flash('subQuestionSaved', 'Error al guardar la pregunta');
+        }
+
+        $this->subQuestion = new Question();
     }
 
     public function editQuestion($id)
     {
-        $this->question = Question::find($id);
-        $this->typeSelected = $this->question->type;
-        $this->questionName['es'] = $this->question->getTranslation('content', 'es');
-        $this->questionName['en'] = $this->question->getTranslation('content', 'en');
-        $this->editModeQuestion = true;
+        $this->question                 = Question::find($id);
+        $this->typeSelected             = $this->question->type;
+        $this->questionName['es']       = $this->question->getTranslation('content', 'es');
+        $this->questionName['en']       = $this->question->getTranslation('content', 'en');
+        $this->editModeQuestion         = true;
     }
+
+    public function editSubQuestion($id)
+    {
+        $this->subQuestion              = Question::find($id);
+        $this->subTypeSelected          = $this->subQuestion->type;
+        $this->subQuestionName['es']    = $this->subQuestion->getTranslation('content', 'es');
+        $this->subQuestionName['en']    = $this->subQuestion->getTranslation('content', 'en');
+        $this->subEditModeQuestion      = true;
+    }
+
     public function deleteQuestion($id)
     {
         Question::destroy($id);
@@ -248,15 +329,15 @@ class CreateSurvey extends Component
 
     public function closeSurvey()
     {
-        $this->survey->audit()->create([
-            'user_id'   => auth()->id(),
-            'status'    => Constants::SURVEY_STATUS_CLOSED,
-            'text'      => 'Encuesta cerrada'
-        ]);
-        $this->survey->status = Constants::SURVEY_STATUS_CLOSED;
-        $this->survey->save();
-        session()->flash('surveySended',  'Encuesta cerrada');
-        return redirect(route('survey.list'));
+        $surveyService  = new SurveyService();
+        $result         = $surveyService->closeSurvey($this->survey, Constants::SURVEY_STATUS_CLOSED);
+
+        if ($result) {
+            session()->flash('surveySended',  'Encuesta cerrada');
+            return redirect(route('survey.list'));
+        } else {
+            session()->flash('surveySended',  'Error al cerrar la encuesta');
+        }
     }
 
     public function updatedSurveyExpiration()
@@ -264,6 +345,11 @@ class CreateSurvey extends Component
         if ($this->survey->status ==  Constants::SURVEY_STATUS_PROCESS) {
             session()->flash('survey-expiration-update', '');
         }
+    }
+
+    public function updatedSelectedParentQuestionId()
+    {
+        $this->selectedParentQuestion = Question::find($this->selectedParentQuestionId);
     }
 
     public function updateExpirationSurvey()

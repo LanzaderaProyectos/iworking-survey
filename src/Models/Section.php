@@ -43,4 +43,14 @@ class Section extends Model implements SectionContract
     {
         return $this->hasMany(get_class(app()->make(Question::class)));
     }
+
+    /**
+     * The section main questions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function mainQuestions()
+    {
+        return $this->hasMany(get_class(app()->make(Question::class)))->whereNull('parent_id')->orderBy('section_id');
+    }
 }

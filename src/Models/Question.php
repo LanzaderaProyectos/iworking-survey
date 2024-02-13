@@ -21,7 +21,7 @@ class Question extends Model implements QuestionContract
      *
      * @var array
      */
-    protected $fillable = ['type', 'options', 'content', 'rules', 'survey_id'];
+    protected $fillable = ['type', 'options', 'content', 'rules', 'survey_id', 'section_id', 'original_id', 'parent_id'];
 
     protected $casts = [
         'rules' => 'array',
@@ -89,6 +89,26 @@ class Question extends Model implements QuestionContract
     public function answers()
     {
         return $this->hasMany(get_class(app()->make(Answer::class)));
+    }
+
+    public function isMain()
+    {
+        return $this->original_id === $this->id && $this->parent_id == null;
+    }
+
+    public function isSub()
+    {
+        return $this->original_id !== $this->id && $this->parent_id !== null;
+    }
+
+     /**
+     * The answers that belong to the question.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function subQuestions()
+    {
+        return $this->hasMany(get_class(app()->make(Question::class)), 'parent_id');
     }
 
     /**
