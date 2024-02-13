@@ -6,7 +6,7 @@
 @php($listQuestions = $lang ? $question->getTranslation('options',$lang) : $question->options)
 @foreach($listQuestions as $option)
 <div class="custom-control custom-radio">
-    <input type="radio" wire:model.defer="answers.{{$question->id}}.value" name="{{ $question->key }}"
+    <input type="radio" wire:model.live="answers.{{$question->id}}.value" name="{{ $question->key }}"
         id="{{ $question->key . '-' . Str::slug($option) }}" value="{{ $option }}" class="custom-control-input" {{
         ($disabled ?? false) ? 'disabled' : '' }}>
     <label class="custom-control-label" for="{{ $question->key . '-' . Str::slug($option) }}">

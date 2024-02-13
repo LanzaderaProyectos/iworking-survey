@@ -18,15 +18,17 @@ class Answers extends Component
 {
     public $entry;
     public $survey;
-    public $answers = [];
-    public $comments = [];
-    public $errorsBag = [];
+    public $answers             = [];
+    public $comments            = [];
+    public $errorsBag           = [];
+    public $respondedQuestions  = [];
 
     public function mount()
     {
-        $crypted = Route::current()->parameter('user');
-        $decrypted =  Crypt::decryptString($crypted);
-        $decrypted = explode(';', $decrypted);
+        $crypted    = Route::current()->parameter('user');
+        $decrypted  =  Crypt::decryptString($crypted);
+        $decrypted  = explode(';', $decrypted);
+
         // Pos [0] => email, Pos [1] => survey_id
         $this->entry = Entry::where('participant', $decrypted[0])
             ->where('survey_id', $decrypted[1])->first();
@@ -35,19 +37,23 @@ class Answers extends Component
         }
         $this->survey = Survey::find($this->entry->survey_id);
         foreach ($this->survey->questions as  $value) {
-            $this->answers[$value->id]['value'] = '';
-            $this->answers[$value->id]['comments'] = $value->comments ?? '';
-            $this->answers[$value->id]['type'] = $value->type;
+            $this->answers[$value->id]['value']     = '';
+            $this->answers[$value->id]['comments']  = $value->comments ?? '';
+            $this->answers[$value->id]['type']      = $value->type;
             if ($value->comments) {
-                $this->comments[$value->id] = '';
+                $this->comments[$value->id]         = '';
+            }
+            if ($value->answers->count() > 0){
+                $this->respondedQuestions[$value->id] = true;
             }
         }
         $answers = Answer::where('entry_id', $this->entry->id)
             ->get();
         foreach ($answers as $item) {
             $this->answers[$item->question_id]['value'] = $item->value;
-            $this->comments[$item->question_id] = $item->comments;
+            $this->comments[$item->question_id]         = $item->comments;
         }
+        
     }
 
     public function render()
@@ -55,20 +61,26 @@ class Answers extends Component
         return view('survey::livewire.answers');
     }
 
+    public function updatedAnswers($value, $key)
+    {
+        $questionId                             = explode('.', $key)[0];
+        $this->respondedQuestions[$questionId]  = true;
+    }
+
     public function saveAnswers()
     {
         $values = [
-            'NO' => 0,
-            'SI' => 100,
-            'YES' => 100,
-            'NP' => 100,
-            'NA' => 100,
-            'Partially' => 25,
-            'Mainly' => 70,
-            'Totally' => 100,
-            'Parcialmente' => 25,
-            'Mayoritariamente' => 70,
-            'Totalmente' => 100,
+            'NO'                => 0,
+            'SI'                => 100,
+            'YES'               => 100,
+            'NP'                => 100,
+            'NA'                => 100,
+            'Partially'         => 25,
+            'Mainly'            => 70,
+            'Totally'           => 100,
+            'Parcialmente'      => 25,
+            'Mayoritariamente'  => 70,
+            'Totalmente'        => 100,
         ];
         foreach ($this->answers as $key => $answer) {
             $score = 0;
@@ -77,13 +89,13 @@ class Answers extends Component
             }
             Answer::updateOrCreate(
                 [
-                    'question_id' => $key,
-                    'entry_id' => $this->entry->id
+                    'question_id'   => $key,
+                    'entry_id'      => $this->entry->id
                 ],
                 [
-                    'value' => $answer['value'],
-                    'comments' => $this->comments[$key] ?? null,
-                    'score' => $score
+                    'value'     => $answer['value'],
+                    'comments'  => $this->comments[$key] ?? null,
+                    'score'     => $score
                 ]
             );
         }
