@@ -13,6 +13,7 @@ use MattDaneshvar\Survey\Models\Answer;
 use MattDaneshvar\Survey\Models\Survey;
 use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Mail\SurveyCompleted;
+use MattDaneshvar\Survey\Models\Question;
 
 class Answers extends Component
 {
@@ -43,7 +44,7 @@ class Answers extends Component
             if ($value->comments) {
                 $this->comments[$value->id]         = '';
             }
-            if ($value->answers->count() > 0){
+            if ($value->answers->count() > 0) {
                 $this->respondedQuestions[$value->id] = true;
             }
         }
@@ -64,7 +65,7 @@ class Answers extends Component
     public function updatedAnswers($value, $key)
     {
         $questionId                             = explode('.', $key)[0];
-        $this->respondedQuestions[$questionId]  = true;
+        $this->respondedQuestions[$questionId]  = $value;
     }
 
     public function saveAnswers()
@@ -116,6 +117,15 @@ class Answers extends Component
             }
             return redirect('/');
         }
+    }
+
+    public function getSubQuestionsAfterAnswer($question)
+    {
+        $questionId     = $question->id;
+        $questionAnswer = $this->answers[$questionId]['value'];
+        $subQuestions   = $question->subQuestions->where('condition', $questionAnswer);
+
+        return $subQuestions;
     }
 
     public function customValidation()

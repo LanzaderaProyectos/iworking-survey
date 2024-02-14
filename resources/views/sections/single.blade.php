@@ -28,10 +28,10 @@
                             ]
                         )
                         @if (!$sendForm)
-                            @include('survey::questions.single', ['question' => $mainQuestion])
+                            @include('survey::questions.single', ['question' => $mainQuestion, 'filter' => false])
                         @else
                             @if (isset($this->respondedQuestions[$mainQuestion->id]))
-                                @include('survey::questions.single', ['question' => $mainQuestion])
+                                @include('survey::questions.single', ['question' => $mainQuestion, 'filter' => true])
                             @endif
                         @endif
                     </div>

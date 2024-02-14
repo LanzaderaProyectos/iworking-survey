@@ -21,30 +21,30 @@
                 class="form-control " id="numbers_format_input">
                 <option value="">Seleccione una pregunta</option>
                 @foreach ($this->survey->questions as $question)
-                    <option value="{{ $question->id }}">
-                        {{ $question->order }} - {{ $question->getTranslation('content', 'es') }}
-                    </option>
+                    @if ($question->type == 'radio')
+                        <option value="{{ $question->id }}">
+                            {{ $question->order }} - {{ $question->getTranslation('content', 'es') }}
+                        </option>
+                    @endif
                 @endforeach
             </select>
         </div>
     </div>
 
     @if ($this->selectedParentQuestion)
-        @if ($this->selectedParentQuestion->type == 'radio')
-            <div class="col-md-6 col-12">
-                <div class="form-group mb-3">
-                    <label for="numbers_format">¿Cuándo debe de mostrar la pregunta?*:</label>
-                    <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="parentQuestionRadio"
-                        class="form-control " id="numbers_format_input">
-                        <option value="">Selecciona una opción</option>
-                        <option value="SI">Cuando pulsa SI</option>
-                        <option value="NO">Cuando pulsa NO</option>
-                        <option value="NA">Cuando pulsa NA</option>
-                        <option value="00">En cualquier caso</option>
-                    </select>
-                </div>
+        <div class="col-md-6 col-12">
+            <div class="form-group mb-3">
+                <label for="numbers_format">¿Cuándo debe de mostrar la pregunta?*:</label>
+                <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="parentQuestionRadio"
+                    class="form-control " id="numbers_format_input">
+                    <option value="">Selecciona una opción</option>
+                    <option value="SI">Cuando pulsa SI</option>
+                    <option value="NO">Cuando pulsa NO</option>
+                    <option value="NA">Cuando pulsa NA</option>
+                    <option value="00">En cualquier caso</option>
+                </select>
             </div>
-        @endif
+        </div>
     @endif
 </div>
 
