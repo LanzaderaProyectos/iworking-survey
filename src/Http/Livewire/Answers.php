@@ -23,6 +23,7 @@ class Answers extends Component
     public $comments            = [];
     public $errorsBag           = [];
     public $respondedQuestions  = [];
+    public $answersToDelete     = [];
 
     public function mount()
     {
@@ -37,24 +38,29 @@ class Answers extends Component
             App::setlocale('en');
         }
         $this->survey = Survey::find($this->entry->survey_id);
-        foreach ($this->survey->questions as  $value) {
-            $this->answers[$value->id]['value']     = '';
-            $this->answers[$value->id]['comments']  = $value->comments ?? '';
-            $this->answers[$value->id]['type']      = $value->type;
-            if ($value->comments) {
-                $this->comments[$value->id]         = '';
-            }
-            if ($value->answers->count() > 0) {
-                $this->respondedQuestions[$value->id] = true;
-            }
-        }
+
+        $this->getAnswers();
+    }
+
+    public function getAnswers()
+    {
         $answers = Answer::where('entry_id', $this->entry->id)
             ->get();
+
+
         foreach ($answers as $item) {
-            $this->answers[$item->question_id]['value'] = $item->value;
-            $this->comments[$item->question_id]         = $item->comments;
+            $question                                                       = $item->question;
+            $this->answers[$item->question_id]['value']                     = $item->value;
+            $this->answers[$item->question_id]['comments']                  = $question->comments;
+            $this->answers[$item->question_id]['type']                      = $question->type;
+            $this->answers[$item->question_id]['question_parent_id']        = $question->parent_id;
+            $this->answers[$item->question_id]['question_question_id']      = $question->original_id;
+            $this->answers[$item->question_id]['model']                     = $item;
+            $this->comments[$item->question_id]                             = $item->comments;
+            if ($question->answers->count() > 0) {
+                $this->respondedQuestions[$question->id] = true;
+            }
         }
-        
     }
 
     public function render()
@@ -64,8 +70,58 @@ class Answers extends Component
 
     public function updatedAnswers($value, $key)
     {
-        $questionId                             = explode('.', $key)[0];
-        $this->respondedQuestions[$questionId]  = $value;
+        $updatedQuestionId                              = explode('.', $key)[0];
+        $this->respondedQuestions[$updatedQuestionId]   = $value;
+        $question                                                       = Question::find($updatedQuestionId);
+
+        $this->answers[$updatedQuestionId]['value']                     = $value['value'] ?? $value;
+        $this->answers[$updatedQuestionId]['comments']                  = $question->comments;
+        $this->answers[$updatedQuestionId]['type']                      = $question->type;
+        $this->answers[$updatedQuestionId]['question_parent_id']        = $question->parent_id;
+        $this->answers[$updatedQuestionId]['question_original_id']      = $question->original_id;
+        $this->answers[$updatedQuestionId]['model']                     = $this->answers[$updatedQuestionId]['model'] ?? null;
+
+        $subQuestions                                                   = $question->subQuestions;
+
+
+        foreach ($subQuestions as $key => $subQuestion) {
+            $id = $subQuestion->id;
+
+            // Si existe la respuesta
+            if (isset($this->answers[$id])) {
+
+                // Si la respuesta es diferente a la condición
+                if ($this->answers[$updatedQuestionId]['value'] != $subQuestion->condition) {
+                    $answerToDelete = $subQuestion->answers()->where('entry_id', $this->entry->id)->first();
+                    if ($answerToDelete) {
+                        $this->answersToDelete[$id] = $answerToDelete;
+                    }
+                    unset($this->answers[$id]);
+                } else {
+                    // Si la respuesta es igual a la condición
+
+                    // Si existe esa respuesta en el array de respuestas a eliminar
+                    if (isset($this->answersToDelete[$id])) {
+                        $question                                           = $this->answersToDelete[$id]->question;
+                        $this->answers[$id]['value']                        = $value['value'] ?? $value;
+                        $this->answers[$id]['comments']                     = $question->comments;
+                        $this->answers[$id]['type']                         = $question->type;
+                        $this->answers[$id]['question_parent_id']           = $question->parent_id;
+                        $this->answers[$id]['question_original_id']         = $question->original_id;
+                        $this->answers[$id]['model']                        = $this->answersToDelete[$updatedQuestionId];
+                        unset($this->answersToDelete[$id]);
+                    }
+                }
+            } else {
+                if ($this->answers[$updatedQuestionId]['value'] == $subQuestion->condition) {
+                    $this->answers[$id]['value']                    = '';
+                    $this->answers[$id]['comments']                 = $question->comments;
+                    $this->answers[$id]['type']                     = $question->type;
+                    $this->answers[$id]['question_parent_id']       = $question->parent_id;
+                    $this->answers[$id]['question_original_id']     = $question->original_id;
+                }
+            }
+        }
     }
 
     public function saveAnswers()
@@ -83,11 +139,13 @@ class Answers extends Component
             'Mayoritariamente'  => 70,
             'Totalmente'        => 100,
         ];
+
         foreach ($this->answers as $key => $answer) {
             $score = 0;
             if ($answer['type'] == 'radio' && $answer['value'] != '') {
                 $score = $values[$answer['value']];
             }
+
             Answer::updateOrCreate(
                 [
                     'question_id'   => $key,
@@ -100,6 +158,14 @@ class Answers extends Component
                 ]
             );
         }
+
+        foreach ($this->answersToDelete as $key => $value) {
+            $value->delete();
+        }
+
+        $this->getAnswers();
+
+
         $this->errorsBag = [];
     }
 
