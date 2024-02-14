@@ -67,6 +67,10 @@ class SurveyServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton('answerService', function ($app) {
+            return new \MattDaneshvar\Survey\Services\AnswerService;
+        });
+
         $this->app->bind(\MattDaneshvar\Survey\Contracts\Answer::class, \MattDaneshvar\Survey\Models\Answer::class);
         $this->app->bind(\MattDaneshvar\Survey\Contracts\Entry::class, \MattDaneshvar\Survey\Models\Entry::class);
         $this->app->bind(\MattDaneshvar\Survey\Contracts\Question::class, \MattDaneshvar\Survey\Models\Question::class);

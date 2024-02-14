@@ -6,14 +6,12 @@ use Livewire\Component;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
-use MattDaneshvar\Survey\Models\Entry;
-use MattDaneshvar\Survey\Models\Answer;
-use MattDaneshvar\Survey\Models\Survey;
+use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Mail\SurveyCompleted;
-use MattDaneshvar\Survey\Models\Question;
+use MattDaneshvar\Survey\Facades\AnswerService;
+use MattDaneshvar\Survey\Services\DecryptionService;
 
 class Answers extends Component
 {
@@ -28,39 +26,18 @@ class Answers extends Component
     public function mount()
     {
         $crypted    = Route::current()->parameter('user');
-        $decrypted  =  Crypt::decryptString($crypted);
-        $decrypted  = explode(';', $decrypted);
-
-        // Pos [0] => email, Pos [1] => survey_id
-        $this->entry = Entry::where('participant', $decrypted[0])
-            ->where('survey_id', $decrypted[1])->first();
+        $this->entry = (new DecryptionService())->decryptUser($crypted);
+        
         if ($this->entry->lang == 'en') {
             App::setlocale('en');
         }
-        $this->survey = Survey::find($this->entry->survey_id);
+       
+        $this->survey = $this->entry->survey;
 
-        $this->getAnswers();
-    }
-
-    public function getAnswers()
-    {
-        $answers = Answer::where('entry_id', $this->entry->id)
-            ->get();
-
-
-        foreach ($answers as $item) {
-            $question                                                       = $item->question;
-            $this->answers[$item->question_id]['value']                     = $item->value;
-            $this->answers[$item->question_id]['comments']                  = $question->comments;
-            $this->answers[$item->question_id]['type']                      = $question->type;
-            $this->answers[$item->question_id]['question_parent_id']        = $question->parent_id;
-            $this->answers[$item->question_id]['question_question_id']      = $question->original_id;
-            $this->answers[$item->question_id]['model']                     = $item;
-            $this->comments[$item->question_id]                             = $item->comments;
-            if ($question->answers->count() > 0) {
-                $this->respondedQuestions[$question->id] = true;
-            }
-        }
+        $getAnswers                 =  AnswerService::setAnswersCommentsQuestions($this->entry);
+        $this->answers              = $getAnswers['answers'];
+        $this->comments             = $getAnswers['comments'];
+        $this->respondedQuestions   = $getAnswers['respondedQuestions'];
     }
 
     public function render()
@@ -126,45 +103,11 @@ class Answers extends Component
 
     public function saveAnswers()
     {
-        $values = [
-            'NO'                => 0,
-            'SI'                => 100,
-            'YES'               => 100,
-            'NP'                => 100,
-            'NA'                => 100,
-            'Partially'         => 25,
-            'Mainly'            => 70,
-            'Totally'           => 100,
-            'Parcialmente'      => 25,
-            'Mayoritariamente'  => 70,
-            'Totalmente'        => 100,
-        ];
-
-        foreach ($this->answers as $key => $answer) {
-            $score = 0;
-            if ($answer['type'] == 'radio' && $answer['value'] != '') {
-                $score = $values[$answer['value']];
-            }
-
-            Answer::updateOrCreate(
-                [
-                    'question_id'   => $key,
-                    'entry_id'      => $this->entry->id
-                ],
-                [
-                    'value'     => $answer['value'],
-                    'comments'  => $this->comments[$key] ?? null,
-                    'score'     => $score
-                ]
-            );
-        }
+        $saveAnswers = AnswerService::saveAnswers($this->answers, $this->entry, $this->comments);
 
         foreach ($this->answersToDelete as $key => $value) {
             $value->delete();
         }
-
-        $this->getAnswers();
-
 
         $this->errorsBag = [];
     }
@@ -213,4 +156,6 @@ class Answers extends Component
         session()->flash('answersAlert', 'Hay preguntas sin responder.');
         return false;
     }
+
+    
 }
