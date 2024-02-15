@@ -94,7 +94,7 @@ class AnswerService
             if (isset($answers[$id])) {
 
                 // Si la respuesta es diferente a la condición
-                if ($answers[$updatedQuestionId]['value'] != $subQuestion->condition) {
+                if ($answers[$updatedQuestionId]['value'] != $subQuestion->condition && $subQuestion->condition != '00') {
                     $answerToDelete = $subQuestion->answers()->where('entry_id', $entry->id)->first();
                     if ($answerToDelete) {
                         $answersToDelete[$id] = $answerToDelete;
