@@ -45,6 +45,10 @@ class Question extends Model implements QuestionContract
                 $question->survey_id = $question->section->survey_id;
             }
         });
+
+        static::deleting(function (self $question) {
+            $question->subQuestions->each->delete();
+        });
     }
 
     /**
@@ -116,7 +120,7 @@ class Question extends Model implements QuestionContract
      */
     public function subQuestions()
     {
-        return $this->hasMany(get_class(app()->make(Question::class)), 'parent_id');
+        return $this->hasMany(get_class(app()->make(Question::class)), 'parent_id')->orderBy('created_at', 'asc');
     }
 
     /**

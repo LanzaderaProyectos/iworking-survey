@@ -287,7 +287,6 @@ class CreateSurvey extends Component
         );
 
         if ($result) {
-            $this->reset('subQuestionName');
             $this->reset('parentQuestionRadio');
             $this->reset('selectedParentQuestionId');
             $this->resetValues();
@@ -329,10 +328,12 @@ class CreateSurvey extends Component
 
     public function resetValues()
     {
-        $this->question = new Question();
-        $this->reset('questionName');
-        $this->reset(['typeSelected']);
-        $this->editModeQuestion = false;
+        $this->question             = new Question();
+        $this->subQuestion          = new Question();
+        $this->editModeQuestion     = false;
+        $this->subEditModeQuestion  = false;
+
+        $this->reset(['typeSelected', 'subTypeSelected', 'questionName', 'subQuestionName']);
     }
 
     public function closeSurvey()

@@ -53,6 +53,20 @@ class Survey extends Model implements SurveyContract
     ];
 
     /**
+     * Boot the survey.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (self $survey) {
+            $survey->sections->each->delete();
+        });
+    }
+
+    /**
      * The survey sections.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

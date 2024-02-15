@@ -27,6 +27,21 @@ class Section extends Model implements SectionContract
         parent::__construct($attributes);
     }
 
+    
+    /**
+     * Boot the section.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (self $section) {
+            $section->questions->each->delete();
+        });
+    }
+
     /**
      * The attributes that are mass assignable.
      *
