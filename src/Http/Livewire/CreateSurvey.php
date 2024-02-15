@@ -285,11 +285,13 @@ class CreateSurvey extends Component
 
         if ($result) {
             $this->reset('subQuestionName');
+            $this->reset('parentQuestionRadio');
+            $this->reset('selectedParentQuestionId');
             $this->resetValues();
-            session()->flash('subQuestionSaved', 'Pregunta guardada');
+            session()->flash('subQuestionSaved', 'Sub pregunta guardada');
             $this->survey->refresh();
         } else {
-            session()->flash('subQuestionSaved', 'Error al guardar la pregunta');
+            session()->flash('subQuestionSaved', 'Error al guardar la sub pregunta');
         }
 
         $this->subQuestion = new Question();

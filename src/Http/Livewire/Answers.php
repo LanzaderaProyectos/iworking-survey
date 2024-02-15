@@ -27,11 +27,11 @@ class Answers extends Component
     {
         $crypted    = Route::current()->parameter('user');
         $this->entry = (new DecryptionService())->decryptUser($crypted);
-        
+
         if ($this->entry->lang == 'en') {
             App::setlocale('en');
         }
-       
+
         $this->survey = $this->entry->survey;
 
         $getAnswers                 =  AnswerService::setAnswersCommentsQuestions($this->entry);
@@ -49,56 +49,9 @@ class Answers extends Component
     {
         $updatedQuestionId                              = explode('.', $key)[0];
         $this->respondedQuestions[$updatedQuestionId]   = $value;
-        $question                                                       = Question::find($updatedQuestionId);
-
-        $this->answers[$updatedQuestionId]['value']                     = $value['value'] ?? $value;
-        $this->answers[$updatedQuestionId]['comments']                  = $question->comments;
-        $this->answers[$updatedQuestionId]['type']                      = $question->type;
-        $this->answers[$updatedQuestionId]['question_parent_id']        = $question->parent_id;
-        $this->answers[$updatedQuestionId]['question_original_id']      = $question->original_id;
-        $this->answers[$updatedQuestionId]['model']                     = $this->answers[$updatedQuestionId]['model'] ?? null;
-
-        $subQuestions                                                   = $question->subQuestions;
-
-
-        foreach ($subQuestions as $key => $subQuestion) {
-            $id = $subQuestion->id;
-
-            // Si existe la respuesta
-            if (isset($this->answers[$id])) {
-
-                // Si la respuesta es diferente a la condición
-                if ($this->answers[$updatedQuestionId]['value'] != $subQuestion->condition) {
-                    $answerToDelete = $subQuestion->answers()->where('entry_id', $this->entry->id)->first();
-                    if ($answerToDelete) {
-                        $this->answersToDelete[$id] = $answerToDelete;
-                    }
-                    unset($this->answers[$id]);
-                } else {
-                    // Si la respuesta es igual a la condición
-
-                    // Si existe esa respuesta en el array de respuestas a eliminar
-                    if (isset($this->answersToDelete[$id])) {
-                        $question                                           = $this->answersToDelete[$id]->question;
-                        $this->answers[$id]['value']                        = $value['value'] ?? $value;
-                        $this->answers[$id]['comments']                     = $question->comments;
-                        $this->answers[$id]['type']                         = $question->type;
-                        $this->answers[$id]['question_parent_id']           = $question->parent_id;
-                        $this->answers[$id]['question_original_id']         = $question->original_id;
-                        $this->answers[$id]['model']                        = $this->answersToDelete[$updatedQuestionId];
-                        unset($this->answersToDelete[$id]);
-                    }
-                }
-            } else {
-                if ($this->answers[$updatedQuestionId]['value'] == $subQuestion->condition) {
-                    $this->answers[$id]['value']                    = '';
-                    $this->answers[$id]['comments']                 = $question->comments;
-                    $this->answers[$id]['type']                     = $question->type;
-                    $this->answers[$id]['question_parent_id']       = $question->parent_id;
-                    $this->answers[$id]['question_original_id']     = $question->original_id;
-                }
-            }
-        }
+        $answerService                                  = AnswerService::updatedAnswers($this->answers, $updatedQuestionId, $value, $this->entry, $this->answersToDelete);
+        $this->answers                                  = $answerService['answers'];
+        $this->answersToDelete                          = $answerService['answersToDelete'];
     }
 
     public function saveAnswers()
@@ -115,6 +68,7 @@ class Answers extends Component
     public function sendAnswers()
     {
         $this->saveAnswers();
+        
         if ($this->customValidation()) {
             $this->entry->status = Constants::ENTRY_STATUS_COMPLETED;
             $this->entry->save();
@@ -139,23 +93,16 @@ class Answers extends Component
 
     public function customValidation()
     {
-        foreach ($this->answers as $key => $item) {
-            if (empty(trim($item['value']))) {
-                $this->errorsBag[$key] = $key . "";
-            } elseif ((trim($item['value'] == 'SI' || trim($item['value'] == 'YES')) && $item['comments'])) {
-                if (empty(trim($this->comments[$key]))) {
-                    $this->errorsBag[$key] = $key . "";
-                }
-            } else {
-                unset($this->errorsBag[$key]);
-            }
-        }
-        if (empty($this->errorsBag)) {
-            return true;
-        }
-        session()->flash('answersAlert', 'Hay preguntas sin responder.');
-        return false;
-    }
+        $answersService = AnswerService::answersCustomValidation($this->answers, $this->errorsBag, $this->comments);
 
-    
+        if (!$answersService['status']) {
+            session()->flash('answersAlert', 'Hay preguntas sin responder.');
+        }else{
+            $this->errorsBag = $answersService['errorsBag'];
+            $this->comments  = $answersService['comments'];
+            $this->answers   = $answersService['answers'];
+        }
+
+        return $answersService['status'];
+    }
 }
