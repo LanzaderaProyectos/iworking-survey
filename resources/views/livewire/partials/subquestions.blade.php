@@ -108,7 +108,7 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label for="numbers_format">Orden:</label>
-                    <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="question.order" type="number"
+                    <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="subQuestion.order" type="number"
                         step="1" min="0" name="section-order" id="survey-order"
                         class="form-control form-control-alternative" placeholder="Orden">
                 </div>
@@ -142,6 +142,9 @@
                 <tr>
                     <th>Acción</th>
                     <th>Sección</th>
+                    <th>Pregunta original</th>
+                    <th>Pregunta superior</th>
+                    <th>Condición</th>
                     <td>Orden</td>
                     <th class="col-5">ES</th>
                     <th class="col-5">EN</th>
@@ -154,7 +157,7 @@
                         <td nowrap>
                             <button wire:loading.delay.attr="disabled" wire:target="downloadExcel"
                                 {{ $this->formEdit ? '' : 'disabled' }}
-                                wire:click="editQuestion('{{ $item->id }}')" type="button"
+                                wire:click="editQuestion('{{ $item->id }}', true)" type="button"
                                 class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
                                 data-placement="top" title="Edit">
                                 <i class="fas fa-edit" aria-hidden="true"></i>
@@ -169,6 +172,15 @@
                         </td>
                         <td>
                             {{ $item->section->name ?? '' }}
+                        </td>
+                        <td>
+                            {{ $item->originalQuestion ? $item->originalQuestion->getTranslation('content', 'es') : '' }}
+                        </td>
+                        <td>
+                            {{ $item->parentQuestion ? $item->parentQuestion->getTranslation('content', 'es') : '' }}
+                        </td>
+                        <td>
+                            {{ $item->condition }}
                         </td>
                         <td>
                             {{ $item->order }}

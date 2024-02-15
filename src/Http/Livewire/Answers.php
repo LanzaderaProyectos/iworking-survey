@@ -86,7 +86,7 @@ class Answers extends Component
     {
         $questionId     = $question->id;
         $questionAnswer = $this->answers[$questionId]['value'];
-        $subQuestions   = $question->subQuestions->where('condition', $questionAnswer);
+        $subQuestions   = $question->subQuestions->whereIn('condition', [$questionAnswer, '00']);
 
         return $subQuestions;
     }

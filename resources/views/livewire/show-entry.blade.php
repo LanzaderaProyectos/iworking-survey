@@ -1,4 +1,4 @@
 <div>
     @include('survey::standard', ['survey' => $survey,
-    'sendForm' => false])
+    'sendForm' => false, 'showEntry' => true])
 </div>

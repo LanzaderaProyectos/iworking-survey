@@ -262,7 +262,11 @@ class CreateSurvey extends Component
         ]);
 
         // IDs
-        $parentId                       = $this->selectedParentQuestion->id;
+        if (!$this->subQuestion->id) {
+            $parentId                       = $this->selectedParentQuestion->id;
+            $this->subQuestion->parent_id   = $parentId;
+        }
+
         $originalId                     = $this->selectedParentQuestion->original_id;
         $sectionId                      = $this->selectedParentQuestion->section_id;
 
@@ -270,7 +274,6 @@ class CreateSurvey extends Component
         $this->subQuestion->survey_id   = $this->survey->id;
         $this->subQuestion->section_id  = $sectionId;
         $this->subQuestion->original_id = $originalId;
-        $this->subQuestion->parent_id   = $parentId;
         $this->subQuestion->condition   = $this->parentQuestionRadio;
 
         $questionService    = new QuestionService();
@@ -297,22 +300,25 @@ class CreateSurvey extends Component
         $this->subQuestion = new Question();
     }
 
-    public function editQuestion($id)
+    public function editQuestion($id, $subQuestion = false)
     {
-        $this->question                 = Question::find($id);
-        $this->typeSelected             = $this->question->type;
-        $this->questionName['es']       = $this->question->getTranslation('content', 'es');
-        $this->questionName['en']       = $this->question->getTranslation('content', 'en');
-        $this->editModeQuestion         = true;
-    }
 
-    public function editSubQuestion($id)
-    {
-        $this->subQuestion              = Question::find($id);
-        $this->subTypeSelected          = $this->subQuestion->type;
-        $this->subQuestionName['es']    = $this->subQuestion->getTranslation('content', 'es');
-        $this->subQuestionName['en']    = $this->subQuestion->getTranslation('content', 'en');
-        $this->subEditModeQuestion      = true;
+        if (!$subQuestion) {
+            $this->question                 = Question::find($id);
+            $this->typeSelected             = $this->question->type;
+            $this->questionName['es']       = $this->question->getTranslation('content', 'es');
+            $this->questionName['en']       = $this->question->getTranslation('content', 'en');
+            $this->editModeQuestion         = true;
+        } else {
+            $this->subQuestion                 = Question::find($id);
+            $this->subTypeSelected             = $this->subQuestion->type;
+            $this->subQuestionName['es']       = $this->subQuestion->getTranslation('content', 'es');
+            $this->subQuestionName['en']       = $this->subQuestion->getTranslation('content', 'en');
+            $this->subEditModeQuestion         = true;
+            $this->selectedParentQuestionId    = $this->subQuestion->parent_id;
+            $this->selectedParentQuestion      = $this->subQuestion;
+            $this->parentQuestionRadio         = $this->subQuestion->condition;
+        }
     }
 
     public function deleteQuestion($id)

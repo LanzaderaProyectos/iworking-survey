@@ -101,6 +101,14 @@ class Question extends Model implements QuestionContract
         return $this->original_id !== $this->id && $this->parent_id !== null;
     }
 
+    public function originalQuestion(){
+        return $this->belongsTo(get_class(app()->make(Question::class)), 'original_id');
+    }
+
+    public function parentQuestion(){
+        return $this->belongsTo(get_class(app()->make(Question::class)), 'parent_id');
+    }
+
      /**
      * The answers that belong to the question.
      *
