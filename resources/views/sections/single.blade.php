@@ -1,12 +1,13 @@
-<div id="accordion">
+<div id="accordion" wire:key="{{str()->random(5)}}">
     <div class="card">
         <div class="card-header" id="headingTwo">
             <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse"
+                <button class="btn btn-link collapsed d-flex align-items-center" style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseSection{{ $index }}" aria-expanded="true"
                     aria-controls="collapseSection{{ $index }}">
                     <span class="h3">{{ $section->name }}
                     </span>
+                    <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>
         </div>

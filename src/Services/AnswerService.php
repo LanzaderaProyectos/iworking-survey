@@ -2,7 +2,6 @@
 
 namespace MattDaneshvar\Survey\Services;
 
-use Illuminate\Support\Facades\Log;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Answer;
 use MattDaneshvar\Survey\Models\Question;
@@ -105,13 +104,11 @@ class AnswerService
 
                     // Si existe esa respuesta en el array de respuestas a eliminar
                     if (isset($answersToDelete[$id])) {
-                        $question                                           = $answersToDelete[$id]->question;
-                        $answers[$id]['value']                        = $value['value'] ?? $value;
-                        $answers[$id]['comments']                     = $question->comments;
-                        $answers[$id]['type']                         = $question->type;
-                        $answers[$id]['question_parent_id']           = $question->parent_id;
-                        $answers[$id]['question_original_id']         = $question->original_id;
-                        $answers[$id]['model']                        = $answersToDelete[$updatedQuestionId];
+                        $question                               = $answersToDelete[$id]->question;
+                        $answers[$id]['value']                  = $value['value'] ?? $value;
+                        $answers[$id]['comments']               = $question->comments;
+                        $answers[$id]['type']                   = $question->type;
+                        $answers[$id]['model']                  = $answersToDelete[$updatedQuestionId];
                         unset($answersToDelete[$id]);
                     }
                 }
@@ -120,8 +117,6 @@ class AnswerService
                     $answers[$id]['value']                    = '';
                     $answers[$id]['comments']                 = $question->comments;
                     $answers[$id]['type']                     = $question->type;
-                    $answers[$id]['question_parent_id']       = $question->parent_id;
-                    $answers[$id]['question_original_id']     = $question->original_id;
                 }
             }
         }

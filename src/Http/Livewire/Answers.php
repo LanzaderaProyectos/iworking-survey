@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
-use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Mail\SurveyCompleted;
 use MattDaneshvar\Survey\Facades\AnswerService;
@@ -58,17 +57,31 @@ class Answers extends Component
     {
         $saveAnswers = AnswerService::saveAnswers($this->answers, $this->entry, $this->comments);
 
-        foreach ($this->answersToDelete as $key => $value) {
-            $value->delete();
+        foreach ($this->answersToDelete as $key => $answer) {
+            if ($answer->question->count() > 0) {
+                $this->deleteSubQuestionAnswers($answer->question);
+            }
+            $answer->delete();
         }
 
-        $this->errorsBag = [];
+        $this->answersToDelete  = [];
+        $this->errorsBag        = [];
+    }
+
+    function deleteSubQuestionAnswers($question)
+    {
+        foreach ($question->subQuestions ?? [] as $subQuestion) {
+            $subQuestion->answers()->where('entry_id', $this->entry->id)->get()->each->delete();
+            if ($subQuestion->subQuestions->count() > 0) {
+                $this->deleteSubQuestionAnswers($subQuestion);
+            }
+        }
     }
 
     public function sendAnswers()
     {
         $this->saveAnswers();
-        
+
         if ($this->customValidation()) {
             $this->entry->status = Constants::ENTRY_STATUS_COMPLETED;
             $this->entry->save();
@@ -97,7 +110,7 @@ class Answers extends Component
 
         if (!$answersService['status']) {
             session()->flash('answersAlert', 'Hay preguntas sin responder.');
-        }else{
+        } else {
             $this->errorsBag = $answersService['errorsBag'];
             $this->comments  = $answersService['comments'];
             $this->answers   = $answersService['answers'];

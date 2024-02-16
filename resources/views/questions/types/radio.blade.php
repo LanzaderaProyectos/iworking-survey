@@ -5,7 +5,7 @@
 {{-- Admin view --}}
 @php($listQuestions = $lang ? $question->getTranslation('options',$lang) : $question->options)
 @foreach($listQuestions as $option)
-<div class="custom-control custom-radio">
+<div class="custom-control custom-radio" wire:key="{{str()->random(5)}}">
     <input type="radio" wire:model.live="answers.{{$question->id}}.value" name="{{ $question->key }}"
         id="{{ $question->key . '-' . Str::slug($option) }}" value="{{ $option }}" class="custom-control-input" {{
         ($disabled ?? false) ? 'disabled' : '' }}>
