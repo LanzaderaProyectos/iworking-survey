@@ -14,6 +14,8 @@ use MattDaneshvar\Survey\Http\Livewire\CreateSurvey;
 use MattDaneshvar\Survey\Http\Middleware\UserSurvey;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use MattDaneshvar\Survey\Http\Livewire\EntryList;
+use MattDaneshvar\Survey\Http\Livewire\Questions\QuestionEdit;
+use MattDaneshvar\Survey\Http\Livewire\Questions\QuestionList;
 use MattDaneshvar\Survey\Http\View\Composers\SurveyComposer;
 
 class SurveyServiceProvider extends ServiceProvider
@@ -126,11 +128,13 @@ class SurveyServiceProvider extends ServiceProvider
 
     protected function bootLivewireComponents()
     {
-        Livewire::component('iworking-survery::survey-list',    Table::class);
-        Livewire::component('iworking-survery::create-survey',  CreateSurvey::class);
-        Livewire::component('iworking-survery::survey-answers', Answers::class);
-        Livewire::component('iworking-survery::show-entry',     ShowEntry::class);
-        Livewire::component('iworking-survery::addresses',     Addresses::class);
-        Livewire::component('iworking-survery::entry-list',     EntryList::class);
+        Livewire::component('iworking-survery::survey-list',        Table::class);
+        Livewire::component('iworking-survery::create-survey',      CreateSurvey::class);
+        Livewire::component('iworking-survery::survey-answers',     Answers::class);
+        Livewire::component('iworking-survery::show-entry',         ShowEntry::class);
+        Livewire::component('iworking-survery::addresses',          Addresses::class);
+        Livewire::component('iworking-survery::entry-list',         EntryList::class);
+        Livewire::component('iworking-questions::question-list',    QuestionList::class);
+        Livewire::component('iworking-questions::question-edit',    QuestionEdit::class);
     }
 }

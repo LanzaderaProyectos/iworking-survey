@@ -52,6 +52,26 @@
     @if (
         ($this->selectedParentQuestion->type == 'radio' && $this->parentQuestionRadio != null) ||
             $this->selectedParentQuestion->type != 'radio')
+        <div class="col-md-4 col-12 mt-3">
+            <div class="form-group ">
+                <label for="numbers_format">Sub pregunta por defecto (opcional):</label>
+                <div class="d-flex">
+                    <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="selectedDefaultQuestion"
+                        class="form-control " id="numbers_format_input">
+                        <option value="">Selecciona una pregunta por defecto</option>
+                        @foreach ($this->defaultQuestions as $question)
+                            <option value="{{ $question->id }}">
+                                {{ $question->getTranslation('content', 'es') }} - {{ $question->type }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button wire:click="addDefaultQuestion(false)" class="btn btn-dark" type="button"
+                        title="Añadir">+</button>
+                </div>
+
+            </div>
+
+        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
@@ -108,8 +128,8 @@
             <div class="col-md-2">
                 <div class="form-group">
                     <label for="numbers_format">Orden:</label>
-                    <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="subQuestion.order" type="number"
-                        step="1" min="0" name="section-order" id="survey-order"
+                    <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="subQuestion.order"
+                        type="number" step="1" min="0" name="section-order" id="survey-order"
                         class="form-control form-control-alternative" placeholder="Orden">
                 </div>
             </div>
