@@ -16,3 +16,11 @@ Route::name('survey.')->group(function () {
         ->middleware(['web', 'user-survey']);
     Route::view('surveys/survey-not-available', 'survey::survey-not-available')->name('not-available');
 });
+
+Route::prefix('questions')->name('questions.')->group(function () {
+    Route::middleware(config('iworking-survey.middleware'))->group(function () {
+        Route::view('list', 'survey::questions.question-list')->name('list');
+        Route::view('new', 'survey::questions.question-edit')->name('new');
+        Route::view('{question}', 'survey::questions.question-edit')->name('edit');
+    });
+});

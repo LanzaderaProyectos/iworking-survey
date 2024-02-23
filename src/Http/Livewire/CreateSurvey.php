@@ -59,9 +59,12 @@ class CreateSurvey extends Component
     public $formEdit;
     public $optionES = [];
     public $optionEN = [];
+    public $defaultQuestions;
 
     public $selectedParentQuestionId;
     public $selectedParentQuestion;
+    public $selectedDefaultQuestion;
+    public $selectedDefaultQuestionOrder;
     public $parentQuestionRadio;
 
     protected $rules = [
@@ -91,8 +94,9 @@ class CreateSurvey extends Component
 
     public function mount($draft = false)
     {
-        $this->draft        = $draft;
-        $this->formEdit     = !Route::is('survey.show');
+        $this->draft            = $draft;
+        $this->formEdit         = !Route::is('survey.show');
+        $this->defaultQuestions = (new QuestionService())->getDefaultQuestions();
         $this->initComponent();
     }
 
@@ -299,6 +303,66 @@ class CreateSurvey extends Component
         $this->subQuestion = new Question();
     }
 
+    public function addDefaultQuestion($isOriginal = true)
+    {
+        try {
+            $this->validate([
+                'selectedDefaultQuestion'       => 'required',
+                'selectedDefaultQuestionOrder'  => 'nullable|numeric',
+            ], [
+                'selectedDefaultQuestion.required' => 'Seleccione una pregunta por defecto',
+            ]);
+    
+            $copyQuestion                   = Question::find($this->selectedDefaultQuestion)->toArray();
+            $copyQuestion['survey_id']      = $this->survey->id;
+    
+            if ($isOriginal) {
+                $this->validate([
+                    'question.section_id' => 'required',
+                ], [
+                    'question.section_id.required' => 'Seleccione una sección',
+                ]);
+
+                $sectionId  = $this->question->section_id;
+                $originalId = null;
+                $parentId   = null;
+            } elseif (!$isOriginal) {
+                $this->validate([
+                    'selectedParentQuestion.section_id'     => 'required',
+                    'selectedParentQuestion.original_id'    => 'required',
+                    'selectedParentQuestionId'              => 'required',
+                ], [
+                    'selectedParentQuestion.section_id.required' => 'Seleccione una sección',
+                    'selectedParentQuestion.original_id.required' => 'Seleccione una pregunta padre',
+                    'selectedParentQuestionId.required' => 'Seleccione una pregunta padre',
+                
+                ]);
+                $sectionId  = $this->selectedParentQuestion->section_id;
+                $originalId = $this->selectedParentQuestion->original_id;
+                $parentId   = $this->selectedParentQuestionId;
+            }
+    
+            $questionService                = new QuestionService();
+            $question                       = $questionService->copyQuestion(
+                isOriginal: $isOriginal,
+                selectedDefaultQuestion: $this->selectedDefaultQuestion,
+                surveyId: $this->survey->id,
+                selectedParentQuestionId: $this->selectedParentQuestionId,
+                parentQuestionRadio: $this->parentQuestionRadio,
+                originalId: $originalId,
+                sectionId: $sectionId,
+                parentId: $parentId,
+                optionES: $this->optionES,
+                optionEN: $this->optionEN
+            );
+    
+            $this->survey->refresh();
+            $this->resetValues();
+        } catch (\Throwable $th) {
+            session()->flash('alert', $th->getMessage());
+        }
+    }
+
     public function editQuestion($id, $subQuestion = false)
     {
 
@@ -333,7 +397,7 @@ class CreateSurvey extends Component
         $this->editModeQuestion     = false;
         $this->subEditModeQuestion  = false;
 
-        $this->reset(['typeSelected', 'subTypeSelected', 'questionName', 'subQuestionName']);
+        $this->reset(['typeSelected', 'subTypeSelected', 'questionName', 'subQuestionName', 'selectedParentQuestionId', 'selectedParentQuestion', 'selectedDefaultQuestion', 'selectedDefaultQuestionOrder', 'parentQuestionRadio']);
     }
 
     public function closeSurvey()
