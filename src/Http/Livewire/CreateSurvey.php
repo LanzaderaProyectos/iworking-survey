@@ -72,7 +72,7 @@ class CreateSurvey extends Component
         'survey.expiration'     => 'required',
         'survey.comments'       => 'nullable',
         'surveyName.es'         => 'required',
-        'surveyName.en'         => 'required',
+        'surveyName.en'         => 'nullable',
         //Sections
         'sectionName.es'        => 'nullable',
         'sectionName.en'        => 'nullable',
@@ -197,7 +197,7 @@ class CreateSurvey extends Component
     {
         $this->validate([
             'sectionName.es' => 'required',
-            'sectionName.en' => 'required',
+            'sectionName.en' => 'nullable',
             'section.order' =>  'nullable|numeric'
         ]);
 
@@ -229,7 +229,7 @@ class CreateSurvey extends Component
     {
         $this->validate([
             'questionName.es'       => 'required',
-            'questionName.en'       => 'required',
+            'questionName.en'       => 'nullable',
             'question.section_id'   => 'required',
             'question.order'        => 'nullable|numeric',
         ]);
@@ -261,7 +261,7 @@ class CreateSurvey extends Component
 
         $this->validate([
             'subQuestionName.es'       => 'required',
-            'subQuestionName.en'       => 'required',
+            'subQuestionName.en'       => 'nullable',
             'subQuestion.order'        => 'nullable|numeric',
         ]);
 
