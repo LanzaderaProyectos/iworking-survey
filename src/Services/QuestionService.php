@@ -5,6 +5,7 @@ namespace MattDaneshvar\Survey\Services;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use MattDaneshvar\Survey\Models\Question;
+use MattDaneshvar\Survey\Models\Survey;
 
 class QuestionService
 {
@@ -17,11 +18,29 @@ class QuestionService
                     ->setTranslation('options', 'en', $optionEN);
             }
             $question->type = $questionType;
-            // TODO: use survey_questions table
-            // $question->survey_id = $surveyId;
             $question
                 ->setTranslation('content', 'es', $questionName['es'])
                 ->setTranslation('content', 'en', $questionName['en']);
+                if(empty($question->code)){
+                    $lastCode = Question::orderBy('code', 'desc')->first();
+                    if($lastCode)
+                    {
+                        $lastCodeNumber = (int) substr($lastCode->code, 2);
+                        $nextNumber = $lastCodeNumber + 1;
+                        if($nextNumber < 1000)
+                        {
+                            $nextCode = "P-".str_pad($nextNumber, 4, "0", STR_PAD_LEFT);
+                        }
+                        else{
+                            $nextCode = "P-".$nextNumber;
+                        }
+                    }
+                    else
+                    {
+                        $nextCode = "P-0001";
+                    }
+                    $question->code = $nextCode;
+                }
             $question->save();
 
             if ($isOriginal === true) {
@@ -36,8 +55,12 @@ class QuestionService
         }
     }
 
-    public function getDefaultQuestions(): Collection
+    public function getDefaultQuestions($surveyType = null): Collection
     {
+        $returnQuery = Question::whereNull('survey_id')->whereNull('section_id');
+        if(!empty($surveyType)){
+            $returnQuery->whereIn('survey_type',['general',$surveyType]);
+        }
         return Question::whereNull('survey_id')->whereNull('section_id')->get();
     }
 

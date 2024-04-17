@@ -17,9 +17,14 @@ return new class extends Migration
             $table->integer('survey_id');
             $table->integer('position');
             $table->integer('parent_id')->nullable();
+            $table->integer('original_id')->nullable();
             $table->integer('section_id')->nullable();
             $table->string('condition')->nullable();
             $table->boolean('mandatory');
+            $table->integer('order');
+            $table->boolean('disabled')->default(false);
+            $table->uuid('disabled_by')->nullable();
+            $table->timestamp('disabled_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

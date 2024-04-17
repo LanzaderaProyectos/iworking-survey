@@ -16,6 +16,7 @@ use MattDaneshvar\Survey\Services\SurveyService;
 use MattDaneshvar\Survey\Services\SectionService;
 use MattDaneshvar\Survey\Services\QuestionService;
 use MattDaneshvar\Survey\Mail\ReminderNotification;
+use MattDaneshvar\Survey\Models\SurveyQuestion;
 
 class CreateSurvey extends Component
 {
@@ -39,6 +40,8 @@ class CreateSurvey extends Component
         'es'    => '',
         'en'    => ''
     ];
+    public $surveyQuestion  = null;
+    public $subSurveyQuestion  = null;
     public $users           = [];
     public $typeSelected    = null;
     public $subTypeSelected = null;
@@ -76,13 +79,22 @@ class CreateSurvey extends Component
     public $newOptionES = "";
     public $newOptionEN = "";
     public $customOptions = false;
+    public $subOptionEs = [];
+    public $subOptionEn = [];
+    public $customSubOptions = false;
     public $updateOption = null;
+    public $sectionQuestionSelected;
+    public $orderQuestion;
+    public $requiredQuestion = false;
+    public $orderSubQuestion;
+    public $requiredSubQuestion = false;
     public $defaultQuestions;
 
     public $selectedParentQuestionId;
     public $selectedParentQuestion;
     public $selectedDefaultQuestion;
     public $selectedDefaultQuestionOrder;
+    public $selectedDefaultQuestionSub;
     public $parentQuestionRadio;
 
     protected $rules = [
@@ -116,7 +128,7 @@ class CreateSurvey extends Component
     {
         $this->draft            = $draft;
         $this->formEdit         = !Route::is('survey.show');
-        $this->defaultQuestions = (new QuestionService())->getDefaultQuestions();
+        $this->defaultQuestions = (new QuestionService())->getDefaultQuestions($this->survey->type ?? '');
         $this->initComponent();
     }
 
@@ -131,6 +143,8 @@ class CreateSurvey extends Component
             $this->question             = new Question();
             $this->subQuestion          = new Question();
             $this->section              = new Section();
+            $this->surveyQuestion       = new SurveyQuestion();
+            $this->subSurveyQuestion    = new SurveyQuestion();
         } else {
             $this->survey = new Survey();
         }
@@ -151,7 +165,7 @@ class CreateSurvey extends Component
         return view('survey::livewire.create-survey');
     }
 
-    
+
 
     public function addOption()
     {
@@ -160,13 +174,10 @@ class CreateSurvey extends Component
             'newOptionEN' => 'required',
         ]);
 
-        if($this->updateOption != null)
-        {
+        if ($this->updateOption != null) {
             $this->optionES[$this->updateOption] = $this->newOptionES;
             $this->optionEN[$this->updateOption] = $this->newOptionEN;
-        }
-        else
-        {
+        } else {
             $this->optionES[] = $this->newOptionES;
             $this->optionEN[] = $this->newOptionEN;
         }
@@ -176,7 +187,8 @@ class CreateSurvey extends Component
         $this->updateOption = null;
     }
 
-    public function deleteOption($position) {
+    public function deleteOption($position)
+    {
         unset($this->optionES[$position]);
         unset($this->optionEN[$position]);
     }
@@ -186,7 +198,6 @@ class CreateSurvey extends Component
         $this->newOptionES = $this->optionES[$id];
         $this->newOptionEN = $this->optionEN[$id];
         $this->updateOption = $id;
-
     }
 
     public function saveSurvey()
@@ -219,8 +230,8 @@ class CreateSurvey extends Component
 
     public function deleteSurvey()
     {
-        $this->survey->questions()->delete();
         $this->survey->sections()->delete();
+        $this->survey->surveyQuestions()->delete();
         $this->survey->delete();
         session()->flash('surveyDeleted', 'Formulario eliminado');
 
@@ -286,36 +297,39 @@ class CreateSurvey extends Component
     public function saveQuestion()
     {
         $this->validate([
-            'questionName.es'       => 'required',
-            'questionName.en'       => 'nullable',
-            'question.section_id'   => 'required',
-            'question.order'        => 'nullable|numeric',
+            'orderQuestion'               => 'required',
+            'sectionQuestionSelected'     => 'required',
         ]);
-
-        $questionService    = new QuestionService();
-        $result             = $questionService->saveQuestion(
-            question: $this->question,
-            surveyId: $this->survey->id,
-            questionType: $this->typeSelected,
-            questionName: $this->questionName,
-            optionES: $this->optionES,
-            optionEN: $this->optionEN
-        );
-
-
-        if ($result) {
-            $this->question->update(['original_id' => $this->question->id]);
-            $this->reset('questionName');
-            $this->resetValues();
-            session()->flash('questionSaved', 'Pregunta guardada');
-            $this->survey->refresh();
-            $this->optionEN = [];
-            $this->optionES = [];
-            $this->customOptions = false;
-            $this->updateOption = null;
+        // $this->question->update(['original_id' => $this->question->id]);
+        if (empty($this->surveyQuestion->id)) {
+            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->question->id)->whereNull('parent_id')->exists()) {
+                $this->surveyQuestion->survey_id = $this->survey->id;
+                $this->surveyQuestion->question_id = $this->question->id;
+                $this->surveyQuestion->position = $this->orderQuestion;
+                $this->surveyQuestion->section_id = $this->sectionQuestionSelected;
+                $this->surveyQuestion->mandatory = $this->requiredQuestion;
+                $this->surveyQuestion->disabled = false;
+                $this->surveyQuestion->save();
+                $this->surveyQuestion->update(['original_id' => $this->surveyQuestion->id]);
+                $this->surveyQuestion = new SurveyQuestion();
+            } else {
+                session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
+                return;
+            }
         } else {
-            session()->flash('questionSaved', 'Error al guardar la pregunta');
+            $this->surveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->question->id)->first();
+            $this->surveyQuestion->update(['position' => $this->orderQuestion]);
+            $this->surveyQuestion->update(['section_id' => $this->sectionQuestionSelected]);
+            $this->surveyQuestion->update(['mandatory' => $this->requiredQuestion]);
         }
+        $this->reset('questionName');
+        $this->resetValues();
+        session()->flash('questionSaved', 'Pregunta guardada');
+        $this->survey->refresh();
+        $this->optionEN = [];
+        $this->optionES = [];
+        $this->customOptions = false;
+        $this->updateOption = null;
     }
 
     public function saveSubQuestion()
@@ -326,46 +340,44 @@ class CreateSurvey extends Component
             'subQuestionName.en'       => 'nullable',
             'subQuestion.order'        => 'nullable|numeric',
         ]);
-
-        // IDs
-        if (!$this->subQuestion->id) {
-            $parentId                       = $this->selectedParentQuestion->id;
-            $this->subQuestion->parent_id   = $parentId;
-        }
-
-        $originalId                     = $this->selectedParentQuestion->original_id;
-        $sectionId                      = $this->selectedParentQuestion->section_id;
-
-        // SubQuestion Attributes
-        $this->subQuestion->survey_id   = $this->survey->id;
-        $this->subQuestion->section_id  = $sectionId;
-        $this->subQuestion->original_id = $originalId;
-        $this->subQuestion->condition   = $this->parentQuestionRadio;
-
-        $questionService    = new QuestionService();
-        $result             = $questionService->saveQuestion(
-            question: $this->subQuestion,
-            surveyId: $this->survey->id,
-            questionType: $this->subTypeSelected,
-            questionName: $this->subQuestionName,
-            optionES: $this->optionES,
-            optionEN: $this->optionEN
-        );
-
-        if ($result) {
-            $this->reset('parentQuestionRadio');
-            $this->reset('selectedParentQuestionId');
-            $this->resetValues();
-            session()->flash('subQuestionSaved', 'Sub pregunta guardada');
-            $this->survey->refresh();
+        if (empty($this->subSurveyQuestion->id)) {
+            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id',$this->selectedDefaultQuestionSub)->exists()) {
+                $surveyQuestionParent = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->selectedParentQuestionId)->whereNull('parent_id')->first();
+                $this->subSurveyQuestion->survey_id = $this->survey->id;
+                $this->subSurveyQuestion->question_id = $this->subQuestion->id;
+                $this->subSurveyQuestion->position = $this->orderSubQuestion;
+                $this->subSurveyQuestion->section_id = $surveyQuestionParent->section_id;
+                $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
+                $this->subSurveyQuestion->disabled = false;
+                $this->subSurveyQuestion->parent_id = $surveyQuestionParent->id;
+                $this->subSurveyQuestion->condition = $this->parentQuestionRadio;
+                $this->subSurveyQuestion->order = $this->orderSubQuestion;
+                $this->subSurveyQuestion->original_id = $surveyQuestionParent->original_id;
+                $this->subSurveyQuestion->save();
+                $this->subSurveyQuestion->update(['original_id' => $this->question->id]);
+                $this->subSurveyQuestion = new SurveyQuestion();
+            } else {
+                session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
+                return;
+            }
         } else {
-            session()->flash('subQuestionSaved', 'Error al guardar la sub pregunta');
+            $this->subSurveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->question->id)->first();
+            $this->subSurveyQuestion->update(['position' => $this->orderSubQuestion]);
+            $this->subSurveyQuestion->update(['mandatory' => $this->requiredSubQuestion]);
         }
-
+        $this->reset('questionName');
+        $this->resetValues();
+        session()->flash('questionSaved', 'Pregunta guardada');
+        $this->survey->refresh();
+        $this->optionEN = [];
+        $this->optionES = [];
+        $this->customOptions = false;
+        $this->updateOption = null;
+        
         $this->subQuestion = new Question();
     }
 
-    public function addDefaultQuestion($isOriginal = true)
+    public function addDefaultQuestion()
     {
         try {
             $this->validate([
@@ -374,52 +386,47 @@ class CreateSurvey extends Component
             ], [
                 'selectedDefaultQuestion.required' => 'Seleccione una pregunta por defecto',
             ]);
-    
-            $copyQuestion                   = Question::find($this->selectedDefaultQuestion)->toArray();
-            $copyQuestion['survey_id']      = $this->survey->id;
-    
-            if ($isOriginal) {
-                $this->validate([
-                    'question.section_id' => 'required',
-                ], [
-                    'question.section_id.required' => 'Seleccione una sección',
-                ]);
-
-                $sectionId  = $this->question->section_id;
-                $originalId = null;
-                $parentId   = null;
-            } elseif (!$isOriginal) {
-                $this->validate([
-                    'selectedParentQuestion.section_id'     => 'required',
-                    'selectedParentQuestion.original_id'    => 'required',
-                    'selectedParentQuestionId'              => 'required',
-                ], [
-                    'selectedParentQuestion.section_id.required' => 'Seleccione una sección',
-                    'selectedParentQuestion.original_id.required' => 'Seleccione una pregunta padre',
-                    'selectedParentQuestionId.required' => 'Seleccione una pregunta padre',
-                
-                ]);
-                $sectionId  = $this->selectedParentQuestion->section_id;
-                $originalId = $this->selectedParentQuestion->original_id;
-                $parentId   = $this->selectedParentQuestionId;
+            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->selectedDefaultQuestion)->whereNull('parent_id')->exists()) {
+                $this->question                     = Question::find($this->selectedDefaultQuestion);
+                $this->questionName['es']           = $this->question->getTranslation('content', 'es');
+                $this->questionName['en']           = $this->question->getTranslation('content', 'en');
+                $this->typeSelected                 = $this->question->type;
+                if ($this->typeSelected == "multiselect" || $this->typeSelected == "uniqueselect") {
+                    $this->customOptions = true;
+                    $this->optionES = $this->question->getTranslation('options', 'es');
+                    $this->optionEN = $this->question->getTranslation('options', 'en');
+                }
+            } else {
+                session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
+                return;
             }
-    
-            $questionService                = new QuestionService();
-            $question                       = $questionService->copyQuestion(
-                isOriginal: $isOriginal,
-                selectedDefaultQuestion: $this->selectedDefaultQuestion,
-                surveyId: $this->survey->id,
-                selectedParentQuestionId: $this->selectedParentQuestionId,
-                parentQuestionRadio: $this->parentQuestionRadio,
-                originalId: $originalId,
-                sectionId: $sectionId,
-                parentId: $parentId,
-                optionES: $this->optionES,
-                optionEN: $this->optionEN
-            );
-    
-            $this->survey->refresh();
-            $this->resetValues();
+        } catch (\Throwable $th) {
+            session()->flash('alert', $th->getMessage());
+        }
+    }
+
+    public function addDefaultQuestionSub()
+    {
+        try {
+            $this->validate([
+                'selectedDefaultQuestionSub'       => 'required',
+            ], [
+                'selectedDefaultQuestionSub.required' => 'Seleccione una pregunta por defecto',
+            ]);
+            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->selectedDefaultQuestionSub)->where('parent_id',$this->selectedParentQuestionId)->exists()) {
+                $this->subQuestion                     = Question::find($this->selectedDefaultQuestionSub);
+                $this->subQuestionName['es']           = $this->subQuestion->getTranslation('content', 'es');
+                $this->subQuestionName['en']           = $this->subQuestion->getTranslation('content', 'en');
+                $this->subTypeSelected                 = $this->subQuestion->type;
+                if ($this->subTypeSelected == "multiselect" || $this->subTypeSelected == "uniqueselect") {
+                    $this->customSubOptions = true;
+                    $this->subOptionEs = $this->subQuestion->getTranslation('options', 'es');
+                    $this->subOptionEn = $this->subQuestion->getTranslation('options', 'en');
+                }
+            } else {
+                session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
+                return;
+            }
         } catch (\Throwable $th) {
             session()->flash('alert', $th->getMessage());
         }
@@ -429,32 +436,43 @@ class CreateSurvey extends Component
     {
 
         if (!$subQuestion) {
-            $this->question                 = Question::find($id);
+            $this->surveyQuestion           = SurveyQuestion::find($id);
+            $this->question                 = $this->surveyQuestion->question;
+            $this->orderQuestion            = $this->surveyQuestion->position;
+            $this->sectionQuestionSelected  = $this->surveyQuestion->section_id;
+            $this->requiredQuestion         = $this->surveyQuestion->mandatory;
             $this->typeSelected             = $this->question->type;
             $this->questionName['es']       = $this->question->getTranslation('content', 'es');
             $this->questionName['en']       = $this->question->getTranslation('content', 'en');
             $this->editModeQuestion         = true;
-            if($this->typeSelected == "multiple" ||$this->typeSelected == "unicSelection")
-            {
+            if ($this->typeSelected == "multiselect" || $this->typeSelected == "uniqueselect") {
                 $this->customOptions = true;
                 $this->optionES = $this->question->getTranslation('options', 'es');
                 $this->optionEN = $this->question->getTranslation('options', 'en');
             }
         } else {
-            $this->subQuestion                 = Question::find($id);
+            $this->subSurveyQuestion           = SurveyQuestion::find($id);
+            $this->subQuestion                 = $this->subSurveyQuestion->question;
+            $this->orderSubQuestion            = $this->subSurveyQuestion->position;
+            $this->requiredSubQuestion         = $this->subSurveyQuestion->mandatory;
             $this->subTypeSelected             = $this->subQuestion->type;
+            $this->selectedParentQuestionId     = $this->subSurveyQuestion->parent->question->id;
+            $this->selectedParentQuestion       = $this->subSurveyQuestion->parent->question;
+            $this->parentQuestionRadio          = $this->subSurveyQuestion->condition;
             $this->subQuestionName['es']       = $this->subQuestion->getTranslation('content', 'es');
             $this->subQuestionName['en']       = $this->subQuestion->getTranslation('content', 'en');
             $this->subEditModeQuestion         = true;
-            $this->selectedParentQuestionId    = $this->subQuestion->parent_id;
-            $this->selectedParentQuestion      = $this->subQuestion;
-            $this->parentQuestionRadio         = $this->subQuestion->condition;
+            if ($this->subTypeSelected == "multiselect" || $this->subTypeSelected == "uniqueselect") {
+                $this->customSubOptions = true;
+                $this->subOptionEs = $this->question->getTranslation('options', 'es');
+                $this->subOptionEn = $this->question->getTranslation('options', 'en');
+            }
         }
     }
 
     public function deleteQuestion($id)
     {
-        Question::destroy($id);
+        SurveyQuestion::destroy($id);
         $this->survey->refresh();
     }
 
@@ -464,6 +482,12 @@ class CreateSurvey extends Component
         $this->subQuestion          = new Question();
         $this->editModeQuestion     = false;
         $this->subEditModeQuestion  = false;
+        $this->sectionQuestionSelected = null;
+        $this->orderQuestion        = null;
+        $this->requiredQuestion     = false;
+        $this->optionEN             = [];
+        $this->optionES             = [];
+        $this->customOptions        = false;
 
         $this->reset(['typeSelected', 'subTypeSelected', 'questionName', 'subQuestionName', 'selectedParentQuestionId', 'selectedParentQuestion', 'selectedDefaultQuestion', 'selectedDefaultQuestionOrder', 'parentQuestionRadio']);
     }
@@ -480,39 +504,39 @@ class CreateSurvey extends Component
             session()->flash('surveySended',  'Error al cerrar el formulario');
         }
     }
+
     public function updatedTypeSelected()
     {
-            switch($this->typeSelected) 
-            {
-                case "radio":
-                    $this->optionES = [
-                        'SI',
-                        'NO',
-                        'NP'
-                    ];
-                    $this->optionEN = [
-                        'YES',
-                        'NO',
-                        'NA'
-                    ];
-                    $this->customOptions = false;
-                    break;
-                case "multiselect":
-                    $this->optionES = [];
-                    $this->optionEN = [];
-                    $this->customOptions = true;
-                    break;
-                case "uniqueselect":
-                    $this->optionES = [];
-                    $this->optionEN = [];
-                    $this->customOptions = true;
-                    break;
-                default:
-                    $this->optionES = [];
-                    $this->optionEN = [];
-                    $this->customOptions = false;
-                    break;
-            }
+        switch ($this->typeSelected) {
+            case "radio":
+                $this->optionES = [
+                    'SI',
+                    'NO',
+                    'NP'
+                ];
+                $this->optionEN = [
+                    'YES',
+                    'NO',
+                    'NA'
+                ];
+                $this->customOptions = false;
+                break;
+            case "multiselect":
+                $this->optionES = [];
+                $this->optionEN = [];
+                $this->customOptions = true;
+                break;
+            case "uniqueselect":
+                $this->optionES = [];
+                $this->optionEN = [];
+                $this->customOptions = true;
+                break;
+            default:
+                $this->optionES = [];
+                $this->optionEN = [];
+                $this->customOptions = false;
+                break;
+        }
     }
 
     public function updatedSurveyExpiration()
@@ -525,6 +549,9 @@ class CreateSurvey extends Component
     public function updatedSelectedParentQuestionId()
     {
         $this->selectedParentQuestion = Question::find($this->selectedParentQuestionId);
+        if($this->selectedParentQuestion->type == "multiselect" || $this->selectedParentQuestion->type == "uniqueselect") {
+            $this->parentQuestionRadio = "000";
+        }
     }
 
     public function updateExpirationSurvey()

@@ -6,6 +6,14 @@
     </button>
 </div>
 @endif
+@if (session()->has('questionWarning'))
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <span> {{ session('questionWarning') }}</span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
 <div class="row">
     <div class="col-12">
         <h5>
@@ -14,7 +22,7 @@
     </div>
     <div class="col-md-4 col-12 mt-3">
         <div class="form-group ">
-            <label for="numbers_format">Preguntas por defecto (opcional):</label>
+            <label for="numbers_format">Preguntas por defecto:</label>
             <div class="d-flex">
                 <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="selectedDefaultQuestion"
                     class="form-control " id="numbers_format_input">
@@ -46,14 +54,14 @@
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-question-es" role="tabpanel"
                     aria-labelledby="nav-home-tab">
-                    <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="questionName.es" type="text"
-                    name="section-name" id="question-name-es" class="form-control form-control-alternative"
-                    placeholder="Introduzca nombre">
+                    <input disabled wire:model.defer="questionName.es" type="text" name="section-name"
+                        id="question-name-es" class="form-control form-control-alternative"
+                        placeholder="Introduzca nombre">
                 </div>
                 <div class="tab-pane fade" id="nav-question-en" role="tabpanel" aria-labelledby="nav-profile-tab">
-                    <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="questionName.en" type="text"
-                    name="section-name" id="question-name-en" class="form-control form-control-alternative"
-                    placeholder="Introduzca nombre">
+                    <input disabled wire:model.defer="questionName.en" type="text" name="section-name"
+                        id="question-name-en" class="form-control form-control-alternative"
+                        placeholder="Introduzca nombre">
                 </div>
             </div>
             @error('questionName.*')
@@ -66,7 +74,8 @@
     <div class="col-md-5 col-12">
         <div class="form-group ">
             <label for="numbers_format">Sección*:</label>
-            <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="question.section_id" class="form-control "
+            <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="sectionQuestionSelected"
+                class="form-control "
                 id="numbers_format_input" size="3">
                 @foreach ($this->survey->sections as $section)
                 <option value="{{ $section->id }}">
@@ -74,13 +83,15 @@
                 </option>
                 @endforeach
             </select>
+            @error('sectionQuestionSelected')
+            <span class="text-danger">{{ $message }}</span>
+            @enderror
         </div>
     </div>
     <div class="col-md-5 col-12">
         <div class="form-group mb-2">
             <label for="numbers_format">Tipo*:</label>
-            <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="typeSelected" class="form-control "
-                id="numbers_format_input" size="3">
+            <select disabled wire:model.live="typeSelected" class="form-control " id="numbers_format_input" size="3">
                 @foreach ($typeAnwers as $key => $value)
                 <option value="{{ $key }}">
                     {{ $value }}
@@ -97,85 +108,33 @@
     <div class="col-md-2">
         <div class="form-group">
             <label for="numbers_format">Orden:</label>
-            <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="question.order" type="number"
+            <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="orderQuestion" type="number"
             step="1" min="0" name="section-order" id="survey-order"
             class="form-control form-control-alternative" placeholder="Orden">
+            @error('orderQuestion')
+            <span class="text-danger">{{ $message }}</span>
+            @enderror
+        </div>
+        <div class="form-group mt-n3">
+            <input type="checkbox" wire:model.defer="requiredQuestion">
+            <label for="numbers_format">Obrigatoria</label>
         </div>
     </div>
 </div>
 @if($customOptions)
-<div class="row mt-n3">
-    <div class="col-md-12">
-        <div class="form-group">
-            <label class="form-control-label" for="input-first_name">Añadir Opción</label>
-            <nav id="create-option">
-                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link active" id="nav-option-tab" data-toggle="tab" href="#nav-option-es"
-                        role="tab" aria-controls="nav-home" aria-selected="true">Español</a>
-                    <a class="nav-item nav-link" id="nav-option-tab" data-toggle="tab" href="#nav-option-en" role="tab"
-                        aria-controls="nav-profile" aria-selected="false">Ingles</a>
-                </div>
-            </nav>
-            <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="nav-option-es" role="tabpanel"
-                    aria-labelledby="nav-home-tab">
-                    <div class="d-flex">
-                        <input wire:model.defer="newOptionES" type="text" name="section-name" id="option-name-es"
-                            class="form-control form-control-alternative" placeholder="Introduzca opción">
-                        @if($updateOption != null)
-                        <button wire:click="addOption" class="btn btn-dark" type="button" title="Guardar">
-                            <i class="fas fa-edit" aria-hidden="true"></i>
-                        </button>
-                        @else
-                        <button wire:click="addOption" class="btn btn-dark" type="button" title="Añadir">+</button>
-                        @endif
-                    </div>
-                </div>
-                <div class="tab-pane fade" id="nav-option-en" role="tabpanel" aria-labelledby="nav-profile-tab">
-                    <div class="d-flex">
-                        <input wire:model.defer="newOptionEN" type="text" name="section-name" id="option-name-en"
-                            class="form-control form-control-alternative" placeholder="Introduzca opción">
-                            @if($updateOption != null)
-                            <button wire:click="addOption" class="btn btn-dark" type="button" title="Guardar">
-                                <i class="fas fa-edit" aria-hidden="true"></i>
-                            </button>
-                            @else
-                            <button wire:click="addOption" class="btn btn-dark" type="button" title="Añadir">+</button>
-                            @endif
-                    </div>
-                </div>
-            </div>
-            @error('optionName.*')
-            <span class="text-danger">{{ $message }}</span>
-            @enderror
-        </div>
-    </div>
-</div>
 <div class="row  mb-3">
-    <div class="col-md-12 mt-3">
+    <div class="col-md-12 mt-n2">
+        <label class="form-control-label" for="input-first_name">Opciónes</label>
         <table class="table table-striped table-bordered table-hover table-checkable">
             <thead>
                 <tr>
-                    <th style="width: 10%">Acción</th>
-                    <th style="width: 40%">ES</th>
-                    <th style="width: 40%">EN</th>
+                    <th style="width: 50%">ES</th>
+                    <th style="width: 50%">EN</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($optionES as $keyOption => $option)
                 <tr>
-                    <td><button wire:loading.delay.attr="disabled" wire:target="downloadExcel"
-                            wire:click="editOption('{{ $keyOption }}')" type="button"
-                            class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip" data-placement="top"
-                            title="Edit">
-                            <i class="fas fa-edit" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
-                            event.stopImmediatePropagation();" wire:click="deleteOption('{{ $keyOption }}')"
-                            class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
-                            <i class="fas fa-trash" aria-hidden="true"></i>
-                        </button>
-                    </td>
                     <td>{{ $option }}</td>
                     <td>{{ $optionEN[$keyOption] }}</td>
                 </tr>
@@ -189,15 +148,15 @@
 <div class="row justify-content-end mb-4">
     <div class="col-4">
         <div class="text-right" aria-label="">
-            @if ($editModeQuestion)
+            @if (!empty($this->question->id))
             <button type="button" wire:click="resetValues" class="btn btn-sm btn-dark mr-2"
                 wire:loading.attr="disabled">
                 Cancelar
             </button>
-            @endif
             <button type="button" wire:click="saveQuestion" class="btn btn-sm btn-info" wire:loading.attr="disabled">
                 Guardar Pregunta
             </button>
+            @endif
         </div>
     </div>
 </div>
@@ -210,13 +169,14 @@
                     <th>Acción</th>
                     <th>Sección</th>
                     <td>Orden</td>
+                    <th class="col-1">Codigo</th>
                     <th class="col-5">ES</th>
                     <th class="col-5">EN</th>
                     <th class="col-1">Tipo</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($this->survey->mainQuestions as $item)
+                @foreach ($this->survey->surveyQuestionsMain as $item)
                 <tr>
                     <td nowrap>
                         <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ? '' :
@@ -238,16 +198,19 @@
                         {{ $item->section->name ?? '' }}
                     </td>
                     <td>
-                        {{ $item->order }}
+                        {{ $item->position }}
                     </td>
                     <td>
-                        {{ $item->getTranslation('content', 'es') }}
+                        {{ $item->question->code ?? '' }}
                     </td>
                     <td>
-                        {{ $item->getTranslation('content', 'en') }}
+                        {{ $item->question->getTranslation('content', 'es') }}
                     </td>
                     <td>
-                        {{ $item->type }}
+                        {{ $item->question->getTranslation('content', 'en') }}
+                    </td>
+                    <td>
+                        {{ $item->question->type }}
                     </td>
                 </tr>
                 @endforeach

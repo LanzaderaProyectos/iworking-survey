@@ -36,6 +36,7 @@ class SurveyService
 
             return true;
         } catch (\Throwable $th) {
+            dd($th);
             Log::error($th);
             return false;
         }

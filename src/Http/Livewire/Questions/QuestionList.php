@@ -19,6 +19,27 @@ class QuestionList extends Component
     public $sortBy              = 'created_at';
     public $orderLinePA     = null;
     public $search          = '';
+    
+    public $typeAnwers = [
+        'radio'         => 'Si/No/NP',
+        'multiselect'   => 'Selección múltiple',
+        'uniqueselect'  => 'Selección única',
+        'date'          => 'Fecha',
+        'hour'          => 'Hora',
+        'text'          => 'Texto',
+        'longText'      => 'Texto largo',
+        'number'        => 'Númerico',
+        'currency'      => 'Moneda'
+        // 'number' => 'Numero'
+    ];
+
+    
+    public $questionTypes = [
+        "general" => "General",
+        "pharmaciesSale" => "Venta Farmacias",
+        "medicalPrescription" => "Prescripción Médica",
+        "training" => "Formación",
+    ];
 
 
     public function mount()

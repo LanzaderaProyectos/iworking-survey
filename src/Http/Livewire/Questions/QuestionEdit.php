@@ -50,8 +50,7 @@ class QuestionEdit extends Component
         'question.comments' => 'nullable',
         'questionName.es'   => 'required',
         'questionName.en'   => 'nullable',
-        'typeSelected'      => 'required',
-        'questionSelected'  => 'required',
+        'typeSelected'      => 'required'
     ];
 
 

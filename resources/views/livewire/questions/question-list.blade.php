@@ -47,11 +47,17 @@
                     <thead scope="col">
                         <tr class="text-uppercase">
                             <th style="width: 20px">Acciones</th>
+                            <th style="cursor: pointer">
+                                Codigo
+                            </th>
                             <th>
                                 Nombre  
                             </th>
                             <th style="cursor: pointer">
                                 Tipo
+                            </th>
+                            <th style="cursor: pointer">
+                                Tipo de Formulario
                             </th>
                             <th>
                                 Fecha creación
@@ -71,13 +77,18 @@
                                     </a>
                                 </td>
                                 <td>
+                                    {{ $question->code }}
+                                </td>
+                                <td>
                                     {{ $question->getTranslation('content', 'es') }}
 
                                 </td>
                                 <td>
-                                    {{ $question->type }}
+                                    {{ $typeAnwers[$question->type] }}
                                 </td>
-
+                                <td>
+                                    {{ $questionTypes[$question->survey_type] }}
+                                </td>
                                 <td>
                                     {{ auth()->user()->applyDateFormat($question->created_at) }}
                                 </td>

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table(config('survey.database.tables.surveys'), function (Blueprint $table) {
-            $table->integer('type')->nullable()->after('settings');
+            $table->string('type')->nullable()->after('settings');
             $table->string('project_type')->nullable()->after('type');
         });
     }

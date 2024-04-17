@@ -78,6 +78,7 @@
                     wire:model.lazy="survey.project_type"
                     class="form-control mt-n2">
                     <option value="">Seleccione una opción</option>
+                    <option value="general">General</option>
                     <option value="formation">Proyecto de Formación</option>
                     <option value="pharmacy_sale">Proyecto de Venta Farmacia</option>
                     <option value="sale_prescription">Proyecto de Venta Prescripción</option>

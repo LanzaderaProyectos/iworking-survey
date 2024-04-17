@@ -33,9 +33,14 @@ class SurveyQuestion extends Model
         'survey_id',
         'position',
         'parent_id',
+        'original_id',
         'section_id',
         'condition',
-        'mandatory'
+        'mandatory',
+        'order',
+        'disabled',
+        'disabled_by',
+        'disabled_at'
     ];
 
     /**
@@ -74,6 +79,16 @@ class SurveyQuestion extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function parent()
+    {
+        return $this->belongsTo(get_class(app()->make(SurveyQuestion::class)));
+    }
+
+    /**
+     * The entry the answer belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function original()
     {
         return $this->belongsTo(get_class(app()->make(SurveyQuestion::class)));
     }

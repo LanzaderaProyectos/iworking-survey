@@ -5,8 +5,8 @@ namespace MattDaneshvar\Survey\Models;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Entry;
+use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Contracts\Section;
-use MattDaneshvar\Survey\Contracts\Question;
 use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
 
 class Survey extends Model implements SurveyContract
@@ -34,15 +34,8 @@ class Survey extends Model implements SurveyContract
      *
      * @var array
      */
-    protected $fillable = [
-        'name',
-        'settings',
-        'author',
-        'status',
-        'expiration',
-        'survey_number',
-        'type',
-        'project_type'
+    protected $guarded = [
+        'id'
     ];
 
     /**
@@ -68,6 +61,8 @@ class Survey extends Model implements SurveyContract
         });
     }
 
+  
+
     /**
      * The survey sections.
      *
@@ -83,9 +78,40 @@ class Survey extends Model implements SurveyContract
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function surveyQuestions()
+    {
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->orderBy('section_id');
+    }
+
+    /**
+     * The survey main questions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function surveyQuestionsMain()
+    {
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->whereNull('parent_id')->orderBy('section_id');
+    }
+
+
+     /**
+     * The survey questions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function surveyQuestionsSub()
+    {
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->whereNotNull('parent_id')->orderBy('section_id');
+    }
+
+    /**
+     * The survey questions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function questions()
     {
-        return $this->hasManyThrough(get_class(app()->make(Question::class)),get_class(app()->make(SurveyQuestion::class)))->orderBy('section_id');
+        return $this->hasManyThrough(get_class(app()->make(Question::class)), get_class(app()->make(SurveyQuestion::class)), 'survey_id', 'id', 'id', 'question_id')->orderBy('section_id');
     }
 
     /**
@@ -95,17 +121,17 @@ class Survey extends Model implements SurveyContract
      */
     public function mainQuestions()
     {
-        return $this->hasManyThrough(get_class(app()->make(Question::class)),get_class(app()->make(SurveyQuestion::class)))->whereNull('survey_questions.parent_id')->orderBy('section_id');
+        return $this->hasManyThrough(get_class(app()->make(Question::class)), get_class(app()->make(SurveyQuestion::class)), 'survey_id', 'id', 'id', 'question_id')->whereNull('survey_questions.parent_id')->orderBy('section_id');
     }
 
-      /**
+    /**
      * The survey sub questions.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function subQuestions()
     {
-        return $this->hasManyThrough(get_class(app()->make(Question::class)),get_class(app()->make(SurveyQuestion::class)))->whereNotNull('survey_questions.parent_id')->orderBy('section_id');
+        return $this->hasManyThrough(get_class(app()->make(Question::class)), get_class(app()->make(SurveyQuestion::class)), 'survey_id', 'id', 'id', 'question_id')->whereNotNull('survey_questions.parent_id')->orderBy('section_id');
     }
 
     /**
