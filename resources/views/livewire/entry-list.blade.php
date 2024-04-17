@@ -73,7 +73,7 @@
             <div class="col-md-4 col-6">
                 <label for="vatNumber" class="font-weight-bold">Encuestado:</label>
                 <input wire:model.debounce.300ms="search.surveyed" type="search" class="form-control form-control-sm"
-                    name="survey_number" id="survey_number" placeholder="Nº Encuesta">
+                    name="survey_number" id="survey_number" placeholder="Nº Formulario">
             </div>
             <div class="col-md-4 col-6">
                 <label for="provider" class="font-weight-bold">Responsable:</label>

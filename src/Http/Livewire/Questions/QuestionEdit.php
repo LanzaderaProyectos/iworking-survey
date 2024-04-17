@@ -19,13 +19,31 @@ class QuestionEdit extends Component
         'en' => ''
     ];
     public $typeAnwers = [
-        'text' => 'Texto',
-        'radio' => 'Opción',
+        'radio'         => 'Si/No/NP',
+        'multiselect'   => 'Selección múltiple',
+        'uniqueselect'  => 'Selección única',
+        'date'          => 'Fecha',
+        'hour'          => 'Hora',
+        'text'          => 'Texto',
+        'longText'      => 'Texto largo',
+        'number'        => 'Númerico',
+        'currency'      => 'Moneda'
         // 'number' => 'Numero'
     ];
     public $optionES = [];
     public $optionEN = [];
     public $typeSelected;
+    public $surveyType;
+    public $newOptionES = "";
+    public $newOptionEN = "";
+    public $customOptions = false;
+    public $updateOption = null;
+    public $questionTypes = [
+        "general" => "General",
+        "pharmaciesSale" => "Venta Farmacias",
+        "medicalPrescription" => "Prescripción Médica",
+        "training" => "Formación",
+    ];
 
 
     protected $rules = [
@@ -33,6 +51,7 @@ class QuestionEdit extends Component
         'questionName.es'   => 'required',
         'questionName.en'   => 'nullable',
         'typeSelected'      => 'required',
+        'questionSelected'  => 'required',
     ];
 
 
@@ -40,32 +59,51 @@ class QuestionEdit extends Component
     {
         if ($questionId) {
             $this->question = Question::find($questionId);
-            if ($this->question->survey_id != null || $this->question->section_id != null)  {
+            if ($this->question->survey_id != null || $this->question->section_id != null) {
                 abort(403, 'This question is already assigned to a survey or section');
-            }else{
+            } else {
                 $this->questionName = [
                     'es' => $this->question->getTranslation('content', 'es'),
                     'en' => $this->question->getTranslation('content', 'en')
                 ];
                 $this->typeSelected = $this->question->type;
+                $this->surveyType = $this->question->survey_type;
+                switch ($this->typeSelected) {
+                    case "radio":
+                        $this->optionES = $this->question->getTranslation('options', 'es');
+                        $this->optionEN = $this->question->getTranslation('options', 'en');
+                        $this->customOptions = false;
+                        break;
+                    case "multiselect":
+                        $this->optionES = $this->question->getTranslation('options', 'es');
+                        $this->optionEN = $this->question->getTranslation('options', 'en');
+                        $this->customOptions = true;
+                        break;
+                    case "uniqueselect":
+                        $this->optionES = $this->question->getTranslation('options', 'es');
+                        $this->optionEN = $this->question->getTranslation('options', 'en');
+                        $this->customOptions = true;
+                        break;
+                    default:
+                        $this->customOptions = false;
+                        break;
+                }
             }
         } else {
             $this->question = new Question();
         }
-
     }
 
     public function render()
     {
-        return view('survey::livewire.questions.question-edit', [
-        ]);
+        return view('survey::livewire.questions.question-edit', []);
     }
 
     public function save()
     {
         $this->validate();
-
         $questionService    = new QuestionService();
+        $this->question->survey_type = $this->surveyType;
         $result             = $questionService->saveQuestion(
             question: $this->question,
             surveyId: null,
@@ -74,9 +112,76 @@ class QuestionEdit extends Component
             optionES: $this->optionES,
             optionEN: $this->optionEN
         );
-
         $this->question->save();
         return redirect()->route('questions.list')->with('status', 'Pregunta guardada con éxito');
+    }
+
+    public function updatedTypeSelected()
+    {
+        switch ($this->typeSelected) {
+            case "radio":
+                $this->optionES = [
+                    'SI',
+                    'NO',
+                    'NP'
+                ];
+                $this->optionEN = [
+                    'YES',
+                    'NO',
+                    'NA'
+                ];
+                $this->customOptions = false;
+                break;
+            case "multiselect":
+                $this->optionES = [];
+                $this->optionEN = [];
+                $this->customOptions = true;
+                break;
+            case "uniqueselect":
+                $this->optionES = [];
+                $this->optionEN = [];
+                $this->customOptions = true;
+                break;
+            default:
+                $this->optionES = [];
+                $this->optionEN = [];
+                $this->customOptions = false;
+                break;
+        }
+    }
+
+    public function addOption()
+    {
+        $this->validate([
+            'newOptionES' => 'required',
+            'newOptionEN' => 'required',
+        ]);
+
+        if ($this->updateOption != null) {
+            $this->optionES[$this->updateOption] = $this->newOptionES;
+            $this->optionEN[$this->updateOption] = $this->newOptionEN;
+        } else {
+            $this->optionES[] = $this->newOptionES;
+            $this->optionEN[] = $this->newOptionEN;
+        }
+
+        $this->newOptionES = "";
+        $this->newOptionEN = "";
+        $this->updateOption = null;
+    }
+
+
+    public function deleteOption($position)
+    {
+        unset($this->optionES[$position]);
+        unset($this->optionEN[$position]);
+    }
+
+    public function editOption($id)
+    {
+        $this->newOptionES = $this->optionES[$id];
+        $this->newOptionEN = $this->optionEN[$id];
+        $this->updateOption = $id;
     }
 
     public function cancel()

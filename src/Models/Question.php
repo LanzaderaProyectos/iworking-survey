@@ -3,10 +3,10 @@
 namespace MattDaneshvar\Survey\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use MattDaneshvar\Survey\Models\Section;
 use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Answer;
 use MattDaneshvar\Survey\Contracts\Survey;
-use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Question as QuestionContract;
 
 class Question extends Model implements QuestionContract
@@ -39,11 +39,12 @@ class Question extends Model implements QuestionContract
 
         //Ensure the question's survey is the same as the section it belongs to.
         static::creating(function (self $question) {
-            $question->load('section');
+            //Section on pivot table
+            // $question->load('section');
 
-            if ($question->section) {
-                $question->survey_id = $question->section->survey_id;
-            }
+            // if ($question->section) {
+            //     $question->survey_id = $question->section->survey_id;
+            // }
         });
 
         static::deleting(function (self $question) {
@@ -72,7 +73,7 @@ class Question extends Model implements QuestionContract
      */
     public function survey()
     {
-        return $this->belongsTo(get_class(app()->make(Survey::class)));
+        return $this->hasManyThrough(get_class(app()->make(Survey::class)),get_class(app()->make(SurveyQuestion::class)));
     }
 
     /**
@@ -82,7 +83,7 @@ class Question extends Model implements QuestionContract
      */
     public function section()
     {
-        return $this->belongsTo(get_class(app()->make(Section::class)));
+        return $this->hasManyThrough(Section::class,SurveyQuestion::class,'question_id','id','id','section_id');
     }
 
     /**
@@ -92,7 +93,7 @@ class Question extends Model implements QuestionContract
      */
     public function answers()
     {
-        return $this->hasMany(get_class(app()->make(Answer::class)));
+        return $this->hasManyThrough(Answer::class,SurveyQuestion::class);
     }
 
     public function isMain()

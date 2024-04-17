@@ -12,14 +12,13 @@ class QuestionService
     {
 
         try {
-            if ($questionType == 'radio') {
+            if ($questionType == 'radio' || $questionType == "multiselect" || $questionType == "uniqueselect") {
                 $question->setTranslation('options', 'es', $optionES)
-                    ->setTranslation('options', 'en', $optionEN);;
-                $question->type = 'radio';
-            } else {
-                $question->type = 'text';
+                    ->setTranslation('options', 'en', $optionEN);
             }
-            $question->survey_id = $surveyId;
+            $question->type = $questionType;
+            // TODO: use survey_questions table
+            // $question->survey_id = $surveyId;
             $question
                 ->setTranslation('content', 'es', $questionName['es'])
                 ->setTranslation('content', 'en', $questionName['en']);
@@ -55,11 +54,10 @@ class QuestionService
         if ($isOriginal) {
             if ($sectionId) {
                 $copyQuestion['section_id'] = $sectionId;
-            }else{
+            } else {
                 return;
             }
-            
-        }else{
+        } else {
             // Si la pregunta a crear es una sub pregunta
             $copyQuestion['parent_id']      = $selectedParentQuestionId;
             $copyQuestion['condition']      = $parentQuestionRadio;

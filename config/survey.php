@@ -16,6 +16,7 @@ return [
             'questions' => 'questions',
             'entries' => 'entries',
             'answers' => 'answers',
+            'survey_questions' => 'survey_questions',
         ],
     ],
 ];

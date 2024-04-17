@@ -40,7 +40,9 @@ class Survey extends Model implements SurveyContract
         'author',
         'status',
         'expiration',
-        'survey_number'
+        'survey_number',
+        'type',
+        'project_type'
     ];
 
     /**
@@ -83,7 +85,7 @@ class Survey extends Model implements SurveyContract
      */
     public function questions()
     {
-        return $this->hasMany(get_class(app()->make(Question::class)))->orderBy('section_id');
+        return $this->hasManyThrough(get_class(app()->make(Question::class)),get_class(app()->make(SurveyQuestion::class)))->orderBy('section_id');
     }
 
     /**
@@ -93,7 +95,7 @@ class Survey extends Model implements SurveyContract
      */
     public function mainQuestions()
     {
-        return $this->hasMany(get_class(app()->make(Question::class)))->whereNull('parent_id')->orderBy('section_id');
+        return $this->hasManyThrough(get_class(app()->make(Question::class)),get_class(app()->make(SurveyQuestion::class)))->whereNull('survey_questions.parent_id')->orderBy('section_id');
     }
 
       /**
@@ -103,7 +105,7 @@ class Survey extends Model implements SurveyContract
      */
     public function subQuestions()
     {
-        return $this->hasMany(get_class(app()->make(Question::class)))->whereNotNull('parent_id')->orderBy('section_id');
+        return $this->hasManyThrough(get_class(app()->make(Question::class)),get_class(app()->make(SurveyQuestion::class)))->whereNotNull('survey_questions.parent_id')->orderBy('section_id');
     }
 
     /**

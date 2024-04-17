@@ -124,7 +124,7 @@ class Table extends Component
 
         return (new FastExcel($surveys->get()))->export($path, function ($survey) {
             return [
-                'Nº Encuesta' => $survey->survey_number ?? '',
+                'Nº Formulario' => $survey->survey_number ?? '',
                 'Nombre' => $survey->name ?? '',
                 'Autor' => $survey->author ?? '',
                 'Estado' => __('survey::status.survey.' . $survey->status) ?? '',
@@ -152,9 +152,9 @@ class Table extends Component
         $path = tempnam(sys_get_temp_dir(), "FOO");
         $this->exportToExcel($path);
 
-        return response()->download($path, 'encuestas' . '.xlsx', [
+        return response()->download($path, 'Formularios' . '.xlsx', [
             'Content-Type' => 'application/vnd.ms-excel',
-            'Content-Disposition' => 'inline; filename="' . 'encuestas' . '.xlsx"'
+            'Content-Disposition' => 'inline; filename="' . 'Formularios' . '.xlsx"'
         ]);
     }
 

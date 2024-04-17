@@ -46,18 +46,9 @@ class SurveyServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/survey.php', 'survey');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'survey');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'survey');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         $viewFactory->composer('survey::standard', SurveyComposer::class);
-
-        $this->publishMigrations([
-            'create_surveys_table',
-            'create_questions_table',
-            'create_entries_table',
-            'create_answers_table',
-            'create_sections_table',
-            'create_surveyeds_table',
-            'questions_parent_id_field',
-        ]);
 
         $this->bootLivewireComponents();
     }

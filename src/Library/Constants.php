@@ -5,11 +5,11 @@ namespace MattDaneshvar\Survey\Library;
 class Constants
 {
     // ORDER STATUS
-    const SURVEY_STATUS_DRAFT                           = 0; // Borrador de encuesta
-    const SURVEY_STATUS_PROCESS                         = 1; // Encuesta en proceso
-    const SURVEY_STATUS_COMPLETED                       = 2; // Encuesta completada
-    const SURVEY_STATUS_SEND_ERROR                      = 99; // Encuesta error
-    const SURVEY_STATUS_CLOSED                          = 98; // Cerrar encuesta
+    const SURVEY_STATUS_DRAFT                           = 0; // Borrador de Formulario
+    const SURVEY_STATUS_PROCESS                         = 1; // Formulario en proceso
+    const SURVEY_STATUS_COMPLETED                       = 2; // Formulario completado
+    const SURVEY_STATUS_SEND_ERROR                      = 99; // Formulario error
+    const SURVEY_STATUS_CLOSED                          = 98; // Cerrar Formulario
 
 
     const ENTRY_STATUS_PENDING                          = 1; // Entrada pendiente

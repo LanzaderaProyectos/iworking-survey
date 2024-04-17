@@ -36,7 +36,7 @@ class ReminderNotification extends Mailable
             $viewNotification = 'survey::emails.reminders.reminder-en';
         } else {
             setlocale(LC_ALL, 'spanish');
-            $subject = 'Recordatorio encuesta B-Corp - Laboratorios Rubio';
+            $subject = 'Recordatorio Formulario B-Corp - Laboratorios Rubio';
             $viewNotification = 'survey::emails.reminders.reminder-es';
         }
 

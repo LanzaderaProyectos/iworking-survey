@@ -1,8 +1,39 @@
 <div>
+    @if(empty($survey->type))
+    <div class="row mt-2">
+        <div class="col-12">
+                <label class="form-control-label" for="input-key_value">Seleccione el tipo de formulario: </label>
+                <div>
+                    <button type="button" wire:click="$set('survey.type','pharmaciesSale')"
+                        wire:loading.attr="disabled"
+                        class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
+                        Formulario de Venta Farmacias
+                    </button>
+                    <button type="button" wire:click="$set('survey.type','medicalPrescription')"
+                        wire:loading.attr="disabled"
+                        class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
+                        Formulario de Prescripción Médica
+                    </button>
+                    <button type="button" wire:click="$set('survey.type','training')"
+                        wire:loading.attr="disabled"
+                        class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
+                        Formulario de Formación
+                    </button>
+                </div>
+        </div>
+    </div>
+    @else
     <div>
         <div class="row mt-2">
             <div class="col-12 col-md-6 py-2">
-                <h4>Encuesta {{ $this->survey->survey_number ?? ''}}</h4>
+                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de 
+                @if($survey->type == 'pharmaciesSale')
+                Venta Farmacias
+                @elseif($survey->type == 'medicalPrescription')
+                Prescripción Médica
+                @elseif($survey->type == 'training')
+                Formación
+                @endif</h4>
             </div>
         </div>
         <div class="row">
@@ -140,7 +171,7 @@
                         @if(is_null($this->survey->id))
                         <button type="button" wire:click="saveSurvey"
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
-                            Crear encuesta
+                            Crear formulario
                         </button>
                         @else
                         <button type="button" wire:click="saveSurvey"
@@ -171,7 +202,7 @@
                         <button type="button" wire:click="closeSurvey"
                             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
                             class="btn btn-dark d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
-                            Cerrar encuesta
+                            Cerrar formulario
                         </button>
                     </div>
                 </div>
@@ -179,4 +210,5 @@
         </div>
         @endif
     </div>
+    @endif
 </div>

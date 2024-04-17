@@ -7,7 +7,7 @@ use MattDaneshvar\Survey\Contracts\Answer as AnswerContract;
 use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Contracts\Question;
 
-class Answer extends Model implements AnswerContract
+class SurveyQuestion extends Model 
 {
     /**
      * Answer constructor.
@@ -17,7 +17,7 @@ class Answer extends Model implements AnswerContract
     public function __construct(array $attributes = [])
     {
         if (!isset($this->table)) {
-            $this->setTable(config('survey.database.tables.answers'));
+            $this->setTable(config('survey.database.tables.survey_questions'));
         }
 
         parent::__construct($attributes);
@@ -29,11 +29,13 @@ class Answer extends Model implements AnswerContract
      * @var array
      */
     protected $fillable = [
-        'value',
         'question_id',
-        'entry_id',
-        'comments',
-        'score'
+        'survey_id',
+        'position',
+        'parent_id',
+        'section_id',
+        'condition',
+        'mandatory'
     ];
 
     /**
@@ -41,9 +43,9 @@ class Answer extends Model implements AnswerContract
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function entry()
+    public function survey()
     {
-        return $this->belongsTo(get_class(app()->make(Entry::class)));
+        return $this->belongsTo(get_class(app()->make(Survey::class)));
     }
 
     /**
@@ -53,6 +55,26 @@ class Answer extends Model implements AnswerContract
      */
     public function question()
     {
-        return $this->hasOneThrough(get_class(app()->make(Question::class)), get_class(app()->make(SurveyQuestion::class)));
+        return $this->belongsTo(get_class(app()->make(Question::class)));
+    }
+
+    /**
+     * The entry the answer belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function section()
+    {
+        return $this->belongsTo(get_class(app()->make(Section::class)));
+    }
+
+    /**
+     * The entry the answer belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function parent()
+    {
+        return $this->belongsTo(get_class(app()->make(SurveyQuestion::class)));
     }
 }

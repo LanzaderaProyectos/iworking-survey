@@ -45,13 +45,27 @@ class CreateSurvey extends Component
     public $newSurvey       = true;
     public $draft;
     public $typeAnwers = [
+        'radio' => 'Si/No/NP',
+        'multiselect' => 'Selección múltiple',
+        'uniqueselect' => 'Selección única',
+        'date' => 'Fecha',
+        'hour' => 'Hora',
         'text' => 'Texto',
-        'radio' => 'Opción',
+        'longText' => 'Texto largo',
+        'number' => 'Númerico',
+        'currency' => 'Moneda',
         // 'number' => 'Numero'
     ];
     public $subTypeAnwers = [
+        'radio' => 'Si/No/NP',
+        'multiselect' => 'Selección múltiple',
+        'uniqueselect' => 'Selección única',
+        'date' => 'Fecha',
+        'hour' => 'Hora',
         'text' => 'Texto',
-        'radio' => 'Opción',
+        'longText' => 'Texto largo',
+        'number' => 'Númerico',
+        'currency' => 'Moneda',
         // 'number' => 'Numero'
     ];
     public $editModeQuestion    = false;
@@ -59,6 +73,10 @@ class CreateSurvey extends Component
     public $formEdit;
     public $optionES = [];
     public $optionEN = [];
+    public $newOptionES = "";
+    public $newOptionEN = "";
+    public $customOptions = false;
+    public $updateOption = null;
     public $defaultQuestions;
 
     public $selectedParentQuestionId;
@@ -71,6 +89,8 @@ class CreateSurvey extends Component
         //Survey
         'survey.expiration'     => 'required',
         'survey.comments'       => 'nullable',
+        'survey.type'           => 'nullable',
+        'survey.project_type'   => 'nullable',
         'surveyName.es'         => 'required',
         'surveyName.en'         => 'nullable',
         //Sections
@@ -131,6 +151,44 @@ class CreateSurvey extends Component
         return view('survey::livewire.create-survey');
     }
 
+    
+
+    public function addOption()
+    {
+        $this->validate([
+            'newOptionES' => 'required',
+            'newOptionEN' => 'required',
+        ]);
+
+        if($this->updateOption != null)
+        {
+            $this->optionES[$this->updateOption] = $this->newOptionES;
+            $this->optionEN[$this->updateOption] = $this->newOptionEN;
+        }
+        else
+        {
+            $this->optionES[] = $this->newOptionES;
+            $this->optionEN[] = $this->newOptionEN;
+        }
+
+        $this->newOptionES = "";
+        $this->newOptionEN = "";
+        $this->updateOption = null;
+    }
+
+    public function deleteOption($position) {
+        unset($this->optionES[$position]);
+        unset($this->optionEN[$position]);
+    }
+
+    public function editOption($id)
+    {
+        $this->newOptionES = $this->optionES[$id];
+        $this->newOptionEN = $this->optionEN[$id];
+        $this->updateOption = $id;
+
+    }
+
     public function saveSurvey()
     {
         $this->validate();
@@ -140,14 +198,14 @@ class CreateSurvey extends Component
             authorId: auth()->user()->id,
             surveyName: $this->surveyName,
             surveyStatus: Constants::SURVEY_STATUS_DRAFT,
-            auditText: 'Encuesta creada',
+            auditText: 'Formulario creado',
             newSurvey: $this->newSurvey
         );
 
         if ($result) {
 
             if ($this->newSurvey) {
-                session()->flash('draftSurveyCreated', 'Encuesta creada');
+                session()->flash('draftSurveyCreated', 'Formulario creado');
                 return redirect(route('survey.edit', [
                     'surveyId' => $this->survey->id
                 ]));
@@ -164,7 +222,7 @@ class CreateSurvey extends Component
         $this->survey->questions()->delete();
         $this->survey->sections()->delete();
         $this->survey->delete();
-        session()->flash('surveyDeleted', 'Encuesta eliminada');
+        session()->flash('surveyDeleted', 'Formulario eliminado');
 
         return redirect(route('survey.list'));
     }
@@ -182,14 +240,14 @@ class CreateSurvey extends Component
             users: $this->users,
             survey: $this->survey,
             audit: true,
-            auditText: 'Encuesta enviada'
+            auditText: 'Formulario enviado'
         );
 
         if ($result) {
-            session()->flash('surveySended',  'Encuesta enviada');
+            session()->flash('surveySended',  'Formulario enviado');
             return redirect(route('survey.list'));
         } else {
-            session()->flash('surveySended',  'Error al enviar la encuesta');
+            session()->flash('surveySended',  'Error al enviar el Formulario');
         }
     }
 
@@ -251,6 +309,10 @@ class CreateSurvey extends Component
             $this->resetValues();
             session()->flash('questionSaved', 'Pregunta guardada');
             $this->survey->refresh();
+            $this->optionEN = [];
+            $this->optionES = [];
+            $this->customOptions = false;
+            $this->updateOption = null;
         } else {
             session()->flash('questionSaved', 'Error al guardar la pregunta');
         }
@@ -372,6 +434,12 @@ class CreateSurvey extends Component
             $this->questionName['es']       = $this->question->getTranslation('content', 'es');
             $this->questionName['en']       = $this->question->getTranslation('content', 'en');
             $this->editModeQuestion         = true;
+            if($this->typeSelected == "multiple" ||$this->typeSelected == "unicSelection")
+            {
+                $this->customOptions = true;
+                $this->optionES = $this->question->getTranslation('options', 'es');
+                $this->optionEN = $this->question->getTranslation('options', 'en');
+            }
         } else {
             $this->subQuestion                 = Question::find($id);
             $this->subTypeSelected             = $this->subQuestion->type;
@@ -406,11 +474,45 @@ class CreateSurvey extends Component
         $result         = $surveyService->closeSurvey($this->survey, Constants::SURVEY_STATUS_CLOSED);
 
         if ($result) {
-            session()->flash('surveySended',  'Encuesta cerrada');
+            session()->flash('surveySended',  'Formulario cerrado');
             return redirect(route('survey.list'));
         } else {
-            session()->flash('surveySended',  'Error al cerrar la encuesta');
+            session()->flash('surveySended',  'Error al cerrar el formulario');
         }
+    }
+    public function updatedTypeSelected()
+    {
+            switch($this->typeSelected) 
+            {
+                case "radio":
+                    $this->optionES = [
+                        'SI',
+                        'NO',
+                        'NP'
+                    ];
+                    $this->optionEN = [
+                        'YES',
+                        'NO',
+                        'NA'
+                    ];
+                    $this->customOptions = false;
+                    break;
+                case "multiselect":
+                    $this->optionES = [];
+                    $this->optionEN = [];
+                    $this->customOptions = true;
+                    break;
+                case "uniqueselect":
+                    $this->optionES = [];
+                    $this->optionEN = [];
+                    $this->customOptions = true;
+                    break;
+                default:
+                    $this->optionES = [];
+                    $this->optionEN = [];
+                    $this->customOptions = false;
+                    break;
+            }
     }
 
     public function updatedSurveyExpiration()
@@ -433,7 +535,7 @@ class CreateSurvey extends Component
             if ($this->survey->id) {
                 $totalRemindersSent = $this->sendReminder();
             }
-            session()->flash('survey-expiration-updated', 'Se ha actualizado correctamente la fecha de expiración de la encuesta. <br> Se enviaron ' . $totalRemindersSent . ' recordatorios por mail.');
+            session()->flash('survey-expiration-updated', 'Se ha actualizado correctamente la fecha de expiración del formulario. <br> Se enviaron ' . $totalRemindersSent . ' recordatorios por mail.');
         }
     }
 

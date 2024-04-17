@@ -1,7 +1,7 @@
 @extends(config('iworking-survey.iworking-layout') . 'layouts.app', [
-'pageTitle' => 'Listado de encuestas',
+'pageTitle' => 'Listado de formularios',
 'pageBreadcrumbs' => [
-'Encuestas',
+'Formularios',
 'Listado',
 ]
 ])
@@ -14,7 +14,7 @@
                 <i class="kt-font-brand fas fa-shopping-cart fa-lg"></i>
             </span>
             <h3 class="kt-portlet__head-title text-uppercase">
-                Listado de encuestas
+                Listado de formularios
             </h3>
         </div>
     </div>
@@ -24,7 +24,7 @@
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link active" id="order-orders-tab" data-toggle="tab" href="#order-orders"
-                            role="tab" aria-controls="order-orders" aria-selected="true">Encuestas</a>
+                            role="tab" aria-controls="order-orders" aria-selected="true">Formularios</a>
                     </li>
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link" id="order-draft-tab" data-toggle="tab" href="#order-draft" role="tab"

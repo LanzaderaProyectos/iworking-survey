@@ -1,7 +1,11 @@
-@component('survey::questions.base', compact('question'))
+@component('survey::questions.base', [
+    'question' => $question,
+    'numberQuestion' => $numberQuestion
+    ])
     @foreach ($question->options as $option)
         <div class="custom-control custom-checkbox">
             <input type="checkbox"
+                   wire:model="answers.{{$question->id}}.value" 
                    name="{{ $question->key }}[]"
                    id="{{ $question->key . '-' . Str::slug($option) }}"
                    value="{{ $option }}"

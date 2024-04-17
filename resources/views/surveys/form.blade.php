@@ -1,7 +1,7 @@
 @extends(config('iworking.iworking-layout') . 'layouts.app', [
-'pageTitle' => (isset($order->id)) ? 'Editar: ' . $order->order_number : 'Crear encuesta',
+'pageTitle' => (isset($order->id)) ? 'Editar: ' . $order->order_number : 'Crear formulario',
 'pageBreadcrumbs' => [
-'Encuestas',
+'Formularios',
 ]
 ])
 
@@ -13,7 +13,7 @@
                 <i class="kt-font-brand fas fa-shopping-cart fa-lg"></i>
             </span>
             <h3 class="kt-portlet__head-title text-uppercase">
-                {{ (isset($order->id)) ? 'Editar encuesta ' . $order->order_number : 'Crear encuesta' }}
+                {{ (isset($order->id)) ? 'Editar formulario ' . $order->order_number : 'Crear formulario' }}
             </h3>
         </div>
         <div class="kt-portlet__head-toolbar">

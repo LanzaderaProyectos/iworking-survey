@@ -13,7 +13,7 @@
                 <i class="kt-font-brand flaticon2-line-chart"></i>
             </span>
             <h3 class="kt-portlet__head-title text-uppercase">
-                Encuestas
+                Formularios
             </h3>
         </div>
         <div class="kt-portlet__head-toolbar">
@@ -22,7 +22,7 @@
                     <a href="{{ route('survey.new') }}" class="btn btn-primary btn-sm btn-icon-sm" data-toggle="tooltip"
                         data-placement="top" title="Create">
                         <i class="fas fa-plus"></i>
-                        Nueva encuesta
+                        Nuevo formulario
                     </a>
                 </div>
             </div>
@@ -90,10 +90,10 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
-                        <label for="vatNumber" class="font-weight-bold">Nº Encuesta:</label>
+                        <label for="vatNumber" class="font-weight-bold">Nº Formulario:</label>
                         <input wire:model.debounce.300ms="search.survey_number" type="search"
                             class="form-control form-control-sm" name="survey_number" id="survey_number"
-                            placeholder="Nº Encuesta">
+                            placeholder="Nº Formulario">
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="provider" class="font-weight-bold">Nombre:</label>
@@ -127,7 +127,7 @@
                         <tr class="text-uppercase">
                             <th style="width: 20px">Acciones</th>
                             <th wire:click="sortBy('survey_number')" style="cursor: pointer">
-                                Nº Encuesta
+                                Nº Formulario
                                 @include('iworking::partials._sort-icon',['field'=>'survey_number'])
                             </th>
                             <th wire:click="sortBy('name')">

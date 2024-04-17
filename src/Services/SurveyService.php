@@ -89,7 +89,7 @@ class SurveyService
             $survey->audit()->create([
                 'user_id'   => auth()->id(),
                 'status'    => $closeStatus,
-                'text'      => 'Encuesta cerrada'
+                'text'      => 'Formulario cerrado'
             ]);
             $survey->status = $closeStatus;
             $survey->save();

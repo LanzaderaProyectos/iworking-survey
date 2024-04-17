@@ -16,7 +16,7 @@ class QuestionList extends Component
     protected $paginationTheme = 'bootstrap';
     public $entries             = 10;
     public $sortDirection       = 'desc';
-    public $sortBy              = 'order';
+    public $sortBy              = 'created_at';
     public $orderLinePA     = null;
     public $search          = '';
 
@@ -55,7 +55,7 @@ class QuestionList extends Component
 
     public function render()
     {
-        $questions = Question::whereNull('survey_id')->whereNull('section_id')->orderBy($this->sortBy, $this->sortDirection);
+        $questions = Question::orderBy($this->sortBy, $this->sortDirection);
 
         if ($this->search != '') {
             $questions->where('content', 'like', '%' . $this->search . '%');
@@ -68,7 +68,7 @@ class QuestionList extends Component
 
     public function exportToExcel($path)
     {
-        $questions = Question::whereNull('survey_id')->whereNull('section_id')->orderBy($this->sortBy, $this->sortDirection);
+        $questions = Question::orderBy($this->sortBy, $this->sortDirection);
         if ($this->search != '') {
             $questions->where('content', 'like', '%' . $this->search . '%');
         }

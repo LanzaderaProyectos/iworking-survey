@@ -40,7 +40,7 @@ class SurveyCompleted extends Mailable
             $subject = 'SURVEY ' . $this->entry->survey->getTranslation('name', 'en');
             $viewNotification = 'survey::emails.survey-completed-message-en';
         } else {
-            $subject = 'ENCUESTA ' . $this->entry->survey->getTranslation('name', 'es');
+            $subject = 'Formulario ' . $this->entry->survey->getTranslation('name', 'es');
             $viewNotification = 'survey::emails.survey-completed-message-es';
         }
         return $this->subject($subject)

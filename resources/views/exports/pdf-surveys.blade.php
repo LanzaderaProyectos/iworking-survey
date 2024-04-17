@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <th>
-                Nº Encuesta
+                Nº Formulario
             </th>
             <th>
                 Nombre

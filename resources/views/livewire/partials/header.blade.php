@@ -51,20 +51,47 @@
         </div>
     </div>
     <div class="col-12 col-md-6">
-        <label class="form-control-label" for="survey.expiration">Fecha expiración*:</label>
-        <input {{ $this->formEdit || ($this->survey->status ==
-        MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
-        auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date"
-        wire:model.lazy="survey.expiration"
-        class="form-control" min="{{date("Y-m-d")}}">
-        @error('survey.expiration') <span class="text-danger">{{ $message }}</span> @enderror
-        @if (session()->has('survey-expiration-update'))
-        <button class="mt-2 btn btn-warning btn-sm float-right"
-            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
-            wire:click="updateExpirationSurvey">
-            Guardar y enviar recordatorio
-        </button>
-        @endif
+        <div class="row">
+            <div class="col-12 mt-1">
+                <label class="form-control-label" for="survey.expiration">Fecha expiración*:</label>
+                <input {{ $this->formEdit || ($this->survey->status ==
+                MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
+                auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date"
+                wire:model.lazy="survey.expiration"
+                class="form-control mt-n2" min="{{date("Y-m-d")}}">
+                @error('survey.expiration') <span class="text-danger">{{ $message }}</span> @enderror
+                @if (session()->has('survey-expiration-update'))
+                <button class="mt-2 btn btn-warning btn-sm float-right"
+                    onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+                    wire:click="updateExpirationSurvey">
+                    Guardar y enviar recordatorio
+                </button>
+                @endif
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-12">
+                <label class="form-control-label" for="survey.expiration">Tipo de proyecto*:</label>
+                <select {{ $this->formEdit || ($this->survey->status ==
+                    MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
+                    auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}}
+                    wire:model.lazy="survey.project_type"
+                    class="form-control mt-n2">
+                    <option value="">Seleccione una opción</option>
+                    <option value="formation">Proyecto de Formación</option>
+                    <option value="pharmacy_sale">Proyecto de Venta Farmacia</option>
+                    <option value="sale_prescription">Proyecto de Venta Prescripción</option>
+                </select>
+                @error('survey.expiration') <span class="text-danger">{{ $message }}</span> @enderror
+                @if (session()->has('survey-expiration-update'))
+                <button class="mt-2 btn btn-warning btn-sm float-right"
+                    onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+                    wire:click="updateExpirationSurvey">
+                    Guardar y enviar recordatorio
+                </button>
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 <div class="row">
