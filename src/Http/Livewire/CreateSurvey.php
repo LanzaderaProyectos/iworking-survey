@@ -152,9 +152,9 @@ class CreateSurvey extends Component
         $this->formEdit         = !Route::is('survey.show');
         $this->initComponent();
         $this->defaultQuestions = (new QuestionService())->getDefaultQuestions($this->survey->type ?? '');
-        $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name','asc')->get();
-        $userTypes = config('iworking.user-type')::select('*')->where('type','like','%-people')->orderBy('type','asc')->pluck('id')->toArray();
-        $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name','asc')->whereIn('type', $userTypes)->get();
+        $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name', 'asc')->get();
+        $userTypes = config('iworking.user-type')::select('*')->where('type', 'like', '%-people')->orderBy('type', 'asc')->pluck('id')->toArray();
+        $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name', 'asc')->whereIn('type', $userTypes)->get();
     }
 
     public function initComponent()
@@ -366,7 +366,7 @@ class CreateSurvey extends Component
             'orderSubQuestion'        => 'required|numeric',
         ]);
         if (empty($this->subSurveyQuestion->id)) {
-            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id',$this->selectedDefaultQuestionSub)->exists()) {
+            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id', $this->selectedDefaultQuestionSub)->exists()) {
                 $surveyQuestionParent = SurveyQuestion::find($this->selectedParentQuestionId);
                 $this->subSurveyQuestion->survey_id = $this->survey->id;
                 $this->subSurveyQuestion->question_id = $this->subQuestion->id;
@@ -384,7 +384,7 @@ class CreateSurvey extends Component
                 return;
             }
         } else {
-            $this->subSurveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id',$this->selectedParentQuestionId)->first();
+            $this->subSurveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id', $this->selectedParentQuestionId)->first();
             $this->subSurveyQuestion->update(['position' => $this->orderSubQuestion]);
             $this->subSurveyQuestion->update(['mandatory' => $this->requiredSubQuestion]);
         }
@@ -396,7 +396,7 @@ class CreateSurvey extends Component
         $this->optionES = [];
         $this->customOptions = false;
         $this->updateOption = null;
-        
+
         $this->subQuestion = new Question();
     }
 
@@ -416,8 +416,13 @@ class CreateSurvey extends Component
                 $this->typeSelected                 = $this->question->type;
                 if ($this->typeSelected == "multiselect" || $this->typeSelected == "uniqueselect") {
                     $this->customOptions = true;
-                    $this->optionES = $this->question->getTranslation('options', 'es');
-                    $this->optionEN = $this->question->getTranslation('options', 'en');
+                    if (!empty(json_decode($this->question->options ?? '', true) ?? [])) {
+                        $this->optionES = $this->question->getTranslation('options', 'es');
+                        $this->optionEN = $this->question->getTranslation('options', 'en');
+                    } else {
+                        $this->optionES = [];
+                        $this->optionEN = [];
+                    }
                 }
             } else {
                 session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
@@ -436,7 +441,7 @@ class CreateSurvey extends Component
             ], [
                 'selectedDefaultQuestionSub.required' => 'Seleccione una pregunta por defecto',
             ]);
-            if (!SurveyQuestion::where('id',$this->selectedDefaultQuestionSub)->where('parent_id',$this->selectedParentQuestionId)->exists()) {
+            if (!SurveyQuestion::where('id', $this->selectedDefaultQuestionSub)->where('parent_id', $this->selectedParentQuestionId)->exists()) {
                 $this->subQuestion                     = Question::find($this->selectedDefaultQuestionSub);
                 $this->subQuestionName['es']           = $this->subQuestion->getTranslation('content', 'es');
                 $this->subQuestionName['en']           = $this->subQuestion->getTranslation('content', 'en');
@@ -574,7 +579,7 @@ class CreateSurvey extends Component
     {
         $surveyQuestion = SurveyQuestion::find($this->selectedParentQuestionId);
         $this->selectedParentQuestion = $surveyQuestion->question;
-        if($this->selectedParentQuestion->type == "multiselect" || $this->selectedParentQuestion->type == "uniqueselect") {
+        if ($this->selectedParentQuestion->type == "multiselect" || $this->selectedParentQuestion->type == "uniqueselect") {
             $this->parentQuestionRadio = "000";
         }
     }
@@ -582,14 +587,11 @@ class CreateSurvey extends Component
     public function updatedSelectedProfessionalId()
     {
         $this->selectedProfessional = config('iworking.user-model')::find($this->selectedProfessionalId);
-        if($this->selectedProfessional)
-        {
-            $this->professionalSelectOptions["jobTitles"] = config('iworking.job-titles')::select('*')->where('user_type_id',$this->selectedProfessional->type)->orderBy('name','asc')->get();
-        }
-        else{
+        if ($this->selectedProfessional) {
+            $this->professionalSelectOptions["jobTitles"] = config('iworking.job-titles')::select('*')->where('user_type_id', $this->selectedProfessional->type)->orderBy('name', 'asc')->get();
+        } else {
             $this->professionalSelectOptions["jobTitles"] = [];
         }
-        
     }
 
     public function updateExpirationSurvey()
