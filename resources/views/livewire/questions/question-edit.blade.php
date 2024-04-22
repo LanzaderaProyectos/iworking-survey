@@ -10,9 +10,23 @@
     <div class="kt-portlet__body">
         <div class="row">
             <div class="col-12">
-                <h5>
-                    Preguntas
-                </h5>
+                <div class="row">
+                    <div class="col-10">
+                        <h5>
+                            Preguntas
+                        </h5>
+                    </div>
+                    <div class="col-2">
+                        <span class="kt-switch kt-switch--sm kt-switch--brand">
+                            <label>
+                                <label class="h5" style="margin-top: 5px;">@if($question->disabled) Activar Pregunta @else Desactivar Pregunta @endif</label>
+                                <input wire:model.live="question.disabled" name="toggle_rgpd" type="checkbox"
+                                    class="form-control {{ $errors->has('contract.is_active') ? ' is-invalid' : '' }}">
+                                <span style="margin-left: 5px"></span>
+                            </label>
+                        </span>
+                    </div>
+                </div>
             </div>
             <div class="col-md-12 mt-3">
                 <div class="form-group">

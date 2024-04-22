@@ -29,7 +29,8 @@
                     <option value="">Selecciona una pregunta por defecto</option>
                     @foreach ($this->defaultQuestions as $question)
                     <option value="{{ $question->id }}">
-                        {{ $question->getTranslation('content', 'es') }} - {{ $question->type }}
+                        {{ $question->code }} - {{ $question->getTranslation('content', 'es') }} - {{
+                        $typeAnwers[$question->type] }}
                     </option>
                     @endforeach
                 </select>
@@ -179,6 +180,7 @@
                 @foreach ($this->survey->surveyQuestionsMain as $item)
                 <tr>
                     <td nowrap>
+                        @if($survey->status !== 0)
                         <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ? '' :
                             'disabled' }}
                             wire:click="editQuestion('{{ $item->id }}')" type="button"
@@ -193,6 +195,20 @@
                             class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
+                        @else
+                            @if($this->isActive($item->id))
+                            <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
+                                wire:click="activeQuestion('{{ $item->id }}')"
+                                class="btn btn-xl btn-clean btn-icon btn-icon-xl"  style="width:100%; height:100%;" title="Desactivar">
+                                <i class="fas fa-toggle-on fa-xl" aria-hidden="true"></i>
+                            @else
+                            <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
+                                wire:click="activeQuestion('{{ $item->id }}')"
+                                class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%; height:100%;" title="Activar">
+                                <i class="fas fa-toggle-off fa-xl" aria-hidden="true"></i>
+                            @endif
+                        @endif
+
                     </td>
                     <td>
                         {{ $item->section->name ?? '' }}
@@ -210,7 +226,7 @@
                         {{ $item->question->getTranslation('content', 'en') }}
                     </td>
                     <td>
-                        {{ $item->question->type }}
+                        {{ $typeAnwers[$item->question->type] ?? $item->question->type  }}
                     </td>
                 </tr>
                 @endforeach

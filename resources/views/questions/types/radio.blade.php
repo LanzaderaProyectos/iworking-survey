@@ -1,24 +1,24 @@
 @component('survey::questions.base', [
-'question' => $question,
+'surveyQuestion' => $surveyQuestion,
 'numberQuestion' => $numberQuestion
 ])
 {{-- Admin view --}}
-@php($listQuestions = $lang ? $question->getTranslation('options',$lang) : $question->options)
+@php($listQuestions = $lang ? $surveyQuestion->question->getTranslation('options',$lang) : $surveyQuestion->question->options)
 @foreach($listQuestions as $option)
 <div class="custom-control custom-radio" wire:key="{{str()->random(5)}}">
-    <input type="radio" wire:model.live="answers.{{$question->id}}.value" name="{{ $question->key }}"
-        id="{{ $question->key . '-' . Str::slug($option) }}" value="{{ $option }}" class="custom-control-input" {{
+    <input type="radio" wire:model.live="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}"
+        id="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}" value="{{ $option }}" class="custom-control-input" {{
         ($disabled ?? false) ? 'disabled' : '' }}>
-    <label class="custom-control-label" for="{{ $question->key . '-' . Str::slug($option) }}">
+    <label class="custom-control-label" for="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}">
         {{ $option }}
     </label>
 </div>
 @endforeach
-@if($question->comments)
-<input type="text" wire:model="comments.{{$question->id}}" class="form-control mt-2">
+@if($surveyQuestion->question->comments)
+<input type="text" wire:model="comments.{{$surveyQuestion->id}}" class="form-control mt-2">
 @endif
 @if($this->errorsBag ?? false)
-@if(in_array($question->id, $this->errorsBag))
+@if(in_array($surveyQuestion->id, $this->errorsBag))
 <span class="text-danger">Campo requerido</span>
 @endif
 @endif

@@ -62,6 +62,9 @@
                             <th>
                                 Fecha creación
                             </th>
+                            <th>
+                                Estado
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,6 +94,13 @@
                                 </td>
                                 <td>
                                     {{ auth()->user()->applyDateFormat($question->created_at) }}
+                                </td>
+                                <td>
+                                    @if($question->disabled)
+                                        Desactivada
+                                    @else
+                                        Activa
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

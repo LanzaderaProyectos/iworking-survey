@@ -48,6 +48,7 @@ class QuestionEdit extends Component
 
     protected $rules = [
         'question.comments' => 'nullable',
+        'question.disabled' => 'nullable',
         'questionName.es'   => 'required',
         'questionName.en'   => 'nullable',
         'typeSelected'      => 'required'
@@ -69,18 +70,42 @@ class QuestionEdit extends Component
                 $this->surveyType = $this->question->survey_type;
                 switch ($this->typeSelected) {
                     case "radio":
-                        $this->optionES = $this->question->getTranslation('options', 'es');
-                        $this->optionEN = $this->question->getTranslation('options', 'en');
+                        $this->optionES = $this->question->getTranslation('options', 'es') ?? [];
+                        $this->optionEN = $this->question->getTranslation('options', 'en') ?? [];
+                        if($this->optionES == "")
+                        {
+                            $this->optionES = [];
+                        }
+                        if($this->optionEN == "")
+                        {
+                            $this->optionEN = [];
+                        }
                         $this->customOptions = false;
                         break;
                     case "multiselect":
-                        $this->optionES = $this->question->getTranslation('options', 'es');
-                        $this->optionEN = $this->question->getTranslation('options', 'en');
+                        $this->optionES = $this->question->getTranslation('options', 'es') ?? [];
+                        $this->optionEN = $this->question->getTranslation('options', 'en') ?? [];
+                        if($this->optionES == "")
+                        {
+                            $this->optionES = [];
+                        }
+                        if($this->optionEN == "")
+                        {
+                            $this->optionEN = [];
+                        }
                         $this->customOptions = true;
                         break;
                     case "uniqueselect":
-                        $this->optionES = $this->question->getTranslation('options', 'es');
-                        $this->optionEN = $this->question->getTranslation('options', 'en');
+                        $this->optionES = $this->question->getTranslation('options', 'es') ?? [];
+                        $this->optionEN = $this->question->getTranslation('options', 'en') ?? [];
+                        if($this->optionES == "")
+                        {
+                            $this->optionES = [];
+                        }
+                        if($this->optionEN == "")
+                        {
+                            $this->optionEN = [];
+                        }
                         $this->customOptions = true;
                         break;
                     default:

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->boolean('mandatory')->nullable()->after('rules');
             $table->string('survey_type')->nullable()->after('mandatory');
             $table->string('code')->nullable()->after('survey_type');
+            $table->integer('disabled')->default(0)->after('code');
         });
     }
 

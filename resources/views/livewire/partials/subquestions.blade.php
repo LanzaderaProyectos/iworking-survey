@@ -20,11 +20,11 @@
             <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="selectedParentQuestionId"
                 class="form-control " id="numbers_format_input">
                 <option value="">Seleccione una pregunta</option>
-                @foreach ($this->survey->mainQuestions as $question)
-                @if ($question->type == 'radio' || $question->type == "multiselect" || $question->type ==
+                @foreach ($this->survey->surveyQuestionsMain as $element)
+                @if ($element->question->type == 'radio' || $element->question->type == "multiselect" || $question->type ==
                 "uniqueselect")
-                <option value="{{ $question->id }}">
-                    {{ $question->order }} - {{ $question->getTranslation('content', 'es') }}
+                <option value="{{ $element->id }}">
+                    {{ $element->section->name }} - {{ $element->position }} - {{ $element->question->getTranslation('content', 'es') }}
                 </option>
                 @endif
                 @endforeach

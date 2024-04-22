@@ -49,6 +49,27 @@ class Section extends Model implements SectionContract
      */
     protected $fillable = ['name'];
 
+
+     /**
+     * The survey questions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function surveyQuestions()
+    {
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->orderBy('section_id');
+    }
+
+    /**
+     * The survey main questions.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function surveyQuestionsMain()
+    {
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->whereNull('parent_id')->orderBy('section_id');
+    }
+
     /**
      * The questions of the section.
      *

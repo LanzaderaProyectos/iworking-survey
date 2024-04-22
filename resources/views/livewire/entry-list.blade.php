@@ -170,9 +170,13 @@
                             @lang('survey::status.entry.'.$entry->status ?? '')
                         </td>
                         <td>
+                            @if($this->totalPoints > 0)
                             {{ $entry->sum_score }} - {{ number_format($entry->sum_score * 100 /
                             $this->totalPoints , 2, ',',
                             '.') }}%
+                            @else
+                            {{ $entry->sum_score }} - 0%
+                            @endif
                         </td>
                     </tr>
                     @endforeach

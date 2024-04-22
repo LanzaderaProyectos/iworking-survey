@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('condition')->nullable();
             $table->boolean('mandatory');
             $table->integer('order');
+            $table->json('custom_options')->nullable();
+            $table->json('tag_information')->nullable();
             $table->boolean('disabled')->default(false);
             $table->uuid('disabled_by')->nullable();
             $table->timestamp('disabled_at')->nullable();

@@ -61,7 +61,7 @@ class QuestionService
         if(!empty($surveyType)){
             $returnQuery->whereIn('survey_type',['general',$surveyType]);
         }
-        return Question::whereNull('survey_id')->whereNull('section_id')->get();
+        return $returnQuery->orderBy('code','asc')->get();
     }
 
     public function copyQuestion($isOriginal, $selectedDefaultQuestion, $surveyId, $selectedParentQuestionId, $parentQuestionRadio, $originalId, $sectionId = null, $parentId = null, $optionES = null, $optionEN = null)

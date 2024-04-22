@@ -17,6 +17,7 @@ use MattDaneshvar\Survey\Services\SectionService;
 use MattDaneshvar\Survey\Services\QuestionService;
 use MattDaneshvar\Survey\Mail\ReminderNotification;
 use MattDaneshvar\Survey\Models\SurveyQuestion;
+use MattDaneshvar\Survey\Models\User;
 
 class CreateSurvey extends Component
 {
@@ -97,6 +98,12 @@ class CreateSurvey extends Component
     public $selectedDefaultQuestionSub;
     public $parentQuestionRadio;
 
+    public $selectedProfessional;
+    public $selectedProfessionalId;
+    public $professionalsSurvey;
+    public $professionalSelectOptions = [];
+
+
     protected $rules = [
         //Survey
         'survey.expiration'     => 'required',
@@ -122,14 +129,32 @@ class CreateSurvey extends Component
         'subQuestion.section_id'   => 'nullable',
         'subQuestion.order'        => 'nullable',
         'subQuestion.comments'     => 'nullable',
+
+        //user Selected
+        'selectedProfessional.*'                            => 'nullable',
+        'selectedProfessional.first_name'                   => 'nullable',
+        'selectedProfessional.last_name'                    => 'nullable',
+        'selectedProfessional.nif'                          => 'nullable',
+        'selectedProfessional.job_title_id'                 => 'nullable',
+        'selectedProfessional.prefix_phone'                 => 'nullable',
+        'selectedProfessional.phone'                        => 'nullable',
+        'selectedProfessional.prefix_mobile'                => 'nullable',
+        'selectedProfessional.mobile_phone'                       => 'nullable',
+        'selectedProfessional.mail_contact'                 => 'nullable',
+        'selectedProfessional.other_contact_information'    => 'nullable',
+        'selectedProfessional.consent_request'              => 'nullable',
+        'selectedProfessional.consent'                      => 'nullable'
     ];
 
     public function mount($draft = false)
     {
         $this->draft            = $draft;
         $this->formEdit         = !Route::is('survey.show');
-        $this->defaultQuestions = (new QuestionService())->getDefaultQuestions($this->survey->type ?? '');
         $this->initComponent();
+        $this->defaultQuestions = (new QuestionService())->getDefaultQuestions($this->survey->type ?? '');
+        $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name','asc')->get();
+        $userTypes = config('iworking.user-type')::select('*')->where('type','like','%-people')->orderBy('type','asc')->pluck('id')->toArray();
+        $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name','asc')->whereIn('type', $userTypes)->get();
     }
 
     public function initComponent()
@@ -338,30 +363,28 @@ class CreateSurvey extends Component
         $this->validate([
             'subQuestionName.es'       => 'required',
             'subQuestionName.en'       => 'nullable',
-            'subQuestion.order'        => 'nullable|numeric',
+            'orderSubQuestion'        => 'required|numeric',
         ]);
         if (empty($this->subSurveyQuestion->id)) {
             if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id',$this->selectedDefaultQuestionSub)->exists()) {
-                $surveyQuestionParent = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->selectedParentQuestionId)->whereNull('parent_id')->first();
+                $surveyQuestionParent = SurveyQuestion::find($this->selectedParentQuestionId);
                 $this->subSurveyQuestion->survey_id = $this->survey->id;
                 $this->subSurveyQuestion->question_id = $this->subQuestion->id;
-                $this->subSurveyQuestion->position = $this->orderSubQuestion;
+                $this->subSurveyQuestion->order = (int)$this->orderSubQuestion ?? 0;
                 $this->subSurveyQuestion->section_id = $surveyQuestionParent->section_id;
                 $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
                 $this->subSurveyQuestion->disabled = false;
                 $this->subSurveyQuestion->parent_id = $surveyQuestionParent->id;
                 $this->subSurveyQuestion->condition = $this->parentQuestionRadio;
-                $this->subSurveyQuestion->order = $this->orderSubQuestion;
                 $this->subSurveyQuestion->original_id = $surveyQuestionParent->original_id;
                 $this->subSurveyQuestion->save();
-                $this->subSurveyQuestion->update(['original_id' => $this->question->id]);
                 $this->subSurveyQuestion = new SurveyQuestion();
             } else {
                 session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
                 return;
             }
         } else {
-            $this->subSurveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->question->id)->first();
+            $this->subSurveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id',$this->selectedParentQuestionId)->first();
             $this->subSurveyQuestion->update(['position' => $this->orderSubQuestion]);
             $this->subSurveyQuestion->update(['mandatory' => $this->requiredSubQuestion]);
         }
@@ -413,7 +436,7 @@ class CreateSurvey extends Component
             ], [
                 'selectedDefaultQuestionSub.required' => 'Seleccione una pregunta por defecto',
             ]);
-            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->selectedDefaultQuestionSub)->where('parent_id',$this->selectedParentQuestionId)->exists()) {
+            if (!SurveyQuestion::where('id',$this->selectedDefaultQuestionSub)->where('parent_id',$this->selectedParentQuestionId)->exists()) {
                 $this->subQuestion                     = Question::find($this->selectedDefaultQuestionSub);
                 $this->subQuestionName['es']           = $this->subQuestion->getTranslation('content', 'es');
                 $this->subQuestionName['en']           = $this->subQuestion->getTranslation('content', 'en');
@@ -427,6 +450,7 @@ class CreateSurvey extends Component
                 session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
                 return;
             }
+            $this->subSurveyQuestion = new SurveyQuestion();
         } catch (\Throwable $th) {
             session()->flash('alert', $th->getMessage());
         }
@@ -456,9 +480,9 @@ class CreateSurvey extends Component
             $this->orderSubQuestion            = $this->subSurveyQuestion->position;
             $this->requiredSubQuestion         = $this->subSurveyQuestion->mandatory;
             $this->subTypeSelected             = $this->subQuestion->type;
-            $this->selectedParentQuestionId     = $this->subSurveyQuestion->parent->question->id;
-            $this->selectedParentQuestion       = $this->subSurveyQuestion->parent->question;
-            $this->parentQuestionRadio          = $this->subSurveyQuestion->condition;
+            $this->selectedParentQuestionId    = $this->subSurveyQuestion->id;
+            $this->selectedParentQuestion      = $this->subSurveyQuestion->parent->question;
+            $this->parentQuestionRadio         = $this->subSurveyQuestion->condition;
             $this->subQuestionName['es']       = $this->subQuestion->getTranslation('content', 'es');
             $this->subQuestionName['en']       = $this->subQuestion->getTranslation('content', 'en');
             $this->subEditModeQuestion         = true;
@@ -548,10 +572,24 @@ class CreateSurvey extends Component
 
     public function updatedSelectedParentQuestionId()
     {
-        $this->selectedParentQuestion = Question::find($this->selectedParentQuestionId);
+        $surveyQuestion = SurveyQuestion::find($this->selectedParentQuestionId);
+        $this->selectedParentQuestion = $surveyQuestion->question;
         if($this->selectedParentQuestion->type == "multiselect" || $this->selectedParentQuestion->type == "uniqueselect") {
             $this->parentQuestionRadio = "000";
         }
+    }
+
+    public function updatedSelectedProfessionalId()
+    {
+        $this->selectedProfessional = config('iworking.user-model')::find($this->selectedProfessionalId);
+        if($this->selectedProfessional)
+        {
+            $this->professionalSelectOptions["jobTitles"] = config('iworking.job-titles')::select('*')->where('user_type_id',$this->selectedProfessional->type)->orderBy('name','asc')->get();
+        }
+        else{
+            $this->professionalSelectOptions["jobTitles"] = [];
+        }
+        
     }
 
     public function updateExpirationSurvey()
@@ -587,5 +625,17 @@ class CreateSurvey extends Component
             }
         }
         return $totalRemindersSent;
+    }
+
+    public function isActive($id)
+    {
+        $surVeyQuestion = SurveyQuestion::find($id);
+        return !$surVeyQuestion->disabled ?? false;
+    }
+
+    public function activeQuestion($id)
+    {
+        $surVeyQuestion = SurveyQuestion::find($id);
+        $surVeyQuestion->update(['disabled' => (!$surVeyQuestion->disabled)]);
     }
 }

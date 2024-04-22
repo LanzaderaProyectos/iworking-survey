@@ -22,6 +22,30 @@ class Answers extends Component
     public $respondedQuestions  = [];
     public $answersToDelete     = [];
 
+
+    public $selectedProfessional;
+    public $selectedProfessionalId;
+    public $professionalsSurvey;
+    public $professionalSelectOptions = [];
+
+    protected $rules = [
+        //user Selected
+        'selectedProfessional.*'                            => 'nullable',
+        'selectedProfessional.first_name'                   => 'nullable',
+        'selectedProfessional.last_name'                    => 'nullable',
+        'selectedProfessional.nif'                          => 'nullable',
+        'selectedProfessional.job_title_id'                 => 'nullable',
+        'selectedProfessional.prefix_phone'                 => 'nullable',
+        'selectedProfessional.phone'                        => 'nullable',
+        'selectedProfessional.prefix_mobile'                => 'nullable',
+        'selectedProfessional.mobile_phone'                       => 'nullable',
+        'selectedProfessional.mail_contact'                 => 'nullable',
+        'selectedProfessional.other_contact_information'    => 'nullable',
+        'selectedProfessional.consent_request'              => 'nullable',
+        'selectedProfessional.consent'                      => 'nullable'
+    ];
+
+
     public function mount()
     {
         $crypted    = Route::current()->parameter('user');
@@ -32,11 +56,14 @@ class Answers extends Component
         }
 
         $this->survey = $this->entry->survey;
-
         $getAnswers                 =  AnswerService::setAnswersCommentsQuestions($this->entry);
         $this->answers              = $getAnswers['answers'];
         $this->comments             = $getAnswers['comments'];
         $this->respondedQuestions   = $getAnswers['respondedQuestions'];
+        $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name','asc')->get();
+        $userTypes = config('iworking.user-type')::select('*')->where('type','like','%-people')->orderBy('type','asc')->pluck('id')->toArray();
+        $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name','asc')->whereIn('type', $userTypes)->get();
+        $this->initMultipleAnswers();
     }
 
     public function render()
@@ -48,9 +75,19 @@ class Answers extends Component
     {
         $updatedQuestionId                              = explode('.', $key)[0];
         $this->respondedQuestions[$updatedQuestionId]   = $value;
+        // dd($this->answers, $updatedQuestionId, $value, $this->entry, $this->answersToDelete);
         $answerService                                  = AnswerService::updatedAnswers($this->answers, $updatedQuestionId, $value, $this->entry, $this->answersToDelete);
         $this->answers                                  = $answerService['answers'];
         $this->answersToDelete                          = $answerService['answersToDelete'];
+    }
+
+    public function initMultipleAnswers()
+    {
+        foreach ($this->survey->surveyQuestions as $surveyQuestion) {
+            if ($surveyQuestion->question->type == 'multiselect' && !isset($this->answers[$surveyQuestion->id]['value'])) {
+                $this->answers[$surveyQuestion->id]['value'] = [];
+            }
+        }
     }
 
     public function saveAnswers()
@@ -99,23 +136,30 @@ class Answers extends Component
     {
         $questionId     = $question->id;
         $questionAnswer = $this->answers[$questionId]['value'];
-        $subQuestions   = $question->subQuestions->whereIn('condition', [$questionAnswer, '00']);
-
+        $subQuestions   = $question->children->whereIn('condition', [$questionAnswer, '00']);
         return $subQuestions;
     }
 
     public function customValidation()
     {
-        $answersService = AnswerService::answersCustomValidation($this->answers, $this->errorsBag, $this->comments);
-
+        $answersService = AnswerService::answersCustomValidation($this->survey, $this->answers, $this->errorsBag, $this->comments);
+        $this->errorsBag = $answersService['errorsBag'] ?? [];
         if (!$answersService['status']) {
-            session()->flash('answersAlert', 'Hay preguntas sin responder.');
-        } else {
-            $this->errorsBag = $answersService['errorsBag'];
-            $this->comments  = $answersService['comments'];
-            $this->answers   = $answersService['answers'];
+            session()->flash('answersAlert', 'Hay preguntas obligatorias sin responder.');
         }
-
         return $answersService['status'];
+    }
+
+    public function updatedSelectedProfessionalId()
+    {
+        $this->selectedProfessional = config('iworking.user-model')::find($this->selectedProfessionalId);
+        if($this->selectedProfessional)
+        {
+            $this->professionalSelectOptions["jobTitles"] = config('iworking.job-titles')::select('*')->where('user_type_id',$this->selectedProfessional->type)->orderBy('name','asc')->get();
+        }
+        else{
+            $this->professionalSelectOptions["jobTitles"] = [];
+        }
+        
     }
 }

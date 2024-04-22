@@ -14,25 +14,26 @@
         <div id="collapseSection{{ $index }}" class="collapse show" aria-labelledby="headingTwo"
             data-parent="#accordion" wire:ignore.self>
             <div class="card-body">
-                @foreach ($section->mainQuestions as $key => $mainQuestion)
+                @foreach ($section->surveyQuestionsMain as $key => $surveyQuestionMain)
+                {{-- @dd($section->surveyQuestionsMain) --}}
                     <div class="p-4 border-bottom">
-                        @include(view()->exists("survey::questions.types.{$mainQuestion->type}")
-                                ? "survey::questions.types.{$mainQuestion->type}"
+                        @include(view()->exists("survey::questions.types.{$surveyQuestionMain->question->type}")
+                                ? "survey::questions.types.{$surveyQuestionMain->question->type}"
                                 : 'survey::questions.types.text',
                             [
                                 'disabled' => $disabled ?? false,
                                 'lang' => $this->lang ?? false,
                                 'value' => $lastEntry ? $lastEntry->answerFor($mainQuestion) : null,
                                 'includeResults' => ($lastEntry ?? null) !== null,
-                                'question' => $mainQuestion,
+                                'surveyQuestion' => $surveyQuestionMain,
                                 'numberQuestion' => $key + 1 . '.',
                             ]
                         )
                         @if (!$sendForm)
-                            @include('survey::questions.single', ['question' => $mainQuestion, 'filter' => false])
+                            @include('survey::questions.single', ['surveyQuestion' => $surveyQuestionMain, 'filter' => false,'parentKey' => $key+1])
                         @else
-                            @if (isset($this->respondedQuestions[$mainQuestion->id]))
-                                @include('survey::questions.single', ['question' => $mainQuestion, 'filter' => true])
+                            @if (isset($this->respondedQuestions[$surveyQuestionMain->id]))
+                                @include('survey::questions.single', ['surveyQuestion' => $surveyQuestionMain, 'filter' => true,'parentKey' => $key+1])
                             @endif
                         @endif
                     </div>

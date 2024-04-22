@@ -1,12 +1,24 @@
-@component('survey::questions.base',[
-    'question' => $question,
-    'numberQuestion' => $numberQuestion
-    ])
-    <input type="number" wire:model="answers.{{$question->id}}.value"  name="{{ $question->key }}" id="{{ $question->key }}" class="form-control" value="{{ $value ?? old($question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}>
-    
-    @slot('report')
-        @if($includeResults ?? false)
-            {{ number_format((new \MattDaneshvar\Survey\Utilities\Summary($question))->average()) }} (Average)
-        @endif
-    @endslot
+@component('survey::questions.base', [
+'surveyQuestion' => $surveyQuestion,
+'numberQuestion' => $numberQuestion
+])
+<div class="input-group mb-3">
+    <input type="number" wire:model="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}"
+        id="{{ $surveyQuestion->question->key }}" class="form-control"
+        value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}>
+    <div class="input-group-append">
+        <span class="input-group-text">€</span>
+    </div>
+</div>
+
+@slot('report')
+@if($includeResults ?? false)
+{{ number_format((new \MattDaneshvar\Survey\Utilities\Summary($surveyQuestion))->average()) }} (Average)
+@endif
+@endslot
+@if($this->errorsBag ?? false)
+@if(in_array($surveyQuestion->id, $this->errorsBag))
+<span class="text-danger">Campo requerido</span>
+@endif
+@endif
 @endcomponent

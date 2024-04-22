@@ -47,6 +47,16 @@ class Answer extends Model implements AnswerContract
     }
 
     /**
+     * The survey question the answer belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function surveyQuestion()
+    {
+        return $this->belongsTo(get_class(app()->make(SurveyQuestion::class)),'question_id');
+    }
+
+    /**
      * The question the answer belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -5,6 +5,7 @@ namespace MattDaneshvar\Survey\Services;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Answer;
 use MattDaneshvar\Survey\Models\Question;
+use MattDaneshvar\Survey\Models\SurveyQuestion;
 
 class AnswerService
 {
@@ -29,7 +30,9 @@ class AnswerService
             if ($answer['type'] == 'radio' && $answer['value'] != '') {
                 $score = $this->values[$answer['value']];
             }
-
+            if ($answer['type'] == "multiselect") {
+                $answer['value'] = json_encode($answer['value'], JSON_UNESCAPED_UNICODE || JSON_UNESCAPED_SLASHES || JSON_UNESCAPED_LINE_TERMINATORS);
+            }
             Answer::updateOrCreate(
                 [
                     'question_id'   => $key,
@@ -53,17 +56,17 @@ class AnswerService
         $answersArray       = [];
         $commentsArray      = [];
         $respondedQuestions = [];
-
+        $listItems = [];
         foreach ($answers as $item) {
-            $answersArray[$item->question_id]['value']                     = $item->value;
-            $answersArray[$item->question_id]['comments']                  = $item->question->comments;
-            $answersArray[$item->question_id]['type']                      = $item->question->type;
-            $answersArray[$item->question_id]['question_parent_id']        = $item->question->parent_id;
-            $answersArray[$item->question_id]['question_question_id']      = $item->question->original_id;
+            $answersArray[$item->question_id]['value']                     = json_decode($item->value, true) ?? $item->value;
+            $answersArray[$item->question_id]['comments']                  = $item->surveyQuestion->comments;
+            $answersArray[$item->question_id]['type']                      = $item->surveyQuestion->question->type;
+            $answersArray[$item->question_id]['question_parent_id']        = $item->surveyQuestion->parent_id;
+            $answersArray[$item->question_id]['question_question_id']      = $item->surveyQuestion->original_id;
             $answersArray[$item->question_id]['model']                     = $item;
             $commentsArray[$item->question_id]                             = $item->comments;
-            if ($item->question->answers->count() > 0) {
-                $respondedQuestions[$item->question->id] = true;
+            if ($item->surveyQuestion->answers->count() > 0) {
+                $respondedQuestions[$item->surveyQuestion->id] = true;
             }
         }
 
@@ -76,15 +79,16 @@ class AnswerService
 
     public function updatedAnswers(array $answers, $updatedQuestionId, $value, $entry, $answersToDelete): array
     {
-        $question                                                 = Question::find($updatedQuestionId);
-        $answers[$updatedQuestionId]['value']                     = $value['value'] ?? $value;
-        $answers[$updatedQuestionId]['comments']                  = $question->comments;
-        $answers[$updatedQuestionId]['type']                      = $question->type;
-        $answers[$updatedQuestionId]['question_parent_id']        = $question->parent_id;
-        $answers[$updatedQuestionId]['question_original_id']      = $question->original_id;
+        $surveyQuestion                                                 = SurveyQuestion::find($updatedQuestionId);
+        if (!is_array($answers[$updatedQuestionId]['value'])) {
+            $answers[$updatedQuestionId]['value']                     = $value['value'] ?? $value;
+        }
+        $answers[$updatedQuestionId]['comments']                  = $surveyQuestion->comments ?? '';
+        $answers[$updatedQuestionId]['type']                      = $surveyQuestion->question->type;
+        $answers[$updatedQuestionId]['question_parent_id']        = $surveyQuestion->parent_id;
+        $answers[$updatedQuestionId]['question_original_id']      = $surveyQuestion->original_id;
         $answers[$updatedQuestionId]['model']                     = $answers[$updatedQuestionId]['model'] ?? null;
-        $subQuestions                                             = $question->subQuestions;
-
+        $subQuestions                                             = $surveyQuestion->children ?? [];
 
         foreach ($subQuestions as $key => $subQuestion) {
             $id = $subQuestion->id;
@@ -105,7 +109,9 @@ class AnswerService
                     // Si existe esa respuesta en el array de respuestas a eliminar
                     if (isset($answersToDelete[$id])) {
                         $question                               = $answersToDelete[$id]->question;
-                        $answers[$id]['value']                  = $value['value'] ?? $value;
+                        if (!is_array($answers[$id]['value'])) {
+                            $answers[$id]['value']                  = $value['value'] ?? $value;
+                        }
                         $answers[$id]['comments']               = $question->comments;
                         $answers[$id]['type']                   = $question->type;
                         $answers[$id]['model']                  = $answersToDelete[$updatedQuestionId];
@@ -115,8 +121,8 @@ class AnswerService
             } else {
                 if ($answers[$updatedQuestionId]['value'] == $subQuestion->condition) {
                     $answers[$id]['value']                    = '';
-                    $answers[$id]['comments']                 = $question->comments;
-                    $answers[$id]['type']                     = $question->type;
+                    $answers[$id]['comments']                 = $subQuestion->comments;
+                    $answers[$id]['type']                     = $subQuestion->type;
                 }
             }
         }
@@ -127,29 +133,51 @@ class AnswerService
         ];
     }
 
-    public function answersCustomValidation(array $answers, $errorsBag, $comments){
-        foreach ($answers as $key => $item) {
-            if (empty(trim($item['value']))) {
-                $errorsBag[$key] = $key . "";
-            } elseif ((trim($item['value'] == 'SI' || trim($item['value'] == 'YES')) && $item['comments'])) {
-                if (empty(trim($comments[$key]))) {
-                    $errorsBag[$key] = $key . "";
-                }
-            } else {
-                unset($errorsBag[$key]);
-            }
+    /**
+     * @param $survey
+     * @param array $answers
+     * @param $errorsBag
+     * @param $comments
+     * @return array
+     */
+    public function answersCustomValidation($survey, array $answers, $errorsBag, $comments)
+    {
+        $surveyQuestions = $survey->surveyQuestionsMain;
+        foreach ($surveyQuestions as $surveyQuestion) {
+            $errorsBag = $this->validateMandatoryQuestion($surveyQuestion, $answers, $errorsBag, $comments);
         }
         if (empty($errorsBag)) {
             return [
                 'status'    => true,
-                'errorsBag' => $errorsBag,
-                'comments'  => $comments,
-                'answers'   => $answers
+                'errorsBag' => $errorsBag
             ];
         }
         return [
             'status'    => false,
+            'errorsBag' => $errorsBag
         ];
     }
-    
+
+    /**
+     * @param SurveyQuestion $surveyQuestion
+     * @param array $answers
+     * @param array $errorsBag
+     * @param array $comments
+     * @return array
+     */
+    public function validateMandatoryQuestion($surveyQuestion, array $answers, $errorsBag,$comments) {
+        if ($surveyQuestion->mandatory) {
+            if (empty($answers[$surveyQuestion->id]['value'])) {
+                if (empty(trim($comments[$surveyQuestion->id]))) {
+                    $errorsBag[$surveyQuestion->id] = $surveyQuestion->id . "";
+                }
+            } else {
+                unset($errorsBag[$surveyQuestion->id]);
+            }
+        }
+        foreach($surveyQuestion->children as $child) {
+            $errorsBag = $this->validateMandatoryQuestion($child, $answers, $errorsBag, $comments);
+        }
+        return $errorsBag;
+    }
 }

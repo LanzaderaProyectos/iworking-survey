@@ -95,9 +95,19 @@ class QuestionList extends Component
         }
 
         return (new FastExcel($questions->get()))->export($path, function ($question) {
+            if($question->disabled)
+            {
+                $status = "Desactivada";
+            }
+            else{
+                $status = "Activa";
+            }
             return [
-                'Nombre' => $question->name ?? '',
-                'Tipo' => $question->type ?? '',
+                'Codigo' => $question->code ?? '',
+                'Nombre' => $question->getTranslation('content', 'es') ?? '',
+                'Tipo' => $this->typeAnwers[$question->type]?? '',
+                'Tipo Formulario' =>  $this->questionTypes[$question->survey_type] ?? '',
+                'Estado' =>  $status,
                 'Fecha creación' =>  auth()->user()->applyDateFormat($question->created_at) ?? '',
             ];
         });

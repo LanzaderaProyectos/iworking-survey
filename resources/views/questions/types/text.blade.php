@@ -1,11 +1,11 @@
 @component('survey::questions.base', [
-'question' => $question,
+'surveyQuestion' => $surveyQuestion,
 'numberQuestion' => $numberQuestion
 ])
-<input type="text" wire:key="{{str()->random(5)}}" wire:model="answers.{{$question->id}}.value" name="{{ $question->key }}" id="{{ $question->key }}"
-    class="form-control" value="{{ $value ?? old($question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }} >
+<input type="text" wire:key="{{str()->random(5)}}" wire:model="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->id }}"
+    class="form-control" value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }} >
 @if($this->errorsBag ?? false)
-@if(in_array($question->id, $this->errorsBag))
+@if(in_array($surveyQuestion->id, $this->errorsBag))
 <span class="text-danger">Campo requerido</span>
 @endif
 @endif
