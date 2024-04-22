@@ -185,7 +185,7 @@
                 @foreach ($this->survey->surveyQuestionsMain as $item)
                 <tr>
                     <td nowrap>
-                        @if($survey->status !== 0)
+                        @if($survey->status == 0)
                         <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ? '' :
                             'disabled' }}
                             wire:click="editQuestion('{{ $item->id }}')" type="button"
