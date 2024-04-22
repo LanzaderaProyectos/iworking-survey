@@ -274,7 +274,7 @@
                     <div class="form-group mb-0">
                         <label style="font-size:1.1rem"> 17- Solicitado consentimiento*</label>:
                     </div>
-                    <input type="checkbox" wire:model="selectedProfessional.consent_request" {{($disabled ??
+                    <input type="checkbox" wire:model.live="selectedProfessional.consent_request" {{($disabled ??
                         false) ? 'disabled' : '' }}>
                 </div>
                 @if($selectedProfessional->consent_request)

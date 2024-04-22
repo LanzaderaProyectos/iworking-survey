@@ -20,6 +20,28 @@
             Preguntas
         </h5>
     </div>
+    <div class="col-12">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="form-group ">
+                    <label for="numbers_format">Sección*:</label>
+                    <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="sectionQuestionSelected"
+                        class="form-control "
+                        id="numbers_format_input" size="3">
+                        @foreach ($this->survey->sections as $section)
+                        <option value="{{ $section->id }}">
+                            {{ $section->order }} - {{ $section->name }}
+                        </option>
+                        @endforeach
+                    </select>
+                    @error('sectionQuestionSelected')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col-md-4 col-12 mt-3">
         <div class="form-group ">
             <label for="numbers_format">Preguntas por defecto:</label>
@@ -72,23 +94,6 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-5 col-12">
-        <div class="form-group ">
-            <label for="numbers_format">Sección*:</label>
-            <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="sectionQuestionSelected"
-                class="form-control "
-                id="numbers_format_input" size="3">
-                @foreach ($this->survey->sections as $section)
-                <option value="{{ $section->id }}">
-                    {{ $section->order }} - {{ $section->name }}
-                </option>
-                @endforeach
-            </select>
-            @error('sectionQuestionSelected')
-            <span class="text-danger">{{ $message }}</span>
-            @enderror
-        </div>
-    </div>
     <div class="col-md-5 col-12">
         <div class="form-group mb-2">
             <label for="numbers_format">Tipo*:</label>
@@ -196,18 +201,20 @@
                             <i class="fas fa-trash" aria-hidden="true"></i>
                         </button>
                         @else
-                            @if($this->isActive($item->id))
-                            <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
-                                wire:click="activeQuestion('{{ $item->id }}')"
-                                class="btn btn-xl btn-clean btn-icon btn-icon-xl"  style="width:100%; height:100%;" title="Desactivar">
-                                <i class="fas fa-toggle-on fa-xl" aria-hidden="true"></i>
+                        @if($this->isActive($item->id))
+                        <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
+                            wire:click="activeQuestion('{{ $item->id }}')"
+                            class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%; height:100%;"
+                            title="Pulsa para Desactivar">
+                            <i class="fas fa-toggle-on fa-xl" aria-hidden="true"></i>
                             @else
                             <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
                                 wire:click="activeQuestion('{{ $item->id }}')"
-                                class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%; height:100%;" title="Activar">
+                                class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%; height:100%;"
+                                title="Pulsa para Activar">
                                 <i class="fas fa-toggle-off fa-xl" aria-hidden="true"></i>
-                            @endif
-                        @endif
+                                @endif
+                                @endif
 
                     </td>
                     <td>
@@ -226,7 +233,7 @@
                         {{ $item->question->getTranslation('content', 'en') }}
                     </td>
                     <td>
-                        {{ $typeAnwers[$item->question->type] ?? $item->question->type  }}
+                        {{ $typeAnwers[$item->question->type] ?? $item->question->type }}
                     </td>
                 </tr>
                 @endforeach

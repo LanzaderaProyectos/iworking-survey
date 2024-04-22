@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-10">
                         <h5>
-                            Preguntas
+                            Pregunta : {{ $question->code }}
                         </h5>
                     </div>
                     <div class="col-2">
@@ -28,7 +28,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 mt-3">
+            <div class="col-md-12 mt-n3">
                 <div class="form-group">
                     <label class="form-control-label" for="input-first_name">Nombre*</label>
                     <nav id="create-questions">
@@ -61,10 +61,10 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-5 col-12">
+            <div class="col-md-6 col-12">
                 <div class="form-group mb-3">
                     <label for="numbers_format">Tipo*:</label>
-                    <select wire:model.live="typeSelected" class="form-control " id="numbers_format_input" size="4">
+                    <select wire:model.live="typeSelected" class="form-control " id="numbers_format_input" size="9">
                         @foreach ($typeAnwers as $key => $value)
                         <option value="{{ $key }}">
                             {{ $value }}
@@ -78,10 +78,10 @@
                     <label for="numbers_format">Comentarios</label>
                 </div>
             </div>
-            <div class="col-md-5 col-12">
+            <div class="col-md-6 col-12">
                 <div class="form-group mb-3">
                     <label for="numbers_format">Para que tipo de formulario*:</label>
-                    <select wire:model.live="surveyType" class="form-control " id="numbers_format_input" size="4">
+                    <select wire:model.live="surveyType" class="form-control " id="numbers_format_input" size="6">
                         @foreach ($questionTypes as $key => $value)
                         <option value="{{ $key }}">
                             {{ $value }}
