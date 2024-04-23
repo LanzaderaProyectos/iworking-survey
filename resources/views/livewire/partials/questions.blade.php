@@ -123,7 +123,7 @@
         </div>
         <div class="form-group mt-n3">
             <input type="checkbox" wire:model.defer="requiredQuestion">
-            <label for="numbers_format">Obrigatoria</label>
+            <label for="numbers_format">Obligatoria</label>
         </div>
     </div>
 </div>

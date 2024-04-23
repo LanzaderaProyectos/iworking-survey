@@ -3,17 +3,24 @@
 'numberQuestion' => $numberQuestion
 ])
 {{-- Admin view --}}
-@php($listQuestions = $lang ? $surveyQuestion->question->getTranslation('options',$lang) : $surveyQuestion->question->options)
+@php($listQuestions = $lang ? $surveyQuestion->question->getTranslation('options',$lang) :
+$surveyQuestion->question->options)
+{{-- End admin view --}}
+@if(!empty($listQuestions))
 @foreach($listQuestions as $option)
 <div class="custom-control custom-radio" wire:key="{{str()->random(5)}}">
-    <input type="radio" wire:model.live="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}"
-        id="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}" value="{{ $option }}" class="custom-control-input" {{
-        ($disabled ?? false) ? 'disabled' : '' }}>
+    <input type="radio" wire:model.live="answers.{{$surveyQuestion->id}}.value"
+        name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}"
+        value="{{ $option }}" class="custom-control-input" {{ ($disabled ?? false) ? 'disabled' : '' }}>
     <label class="custom-control-label" for="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}">
         {{ $option }}
     </label>
 </div>
 @endforeach
+@else
+<br>
+<label>Pendiente de definir opciones</label>
+@endif
 @if($surveyQuestion->question->comments)
 <input type="text" wire:model="comments.{{$surveyQuestion->id}}" class="form-control mt-2">
 @endif
