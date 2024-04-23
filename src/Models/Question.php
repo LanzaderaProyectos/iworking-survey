@@ -2,6 +2,7 @@
 
 namespace MattDaneshvar\Survey\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use MattDaneshvar\Survey\Models\Section;
 use Spatie\Translatable\HasTranslations;
@@ -21,7 +22,7 @@ class Question extends Model implements QuestionContract
      *
      * @var array
      */
-    protected $fillable = ['type', 'options', 'content', 'rules', 'survey_id', 'section_id', 'original_id', 'parent_id', 'order', 'condition','code','disabled','mandatory','survey_type'];
+    protected $fillable = ['type','section_type', 'options', 'content', 'rules', 'survey_id', 'section_id', 'original_id', 'parent_id', 'order', 'condition', 'code', 'disabled', 'mandatory', 'survey_type','disabled_at'];
 
     protected $casts = [
         'rules' => 'array',
@@ -73,7 +74,7 @@ class Question extends Model implements QuestionContract
      */
     public function survey()
     {
-        return $this->hasManyThrough(get_class(app()->make(Survey::class)),get_class(app()->make(SurveyQuestion::class)));
+        return $this->hasManyThrough(get_class(app()->make(Survey::class)), get_class(app()->make(SurveyQuestion::class)));
     }
 
     /**
@@ -83,7 +84,7 @@ class Question extends Model implements QuestionContract
      */
     public function section()
     {
-        return $this->hasManyThrough(Section::class,SurveyQuestion::class,'question_id','id','id','section_id');
+        return $this->hasManyThrough(Section::class, SurveyQuestion::class, 'question_id', 'id', 'id', 'section_id');
     }
 
     /**
@@ -93,7 +94,7 @@ class Question extends Model implements QuestionContract
      */
     public function answers()
     {
-        return $this->hasManyThrough(Answer::class,SurveyQuestion::class);
+        return $this->hasManyThrough(Answer::class, SurveyQuestion::class);
     }
 
     public function isMain()
@@ -106,15 +107,17 @@ class Question extends Model implements QuestionContract
         return $this->original_id !== $this->id && $this->parent_id !== null;
     }
 
-    public function originalQuestion(){
+    public function originalQuestion()
+    {
         return $this->belongsTo(get_class(app()->make(Question::class)), 'original_id');
     }
 
-    public function parentQuestion(){
+    public function parentQuestion()
+    {
         return $this->belongsTo(get_class(app()->make(Question::class)), 'parent_id');
     }
 
-     /**
+    /**
      * The answers that belong to the question.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -157,5 +160,37 @@ class Question extends Model implements QuestionContract
     public function scopeWithoutSection($query)
     {
         return $query->where('section_id', null);
+    }
+
+    public function scopeFilters($query,$filters)
+    {
+        if(!empty($filters['code'])){
+            $query->where('code', 'like', '%' . $filters['code'] . '%');
+        }
+        if(!empty($filters['name'])){
+            $query->where('content', 'like', '%' . $filters['name'] . '%');
+        }
+        if(!empty($filters['type'])){
+            $query->where('type', 'like', '%' . $filters['type'] . '%');
+        }
+        if(!empty($filters['survey_type'])){
+            $query->where('form_type', 'like', '%' . $filters['survey_type'] . '%');
+        }
+        if(!empty($filters['created_from'])){
+            $query->whereDate('created_at', '>=', $filters['created_from']);
+        }
+        if(!empty($filters['created_to'])){
+            $query->whereDate('created_at', '<=', $filters['created_to']);
+        }
+        if(!empty($filters['disabled'])){
+            $query->where('disabled', $filters['disabled']);
+        }
+        if(!empty($filters['disabled_from'])){
+            $query->whereDate('disabled_at', '>=', $filters['disabled_from']);
+        }
+        if(!empty($filters['disabled_to'])){
+            $query->whereDate('disabled_at', '<=', $filters['disabled_to']);
+        }
+
     }
 }

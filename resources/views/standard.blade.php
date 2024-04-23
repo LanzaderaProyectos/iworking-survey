@@ -15,12 +15,15 @@
                 </div>
             </div>
         </div>
-        @include('survey::sections.profesional')
+        {{-- @include('survey::sections.profesional') --}}
         @php($numberQuestion = 1)
         @foreach ($this->survey->sections as $index => $section)
         @include('survey::sections.single')
         @php($numberQuestion += $section->questions->count())
         @endforeach
+        @if($this->survey->type == "pharmaciesSale")
+        @include('survey::sections.pharmaciesSale')
+        @endif
     </div>
     @if ($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)
     @if (session()->has('answersAlert'))

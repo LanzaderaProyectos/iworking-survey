@@ -90,6 +90,7 @@ class CreateSurvey extends Component
     public $orderSubQuestion;
     public $requiredSubQuestion = false;
     public $defaultQuestions;
+    public $defaultQuestionsSub;
 
     public $selectedParentQuestionId;
     public $selectedParentQuestion;
@@ -241,12 +242,12 @@ class CreateSurvey extends Component
         if ($result) {
 
             if ($this->newSurvey) {
+                $this->createSections();
                 session()->flash('draftSurveyCreated', 'Formulario creado');
                 return redirect(route('survey.edit', [
                     'surveyId' => $this->survey->id
                 ]));
             }
-
             session()->flash('surveyUpdated', 'Cambios guardados');
         } else {
             session()->flash('surveyUpdated', 'Error al guardar los cambios');
@@ -261,6 +262,44 @@ class CreateSurvey extends Component
         session()->flash('surveyDeleted', 'Formulario eliminado');
 
         return redirect(route('survey.list'));
+    }
+
+    public function createSections()
+    {
+        if ($this->survey->type == "pharmaciesSale") {
+            $this->section = new Section();
+            $this->sectionName['es'] = "General";
+            $this->sectionName['en'] = "General";
+            $this->section->order = 1;
+            $this->addSection();
+        } elseif ($this->survey->type == "medicalPrescription") {
+            $this->section = new Section();
+            $this->sectionName['es'] = "General";
+            $this->sectionName['en'] = "General";
+            $this->section->order = 1;
+            $this->addSection();
+            $this->section = new Section();
+            $this->sectionName['es'] = "Preguntas";
+            $this->sectionName['en'] = "Questions";
+            $this->section->order = 2;
+            $this->addSection();
+        } else {
+            $this->section = new Section();
+            $this->sectionName['es'] = "General";
+            $this->sectionName['en'] = "General";
+            $this->section->order = 1;
+            $this->addSection();
+            $this->section = new Section();
+            $this->sectionName['es'] = "Agendar Formación";
+            $this->sectionName['en'] = "Agendar Formación";
+            $this->section->order = 2;
+            $this->addSection();
+            $this->section = new Section();
+            $this->sectionName['es'] = "Formación realizada";
+            $this->sectionName['en'] = "Formación realizada";
+            $this->section->order = 3;
+            $this->addSection();
+        }
     }
 
     public function sendSurvey()
@@ -330,6 +369,7 @@ class CreateSurvey extends Component
             if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->question->id)->whereNull('parent_id')->exists()) {
                 $this->surveyQuestion->survey_id = $this->survey->id;
                 $this->surveyQuestion->question_id = $this->question->id;
+                $this->surveyQuestion->order = $this->orderQuestion;
                 $this->surveyQuestion->position = $this->orderQuestion;
                 $this->surveyQuestion->section_id = $this->sectionQuestionSelected;
                 $this->surveyQuestion->mandatory = $this->requiredQuestion;
@@ -416,7 +456,7 @@ class CreateSurvey extends Component
                 $this->typeSelected                 = $this->question->type;
                 if ($this->typeSelected == "multiselect" || $this->typeSelected == "uniqueselect") {
                     $this->customOptions = true;
-                    if (!empty(json_decode($this->question->options ?? '', true) ?? [])) {
+                    if ((is_array($this->question->options) && !empty($this->question->options)) || !empty(json_decode($this->question->options ?? '', true) ?? [])) {
                         $this->optionES = $this->question->getTranslation('options', 'es');
                         $this->optionEN = $this->question->getTranslation('options', 'en');
                     } else {
@@ -511,7 +551,6 @@ class CreateSurvey extends Component
         $this->subQuestion          = new Question();
         $this->editModeQuestion     = false;
         $this->subEditModeQuestion  = false;
-        $this->sectionQuestionSelected = null;
         $this->orderQuestion        = null;
         $this->requiredQuestion     = false;
         $this->optionEN             = [];
@@ -582,6 +621,7 @@ class CreateSurvey extends Component
         if ($this->selectedParentQuestion->type == "multiselect" || $this->selectedParentQuestion->type == "uniqueselect") {
             $this->parentQuestionRadio = "000";
         }
+        $this->defaultQuestionsSub = (new SurveyService())->getQuestions($this->survey, Section::find($surveyQuestion->section_id));
     }
 
     public function updatedSelectedProfessionalId()
@@ -592,6 +632,18 @@ class CreateSurvey extends Component
         } else {
             $this->professionalSelectOptions["jobTitles"] = [];
         }
+    }
+
+    public function updatedSectionQuestionSelected()
+    {
+        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected));
+        $this->question = new Question();
+        $this->selectedDefaultQuestion = null;
+        $this->questionName = [
+            'es'    => '',
+            'en'    => ''
+        ];
+        $this->typeSelected = null;
     }
 
     public function updateExpirationSurvey()

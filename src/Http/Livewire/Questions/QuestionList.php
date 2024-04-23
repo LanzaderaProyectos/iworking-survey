@@ -15,11 +15,24 @@ class QuestionList extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public $entries             = 10;
-    public $sortDirection       = 'desc';
-    public $sortBy              = 'created_at';
+    public $sortDirection       = 'asc';
+    public $sortBy              = 'code';
     public $orderLinePA     = null;
     public $search          = '';
-    
+
+    public $filters = [
+        "code" => "",
+        "name" => "",
+        "type" => "",
+        "form_type" => "",
+        "created_from" => "",
+        "created_to" => "",
+        "disabled" => false,
+        "disabled_from" => "",
+        "disabled_to" => ""
+    ];
+    public $filtersMode = false;
+
     public $typeAnwers = [
         'radio'         => 'Si/No/NP',
         'multiselect'   => 'Selección múltiple',
@@ -33,7 +46,7 @@ class QuestionList extends Component
         // 'number' => 'Numero'
     ];
 
-    
+
     public $questionTypes = [
         "general" => "General",
         "pharmaciesSale" => "Venta Farmacias",
@@ -46,7 +59,7 @@ class QuestionList extends Component
     {
     }
 
-    public function sortBy($field)
+    public function sortByTable($field)
     {
         if ($this->sortDirection == 'asc') {
             $this->sortDirection = 'desc';
@@ -62,6 +75,25 @@ class QuestionList extends Component
         $this->resetPage();
     }
 
+    public function updatedFilters()
+    {
+        if ($this->filters != [
+            "code" => "",
+            "name" => "",
+            "type" => "",
+            "form_type" => "",
+            "created_from" => "",
+            "created_to" => "",
+            "disabled" => false,
+            "disabled_from" => "",
+            "disabled_to" => ""
+        ]) {
+            $this->filtersMode = true;
+        } else {
+            $this->filtersMode = false;
+        }
+    }
+
     /**
      * Deletes all the previous saved filters on the user session
      * and reset the filters array $search
@@ -71,44 +103,52 @@ class QuestionList extends Component
      */
     public function clearFilters()
     {
-        $this->search = '';
+        $this->filters = [
+            "code" => "",
+            "name" => "",
+            "type" => "",
+            "form_type" => "",
+            "created_from" => "",
+            "created_to" => "",
+            "disabled" => false,
+            "disabled_from" => "",
+            "disabled_to" => ""
+        ];
+        $this->filtersMode = false;
     }
 
     public function render()
     {
-        $questions = Question::orderBy($this->sortBy, $this->sortDirection);
+        $questions = Question::select('*');
 
-        if ($this->search != '') {
-            $questions->where('content', 'like', '%' . $this->search . '%');
-        }
+        $questions->filters($this->filters);
 
         return view('survey::livewire.questions.question-list', [
-            'questions' => $questions->paginate($this->entries)
+            'questions' => $questions->orderBy($this->sortBy, $this->sortDirection)->paginate($this->entries)
         ]);
     }
 
     public function exportToExcel($path)
     {
         $questions = Question::orderBy($this->sortBy, $this->sortDirection);
-        if ($this->search != '') {
-            $questions->where('content', 'like', '%' . $this->search . '%');
-        }
+        $questions->filters($this->filters);
 
         return (new FastExcel($questions->get()))->export($path, function ($question) {
-            if($question->disabled)
-            {
+            if ($question->disabled) {
                 $status = "Desactivada";
-            }
-            else{
+                $disabledAt = auth()->user()->applyDateFormat($question->disabled_at);
+            } else {
                 $status = "Activa";
+                $disabledAt = "-";
             }
             return [
                 'Codigo' => $question->code ?? '',
                 'Nombre' => $question->getTranslation('content', 'es') ?? '',
-                'Tipo' => $this->typeAnwers[$question->type]?? '',
+                'Tipo' => $this->typeAnwers[$question->type] ?? '',
                 'Tipo Formulario' =>  $this->questionTypes[$question->survey_type] ?? '',
-                'Estado' =>  $status,
                 'Fecha creación' =>  auth()->user()->applyDateFormat($question->created_at) ?? '',
+                'Estado' =>  $status,
+                'Fecha desactivación' =>  $disabledAt,
             ];
         });
     }

@@ -19,10 +19,22 @@
                     <div class="col-2">
                         <span class="kt-switch kt-switch--sm kt-switch--brand">
                             <label>
-                                <label class="h5" style="margin-top: 5px;">@if($question->disabled) Activar Pregunta @else Desactivar Pregunta @endif</label>
-                                <input wire:model.live="question.disabled" name="toggle_rgpd" type="checkbox"
-                                    class="form-control {{ $errors->has('contract.is_active') ? ' is-invalid' : '' }}">
-                                <span style="margin-left: 5px"></span>
+
+                                @if($question->disabled)
+                                <button type="button" wire:click="$set('question.disabled',0)"
+                                    class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%; height:100%;"
+                                    title="Pulsa para Activar">
+                                    <i class="fas fa-toggle-on fa-xl" aria-hidden="true"> <label class="h5"
+                                            style="margin-top: 5px;">Activar Pregunta</label></i>
+                                </button>
+                                @else
+                                <button type="button" wire:click="$set('question.disabled',1)"
+                                    class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%;
+                                    height:100%;" title="Pulsa para Desactivar">
+                                    <i class="fas fa-toggle-off fa-xl" aria-hidden="true"> <label class="h5"
+                                            style="margin-top: 5px;">Desactivar Pregunta</label></i>
+                                </button>
+                                @endif
                             </label>
                         </span>
                     </div>
@@ -79,20 +91,43 @@
                 </div>
             </div>
             <div class="col-md-6 col-12">
-                <div class="form-group mb-3">
-                    <label for="numbers_format">Para que tipo de formulario*:</label>
-                    <select wire:model.live="surveyType" class="form-control " id="numbers_format_input" size="6">
-                        @foreach ($questionTypes as $key => $value)
-                        <option value="{{ $key }}">
-                            {{ $value }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('questionSelected')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group mb-3">
+                            <label for="numbers_format">Para que tipo de formulario*:</label>
+                            <select wire:model.live="surveyType" class="form-control " id="numbers_format_input"
+                                size="4">
+                                @foreach ($questionTypes as $key => $value)
+                                <option value="{{ $key }}">
+                                    {{ $value }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('questionSelected')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    @if($surveyType)
+                    <div class="col-12">
+                        <div class="form-group mb-3">
+                            <label for="section_select">Para que Sección del formulario*:</label>
+                            <select wire:model.live="sectionType" class="form-control " id="section_select" size="4">
+                                @foreach ($sectionTypes as $key => $value)
+                                <option value="{{ $key }}">
+                                    {{ $value }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('sectionType')
+                            <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
+
         </div>
         @if($customOptions)
         <div class="row mt-n3">

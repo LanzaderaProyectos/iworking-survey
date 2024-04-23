@@ -23,6 +23,12 @@ class Table extends Component
     public $orderLinePA = null;
     public $search = [];
 
+    public $surveyTypes = [
+        'pharmaciesSale' => "Venta Farmacias",
+        'medicalPrescription' => "Prescripción Médica",
+        'training' => "Formación",
+    ];
+
 
     public function mount()
     {
@@ -42,7 +48,7 @@ class Table extends Component
         }
     }
 
-    public function sortBy($field)
+    public function sortByTable($field)
     {
         if ($this->sortDirection == 'asc') {
             $this->sortDirection = 'desc';

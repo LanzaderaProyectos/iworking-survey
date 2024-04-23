@@ -5,6 +5,7 @@ namespace MattDaneshvar\Survey\Http\Livewire\Questions;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use MattDaneshvar\Survey\Models\Question;
 use Rap2hpoutre\FastExcel\FastExcel;
 use MattDaneshvar\Survey\Models\Survey;
@@ -34,6 +35,7 @@ class QuestionEdit extends Component
     public $optionEN = [];
     public $typeSelected;
     public $surveyType;
+    public $sectionType;
     public $newOptionES = "";
     public $newOptionEN = "";
     public $customOptions = false;
@@ -44,14 +46,17 @@ class QuestionEdit extends Component
         "medicalPrescription" => "Prescripción Médica",
         "training" => "Formación",
     ];
+    public $sectionTypes = [];
 
 
     protected $rules = [
-        'question.comments' => 'nullable',
-        'question.disabled' => 'nullable',
-        'questionName.es'   => 'required',
-        'questionName.en'   => 'nullable',
-        'typeSelected'      => 'required'
+        'question.comments'     => 'nullable',
+        'question.disabled'     => 'nullable',
+        'questionName.es'       => 'required',
+        'questionName.en'       => 'nullable',
+        'typeSelected'          => 'required',
+        'sectionType'           => 'required',
+        'question.disabled_at'  => 'nullable'
     ];
 
 
@@ -68,16 +73,15 @@ class QuestionEdit extends Component
                 ];
                 $this->typeSelected = $this->question->type;
                 $this->surveyType = $this->question->survey_type;
+                $this->sectionType = $this->question->section_type;
                 switch ($this->typeSelected) {
                     case "radio":
                         $this->optionES = $this->question->getTranslation('options', 'es') ?? [];
                         $this->optionEN = $this->question->getTranslation('options', 'en') ?? [];
-                        if($this->optionES == "")
-                        {
+                        if ($this->optionES == "") {
                             $this->optionES = [];
                         }
-                        if($this->optionEN == "")
-                        {
+                        if ($this->optionEN == "") {
                             $this->optionEN = [];
                         }
                         $this->customOptions = false;
@@ -85,12 +89,10 @@ class QuestionEdit extends Component
                     case "multiselect":
                         $this->optionES = $this->question->getTranslation('options', 'es') ?? [];
                         $this->optionEN = $this->question->getTranslation('options', 'en') ?? [];
-                        if($this->optionES == "")
-                        {
+                        if ($this->optionES == "") {
                             $this->optionES = [];
                         }
-                        if($this->optionEN == "")
-                        {
+                        if ($this->optionEN == "") {
                             $this->optionEN = [];
                         }
                         $this->customOptions = true;
@@ -98,12 +100,10 @@ class QuestionEdit extends Component
                     case "uniqueselect":
                         $this->optionES = $this->question->getTranslation('options', 'es') ?? [];
                         $this->optionEN = $this->question->getTranslation('options', 'en') ?? [];
-                        if($this->optionES == "")
-                        {
+                        if ($this->optionES == "") {
                             $this->optionES = [];
                         }
-                        if($this->optionEN == "")
-                        {
+                        if ($this->optionEN == "") {
                             $this->optionEN = [];
                         }
                         $this->customOptions = true;
@@ -111,6 +111,33 @@ class QuestionEdit extends Component
                     default:
                         $this->customOptions = false;
                         break;
+                }
+                if($this->surveyType == "general") {
+                    $this->sectionTypes = [
+                        "all"       => "Todas",
+                        "general"   => "Sección General",
+                    ];
+                }
+                elseif($this->surveyType == "pharmaciesSale") {
+                    $this->sectionTypes = [
+                        "all"       => "Todas",
+                        "general"   => "Sección General",
+                    ];
+                }
+                elseif($this->surveyType == "medicalPrescription") {
+                    $this->sectionTypes = [
+                        "all"       => "Todas",
+                        "general"   => "Sección General",
+                        "questions" => "Preguntas"
+                    ];
+                }
+                elseif($this->surveyType == "training") {
+                    $this->sectionTypes = [
+                        "all"       => "Todas",
+                        "general"   => "Sección General",
+                        "schedule_training" => "Agendar Formación",
+                        "training_complete" => "Formación Realizada"
+                    ];
                 }
             }
         } else {
@@ -128,6 +155,7 @@ class QuestionEdit extends Component
         $this->validate();
         $questionService    = new QuestionService();
         $this->question->survey_type = $this->surveyType;
+        $this->question->section_type = $this->sectionType;
         $result             = $questionService->saveQuestion(
             question: $this->question,
             surveyId: null,
@@ -138,6 +166,47 @@ class QuestionEdit extends Component
         );
         $this->question->save();
         return redirect()->route('questions.list')->with('status', 'Pregunta guardada con éxito');
+    }
+
+    public function updated($key, $value)
+    {
+        if ($key == "question.disabled") {
+            if ($this->question->disabled) {
+                $this->question->disabled_at = date('Y-m-d h:i:s');
+            } else {
+                $this->question->disabled_at = null;
+            }
+        }
+        if($key == "surveyType")
+        {
+            if($value == "general") {
+                $this->sectionTypes = [
+                    "all"       => "Todas",
+                    "general"   => "Sección General",
+                ];
+            }
+            elseif($value == "pharmaciesSale") {
+                $this->sectionTypes = [
+                    "all"       => "Todas",
+                    "general"   => "Sección General",
+                ];
+            }
+            elseif($value == "medicalPrescription") {
+                $this->sectionTypes = [
+                    "all"       => "Todas",
+                    "general"   => "Sección General",
+                    "questions" => "Preguntas"
+                ];
+            }
+            elseif($value == "training") {
+                $this->sectionTypes = [
+                    "all"       => "Todas",
+                    "general"   => "Sección General",
+                    "schedule_training" => "Agendar Formación",
+                    "training_complete" => "Formación Realizada"
+                ];
+            }
+        }
     }
 
     public function updatedTypeSelected()

@@ -25,7 +25,7 @@
             <div class="col-md-6 col-12">
                 <div class="form-group ">
                     <label for="numbers_format">Sección*:</label>
-                    <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="sectionQuestionSelected"
+                    <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="sectionQuestionSelected"
                         class="form-control "
                         id="numbers_format_input" size="3">
                         @foreach ($this->survey->sections as $section)
@@ -46,7 +46,7 @@
         <div class="form-group ">
             <label for="numbers_format">Preguntas por defecto:</label>
             <div class="d-flex">
-                <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="selectedDefaultQuestion"
+                <select {{ $this->formEdit ? '' : 'disabled' }} @if(empty($sectionQuestionSelected)) disabled @endif wire:model.defer="selectedDefaultQuestion"
                     class="form-control " id="numbers_format_input">
                     <option value="">Selecciona una pregunta por defecto</option>
                     @foreach ($this->defaultQuestions as $question)
@@ -207,14 +207,16 @@
                             class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%; height:100%;"
                             title="Pulsa para Desactivar">
                             <i class="fas fa-toggle-on fa-xl" aria-hidden="true"></i>
-                            @else
-                            <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
-                                wire:click="activeQuestion('{{ $item->id }}')"
-                                class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%; height:100%;"
-                                title="Pulsa para Activar">
-                                <i class="fas fa-toggle-off fa-xl" aria-hidden="true"></i>
-                                @endif
-                                @endif
+                        </button>
+                        @else
+                        <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
+                            wire:click="activeQuestion('{{ $item->id }}')"
+                            class="btn btn-xl btn-clean btn-icon btn-icon-xl" style="width:100%; height:100%;"
+                            title="Pulsa para Activar">
+                            <i class="fas fa-toggle-off fa-xl" aria-hidden="true"></i>
+                        </button>
+                        @endif
+                        @endif
 
                     </td>
                     <td>

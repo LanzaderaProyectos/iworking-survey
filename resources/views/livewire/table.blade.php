@@ -126,19 +126,23 @@
                     <thead scope="col">
                         <tr class="text-uppercase">
                             <th style="width: 20px">Acciones</th>
-                            <th wire:click="sortBy('survey_number')" style="cursor: pointer">
+                            <th wire:click="sortByTable('survey_number')" style="cursor: pointer">
                                 Nº Formulario
                                 @include('iworking::partials._sort-icon',['field'=>'survey_number'])
                             </th>
-                            <th wire:click="sortBy('name')">
+                            <th wire:click="sortByTable('name')">
                                 Nombre
                                 @include('iworking::partials._sort-icon',['field'=>'name'])
                             </th>
-                            <th wire:click="sortBy('author')" style="cursor: pointer">
+                            <th wire:click="sortByTable('author')" style="cursor: pointer">
                                 Autor
                                 @include('iworking::partials._sort-icon',['field'=>'author'])
                             </th>
-                            <th wire:click="sortBy('status')" style="cursor: pointer">
+                            <th wire:click="sortByTable('type')" style="cursor: pointer">
+                                Tipo
+                                @include('iworking::partials._sort-icon',['field'=>'type'])
+                            </th>
+                            <th wire:click="sortByTable('status')" style="cursor: pointer">
                                 Estado
                                 @include('iworking::partials._sort-icon',['field'=>'status'])
                             </th>
@@ -184,6 +188,9 @@
                             </td>
                             <td>
                                 {{ $survey->user->first_name }} {{ $survey->user->last_name }}
+                            </td>
+                            <td>
+                                {{$surveyTypes[$survey->type]}}
                             </td>
                             <td>
                                 @lang('survey::status.survey.'.$survey->status ?? '')

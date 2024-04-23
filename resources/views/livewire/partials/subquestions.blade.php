@@ -21,10 +21,9 @@
                 class="form-control " id="numbers_format_input">
                 <option value="">Seleccione una pregunta</option>
                 @foreach ($this->survey->surveyQuestionsMain as $element)
-                @if ($element->question->type == 'radio' || $element->question->type == "multiselect" || $question->type ==
-                "uniqueselect")
+                @if (in_array($element->question->type, ['radio','multiselect','uniqueselect']))
                 <option value="{{ $element->id }}">
-                    {{ $element->section->name }} - {{ $element->position }} - {{ $element->question->getTranslation('content', 'es') }}
+                    {{ $element->section->name }} - {{ $element->position }} - {{ $element->question->getTranslation('content', 'es') }} - {{$typeAnwers[$element->question->type]}}
                 </option>
                 @endif
                 @endforeach
@@ -65,9 +64,9 @@ $this->selectedParentQuestion->type != 'radio')
             <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="selectedDefaultQuestionSub"
                 class="form-control " id="numbers_format_input">
                 <option value="">Selecciona una pregunta por defecto</option>
-                @foreach ($this->defaultQuestions as $question)
+                @foreach ($this->defaultQuestionsSub as $question)
                 <option value="{{ $question->id }}">
-                    {{ $question->getTranslation('content', 'es') }} - {{ $question->type }}
+                    {{ $question->getTranslation('content', 'es') }} - {{ $typeAnwers[$question->type] }}
                 </option>
                 @endforeach
             </select>
@@ -220,7 +219,7 @@ $this->selectedParentQuestion->type != 'radio')
                         {{ $item->question->getTranslation('content', 'en') }}
                     </td>
                     <td>
-                        {{ $item->question->type }}
+                        {{ $typeAnwers[$item->question->type] ?? $item->question->type }}
                     </td>
                 </tr>
                 @endforeach
