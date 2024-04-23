@@ -20,19 +20,19 @@
                     <table class="table table-striped- table-bordered table-hover table-checkable mt-4" id="comandTable">
                         <thead>
                             <tr>
-                                <th>Tipo de pedido</th>
-                                <th>Producto</th>
-                                <th>Unidades</th>
-                                <th>Facturación sin iva</th>
-                                <th>Motivos no interesado</th>
-                                <th>Comentarios</th>
+                                <th style="width: 15%;">Tipo de pedido</th>
+                                <th style="width: 15%;">Producto</th>
+                                <th style="width: 10%;">Unidades</th>
+                                <th style="width: 15%;">Facturación sin iva</th>
+                                <th style="width: 20%;">Motivos no interesado</th>
+                                <th style="width: 25%;">Comentarios</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>
                                     <select  {{ ($disabled ?? false) ? 'disabled' : '' }} class="form-control">
-                                        <option value="">Seleccione una opción</option>
+                                        <option value="">Seleccione opción</option>
                                         <option value="1">Preventa</option>
                                         <option value="2">Campaña</option>
                                         <option value="3">Pedido normal</option>
@@ -56,7 +56,12 @@
                                     <input type="text" class="form-control" {{ ($disabled ?? false) ? 'disabled' : '' }}>
                                 </td>
                                 <td>
-                                    <textarea class="form-control" {{ ($disabled ?? false) ? 'disabled' : '' }} style="resize: vertical" rows="2"></textarea>
+                                    <textarea class="form-control" {{ ($disabled ?? false) ? 'disabled' : '' }} style="resize: vertical" rows="1"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <button class="btn btn-primary">+</button>
                                 </td>
                             </tr>
                         </tbody>

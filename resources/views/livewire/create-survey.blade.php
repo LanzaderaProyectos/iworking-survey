@@ -67,11 +67,11 @@
                             : ''}}" id="survey-preview-tab" data-toggle="tab" href="#survey-preview" role="tab"
                             aria-controls="survey-preview" aria-selected="true">Previsualizar</a>
                     </li>
-                    <li class="nav-item" role="presentation" wire:ignore>
+                    {{-- <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-users-tab" data-toggle="tab" href="#survey-users" role="tab"
                             aria-controls="survey-users" aria-selected="true">Destinatarios</a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-chat-tab" data-toggle="tab" href="#survey-chat" role="tab"
@@ -104,12 +104,12 @@
                         'sendForm' => false,
                         'disabled' => true])
                     </div>
-                    <div class="tab-pane fade" id="survey-users" role="tabpanel" aria-labelledby="survey-users"
+                    {{-- <div class="tab-pane fade" id="survey-users" role="tabpanel" aria-labelledby="survey-users"
                         wire:ignore.self>
                         @livewire('iworking-survery::addresses',[
                         'survey' => $this->survey->id
                         ])
-                    </div>
+                    </div> --}}
                     <div class="tab-pane fade" id="survey-chat" role="tabpanel" aria-labelledby="survey-chat"
                         wire:ignore.self>
                         @livewire('iworking::common-comments',[

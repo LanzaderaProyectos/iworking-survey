@@ -11,7 +11,8 @@
                     @endif
                 </div>
                 <div class="col-2 text-right">
-                    <img src="{{ asset('/img/logo_rubio.jpg') }}" style="max-height: 70px;" />
+                    {{-- <img src="{{ asset('/img/logo_rubio.jpg') }}" style="max-height: 70px;" /> --}}
+                    
                 </div>
             </div>
         </div>

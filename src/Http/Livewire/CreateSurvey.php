@@ -304,26 +304,26 @@ class CreateSurvey extends Component
 
     public function sendSurvey()
     {
-        $this->users = Surveyed::where('survey_id', $this->survey->id)->get();
-        if (!$this->users->count()) {
-            session()->flash('userListEmpty', 'No hay usuarios');
-            return;
-        }
+        // $this->users = Surveyed::where('survey_id', $this->survey->id)->get();
+        // if (!$this->users->count()) {
+        //     session()->flash('userListEmpty', 'No hay usuarios');
+        //     return;
+        // }
 
-        $surveyService  = new SurveyService();
-        $result         = $surveyService->sendSurvey(
-            users: $this->users,
-            survey: $this->survey,
-            audit: true,
-            auditText: 'Formulario enviado'
-        );
+        // $surveyService  = new SurveyService();
+        // $result         = $surveyService->sendSurvey(
+        //     users: $this->users,
+        //     survey: $this->survey,
+        //     audit: true,
+        //     auditText: 'Formulario enviado'
+        // );
 
-        if ($result) {
-            session()->flash('surveySended',  'Formulario enviado');
-            return redirect(route('survey.list'));
-        } else {
-            session()->flash('surveySended',  'Error al enviar el Formulario');
-        }
+        // if ($result) {
+        //     session()->flash('surveySended',  'Formulario enviado');
+        //     return redirect(route('survey.list'));
+        // } else {
+        //     session()->flash('surveySended',  'Error al enviar el Formulario');
+        // }
     }
 
     public function addSection()
