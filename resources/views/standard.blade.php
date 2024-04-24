@@ -11,8 +11,10 @@
                     @endif
                 </div>
                 <div class="col-2 text-right">
-                    {{-- <img src="{{ asset('/img/logo_rubio.jpg') }}" style="max-height: 70px;" /> --}}
-                    
+                    <button wire:click="exportSurveyToPDF" class="btn btn-danger rounded-right pl-3 pr-2" type="button"
+                        data-toggle="tooltip" data-placement="top" title="Exportar tabla a PDF">
+                        <i class="fas fa-file-pdf"></i>
+                    </button>
                 </div>
             </div>
         </div>

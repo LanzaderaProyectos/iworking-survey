@@ -19,6 +19,11 @@
                         class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
                         Formulario de Formación
                     </button>
+                    <button type="button" wire:click="$set('survey.type','general')"
+                        wire:loading.attr="disabled"
+                        class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
+                        General
+                    </button>
                 </div>
         </div>
     </div>

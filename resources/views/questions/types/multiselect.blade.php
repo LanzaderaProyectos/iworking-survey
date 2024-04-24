@@ -13,11 +13,11 @@
     <label class="custom-control-label" for="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}">{{ $option }}
     </label>
 </div>
+@endforeach
 @else
 <br>
 <label>Pendiente de definir opciones</label>
 @endif
-@endforeach
 @if($this->errorsBag ?? false)
 @if(in_array($surveyQuestion->id, $this->errorsBag))
 <span class="text-danger">Campo requerido</span>

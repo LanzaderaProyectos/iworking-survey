@@ -2,22 +2,25 @@
 
 namespace MattDaneshvar\Survey\Http\Livewire;
 
+use Exception;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Route;
+use MattDaneshvar\Survey\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Survey;
 use MattDaneshvar\Survey\Models\Section;
 use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Models\Surveyed;
 use MattDaneshvar\Survey\Library\Constants;
+use MattDaneshvar\Survey\Models\SurveyQuestion;
 use MattDaneshvar\Survey\Services\SurveyService;
 use MattDaneshvar\Survey\Services\SectionService;
 use MattDaneshvar\Survey\Services\QuestionService;
 use MattDaneshvar\Survey\Mail\ReminderNotification;
-use MattDaneshvar\Survey\Models\SurveyQuestion;
-use MattDaneshvar\Survey\Models\User;
 
 class CreateSurvey extends Component
 {
@@ -156,6 +159,10 @@ class CreateSurvey extends Component
         $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name', 'asc')->get();
         $userTypes = config('iworking.user-type')::select('*')->where('type', 'like', '%-people')->orderBy('type', 'asc')->pluck('id')->toArray();
         $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name', 'asc')->whereIn('type', $userTypes)->get();
+        if($this->survey->sections()->where('name','like','%General%')->exists())
+        {
+            $this->sectionQuestionSelected = $this->survey->sections()->where('name','like','%General%')->first()->id;
+        }
     }
 
     public function initComponent()
@@ -266,7 +273,13 @@ class CreateSurvey extends Component
 
     public function createSections()
     {
-        if ($this->survey->type == "pharmaciesSale") {
+        if ($this->survey->type == "general") {
+            $this->section = new Section();
+            $this->sectionName['es'] = "General";
+            $this->sectionName['en'] = "General";
+            $this->section->order = 1;
+            $this->addSection();
+        } elseif ($this->survey->type == "pharmaciesSale") {
             $this->section = new Section();
             $this->sectionName['es'] = "General";
             $this->sectionName['en'] = "General";
@@ -454,6 +467,7 @@ class CreateSurvey extends Component
                 $this->questionName['es']           = $this->question->getTranslation('content', 'es');
                 $this->questionName['en']           = $this->question->getTranslation('content', 'en');
                 $this->typeSelected                 = $this->question->type;
+                $this->surveyQuestion              = new SurveyQuestion();
                 if ($this->typeSelected == "multiselect" || $this->typeSelected == "uniqueselect") {
                     $this->customOptions = true;
                     if ((is_array($this->question->options) && !empty($this->question->options)) || !empty(json_decode($this->question->options ?? '', true) ?? [])) {
@@ -691,5 +705,106 @@ class CreateSurvey extends Component
     {
         $surVeyQuestion = SurveyQuestion::find($id);
         $surVeyQuestion->update(['disabled' => (!$surVeyQuestion->disabled)]);
+    }
+
+    public function exportSurveyToPDF()
+    {
+        try {
+            $name = "Formulario_" . $this->survey->survey_number . "_";;
+            if ($this->survey->type == "pharmaciesSale") {
+                $name .= "Venta_Farmacia";
+            } elseif ($this->survey->type == "medicalPrescription") {
+                $name .= "Prescripción_Médica";
+            } elseif ($this->survey->type == "general") {
+                $name .= "General";
+            } else {
+                $name .= "Formación";
+            }
+
+            $data = ['survey' => $this->survey, 'onlyOrder' => false];
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true, "isPhpEnabled" => true])->loadView('survey::exports.pdf-survey', $data);
+            $pdf = $pdf->output();
+            return response()->streamDownload(
+                fn () => print($pdf),
+                $name . '.pdf'
+            );
+        } catch (Exception $e) {
+            dd($data, $e->getMessage());
+        }
+    }
+
+    public function exportOrderToPDF()
+    {
+        try {
+            $name = "Comanda_" . $this->survey->survey_number . "_";;
+            if ($this->survey->type == "pharmaciesSale") {
+                $name .= "Venta_Farmacia";
+            } elseif ($this->survey->type == "medicalPrescription") {
+                $name .= "Prescripción_Médica";
+            } elseif ($this->survey->type == "general") {
+                $name .= "General";
+            } else {
+                $name .= "Formación";
+            }
+            $data = ['survey' => $this->survey, 'onlyOrder' => true];
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true, "isPhpEnabled" => true])->loadView('survey::exports.pdf-survey', $data);
+            $pdf = $pdf->output();
+            return response()->streamDownload(
+                fn () => print($pdf),
+                $name . '.pdf'
+            );
+        } catch (Exception $e) {
+            dd($data, $e->getMessage());
+        }
+    }
+
+    public function exportOrderToExcel()
+    {
+        $name = "Comanda_" . $this->survey->survey_number . "_";;
+        if ($this->survey->type == "pharmaciesSale") {
+            $name .= "Venta_Farmacia";
+        } elseif ($this->survey->type == "medicalPrescription") {
+            $name .= "Prescripción_Médica";
+        } elseif ($this->survey->type == "general") {
+            $name .= "General";
+        } else {
+            $name .= "Formación";
+        }
+        $path = tempnam(sys_get_temp_dir(), "FOO");
+        $this->exportToExcel($path);
+
+        return response()->download($path, $name . '.xlsx', [
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Disposition' => 'inline; filename="' . $name . '.xlsx"'
+        ]);
+    }
+
+
+    public function exportToExcel($path)
+    {
+
+        $list = collect([
+            [
+                'Tipo de pedido' => '',
+                'Producto' =>  '',
+                'Unidades' =>  '',
+                'Facturación sin iva' =>  '',
+                'Motivos no interesado' =>   '',
+                'Comentarios' =>   ''
+
+            ]
+        ]);
+
+        return (new FastExcel($list))->export($path, function ($entry) {
+            return [
+                'Tipo de pedido' => '',
+                'Producto' =>  '',
+                'Unidades' =>  '',
+                'Facturación sin iva' =>  '',
+                'Motivos no interesado' =>   '',
+                'Comentarios' =>   ''
+
+            ];
+        });
     }
 }
