@@ -39,6 +39,10 @@
                     @enderror
                 </div>
             </div>
+            <div class="offset-8 col-4 offset-md-4 col-md-2">
+                <button wire:click="refreshQuestions"  class="btn btn-secondary btn-elevate btn-sm" target="_blank">Recargar Preguntas</button>
+                <a href="{{ route('questions.new') }}"  class="btn btn-success btn-elevate btn-sm" target="_blank"> + Nueva Pregunta</a>
+            </div>
         </div>
     </div>
 
@@ -182,7 +186,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($this->survey->surveyQuestionsMain as $item)
+                @foreach ($this->survey->surveyQuestionsMain()->where('section_id',$sectionQuestionSelected)->get() as $item)
                 <tr>
                     <td nowrap>
                         @if($survey->status == 0)

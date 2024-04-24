@@ -95,6 +95,8 @@ class CreateSurvey extends Component
     public $defaultQuestions;
     public $defaultQuestionsSub;
 
+    public $questionsIn = [];
+
     public $selectedParentQuestionId;
     public $selectedParentQuestion;
     public $selectedDefaultQuestion;
@@ -159,9 +161,9 @@ class CreateSurvey extends Component
         $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name', 'asc')->get();
         $userTypes = config('iworking.user-type')::select('*')->where('type', 'like', '%-people')->orderBy('type', 'asc')->pluck('id')->toArray();
         $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name', 'asc')->whereIn('type', $userTypes)->get();
-        if($this->survey->sections()->where('name','like','%General%')->exists())
-        {
-            $this->sectionQuestionSelected = $this->survey->sections()->where('name','like','%General%')->first()->id;
+        if ($this->survey->sections()->where('name', 'like', '%General%')->exists()) {
+            $this->sectionQuestionSelected = $this->survey->sections()->where('name', 'like', '%General%')->first()->id;
+            $this->questionsIn = $this->survey->sections()->where('name', 'like', '%General%')->first()->surveyQuestionsMain()->pluck('question_id')->toArray();
         }
     }
 
@@ -478,6 +480,8 @@ class CreateSurvey extends Component
                         $this->optionEN = [];
                     }
                 }
+                $this->questionsIn[] = $this->selectedDefaultQuestion;
+                $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
             } else {
                 session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
                 return;
@@ -555,8 +559,11 @@ class CreateSurvey extends Component
 
     public function deleteQuestion($id)
     {
+        $questionId = SurveyQuestion::find($id)->question_id;
+        $this->questionsIn = array_diff($this->questionsIn, [$questionId]);
         SurveyQuestion::destroy($id);
         $this->survey->refresh();
+        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
     }
 
     public function resetValues()
@@ -649,8 +656,9 @@ class CreateSurvey extends Component
     }
 
     public function updatedSectionQuestionSelected()
-    {
-        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected));
+    { 
+        $this->questionsIn = Section::find($this->sectionQuestionSelected)->surveyQuestionsMain()->pluck('question_id')->toArray();
+        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
         $this->question = new Question();
         $this->selectedDefaultQuestion = null;
         $this->questionName = [
@@ -705,6 +713,11 @@ class CreateSurvey extends Component
     {
         $surVeyQuestion = SurveyQuestion::find($id);
         $surVeyQuestion->update(['disabled' => (!$surVeyQuestion->disabled)]);
+    }
+
+    public function refreshQuestions()
+    {
+        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
     }
 
     public function exportSurveyToPDF()
