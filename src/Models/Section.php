@@ -57,7 +57,7 @@ class Section extends Model implements SectionContract
      */
     public function surveyQuestions()
     {
-        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->orderBy('order','asc');
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->orderBy('position','asc');
     }
 
     /**
@@ -67,7 +67,7 @@ class Section extends Model implements SectionContract
      */
     public function surveyQuestionsMain()
     {
-        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->whereNull('parent_id')->orderBy('order','asc');
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->whereNull('parent_id')->orderBy('position','asc');
     }
 
     /**
