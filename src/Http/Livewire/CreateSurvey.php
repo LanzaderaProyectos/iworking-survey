@@ -426,6 +426,7 @@ class CreateSurvey extends Component
                 $this->subSurveyQuestion->survey_id = $this->survey->id;
                 $this->subSurveyQuestion->question_id = $this->subQuestion->id;
                 $this->subSurveyQuestion->order = (int)$this->orderSubQuestion ?? 0;
+                $this->subSurveyQuestion->position = (int)$this->orderSubQuestion ?? 0;
                 $this->subSurveyQuestion->section_id = $surveyQuestionParent->section_id;
                 $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
                 $this->subSurveyQuestion->disabled = false;

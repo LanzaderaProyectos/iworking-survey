@@ -156,6 +156,10 @@ class QuestionEdit extends Component
         $questionService    = new QuestionService();
         $this->question->survey_type = $this->surveyType;
         $this->question->section_type = $this->sectionType;
+        if(empty($this->question->disabled))
+        {
+            $this->question->disabled = false;
+        }
         $result             = $questionService->saveQuestion(
             question: $this->question,
             surveyId: null,
