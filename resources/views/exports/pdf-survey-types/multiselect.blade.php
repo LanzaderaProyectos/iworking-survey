@@ -1,6 +1,6 @@
 @php($question = $surveyQuestion->question)
-<div class="form-group">
-    <label style="font-size:1.1rem">{{ $numberQuestion }} {!! $question->content
+<div class="@if(!$is_child) form-group @endif">
+    <label style="font-size:1.1rem">{{ $numberQuestion }}. {!! $question->content
         !!}</label>@if($surveyQuestion->mandatory)*@endif:
     @php($listQuestions = 'es' ? $question->getTranslation('options','es') : $question->options)
     @if(!empty($listQuestions))
@@ -14,5 +14,22 @@
     @else
     <br>
     <label>Pendiente de definir opciones</label>
+    @endif
+    @if(count($surveyQuestion->children) > 0) 
+    <label style="margin-left: 20px; margin-top: 20px;">En caso que la pregunta "{{ $numberQuestion }}" sea respondida</label>
+    @foreach($surveyQuestion->children as $key => $surveyQuestionChild)
+    <div style="
+    margin-left: 20px;
+    page-break-after:auto;
+    page-break-before:auto;">
+        @include("survey::exports.pdf-survey-types.{$surveyQuestionChild->question->type}",
+        [
+        'surveyQuestion' => $surveyQuestionChild,
+        'numberQuestion' => $numberQuestion . '.' .($key+1),
+        'value' => '',
+        'is_child' => true
+        ])
+    </div>
+    @endforeach
     @endif
 </div>

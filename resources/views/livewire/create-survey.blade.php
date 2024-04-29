@@ -2,43 +2,22 @@
     @if(empty($survey->type))
     <div class="row mt-2">
         <div class="col-12">
-                <label class="form-control-label" for="input-key_value">Seleccione el tipo de formulario: </label>
-                <div>
-                    <button type="button" wire:click="$set('survey.type','pharmaciesSale')"
-                        wire:loading.attr="disabled"
-                        class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
-                        Formulario de Venta Farmacias
-                    </button>
-                    <button type="button" wire:click="$set('survey.type','medicalPrescription')"
-                        wire:loading.attr="disabled"
-                        class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
-                        Formulario de Prescripción Médica
-                    </button>
-                    <button type="button" wire:click="$set('survey.type','training')"
-                        wire:loading.attr="disabled"
-                        class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
-                        Formulario de Formación
-                    </button>
-                    <button type="button" wire:click="$set('survey.type','general')"
-                        wire:loading.attr="disabled"
-                        class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
-                        General
-                    </button>
-                </div>
+            <label class="form-control-label" for="input-key_value">Seleccione el tipo de formulario: </label>
+            <div>
+                @foreach($surveyTypes as $type)
+                <button type="button" wire:click="$set('survey.type','{{$type->id}}')" wire:loading.attr="disabled"
+                    class="btn btn-sm btn-primary d-flex p-4 py-lg-2 float-left mr-2">
+                    {{$type->name}}
+                </button>
+                @endforeach
+            </div>
         </div>
     </div>
     @else
     <div>
         <div class="row mt-2">
             <div class="col-12 col-md-6 py-2">
-                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de 
-                @if($survey->type == 'pharmaciesSale')
-                Venta Farmacias
-                @elseif($survey->type == 'medicalPrescription')
-                Prescripción Médica
-                @elseif($survey->type == 'training')
-                Formación
-                @endif</h4>
+                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de {{ $this->survey->surveyType->name ?? ''}}</h4>
             </div>
         </div>
         <div class="row">

@@ -21,6 +21,7 @@ use MattDaneshvar\Survey\Services\SurveyService;
 use MattDaneshvar\Survey\Services\SectionService;
 use MattDaneshvar\Survey\Services\QuestionService;
 use MattDaneshvar\Survey\Mail\ReminderNotification;
+use MattDaneshvar\Survey\Models\SurveyType;
 
 class CreateSurvey extends Component
 {
@@ -44,6 +45,8 @@ class CreateSurvey extends Component
         'es'    => '',
         'en'    => ''
     ];
+
+    public $surveyTypes;
     public $surveyQuestion  = null;
     public $subSurveyQuestion  = null;
     public $users           = [];
@@ -157,14 +160,16 @@ class CreateSurvey extends Component
         $this->draft            = $draft;
         $this->formEdit         = !Route::is('survey.show');
         $this->initComponent();
-        $this->defaultQuestions = (new QuestionService())->getDefaultQuestions($this->survey->type ?? '');
+        
         $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name', 'asc')->get();
         $userTypes = config('iworking.user-type')::select('*')->where('type', 'like', '%-people')->orderBy('type', 'asc')->pluck('id')->toArray();
         $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name', 'asc')->whereIn('type', $userTypes)->get();
         if ($this->survey->sections()->where('name', 'like', '%General%')->exists()) {
             $this->sectionQuestionSelected = $this->survey->sections()->where('name', 'like', '%General%')->first()->id;
             $this->questionsIn = $this->survey->sections()->where('name', 'like', '%General%')->first()->surveyQuestionsMain()->pluck('question_id')->toArray();
+            $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
         }
+        $this->surveyTypes = SurveyType::all();
     }
 
     public function initComponent()
@@ -275,44 +280,12 @@ class CreateSurvey extends Component
 
     public function createSections()
     {
-        if ($this->survey->type == "general") {
+        $sections = json_decode($this->survey->surveyType->default_sections, true);
+        foreach($sections as $section) {
             $this->section = new Section();
-            $this->sectionName['es'] = "General";
-            $this->sectionName['en'] = "General";
-            $this->section->order = 1;
-            $this->addSection();
-        } elseif ($this->survey->type == "pharmaciesSale") {
-            $this->section = new Section();
-            $this->sectionName['es'] = "General";
-            $this->sectionName['en'] = "General";
-            $this->section->order = 1;
-            $this->addSection();
-        } elseif ($this->survey->type == "medicalPrescription") {
-            $this->section = new Section();
-            $this->sectionName['es'] = "General";
-            $this->sectionName['en'] = "General";
-            $this->section->order = 1;
-            $this->addSection();
-            $this->section = new Section();
-            $this->sectionName['es'] = "Preguntas";
-            $this->sectionName['en'] = "Questions";
-            $this->section->order = 2;
-            $this->addSection();
-        } else {
-            $this->section = new Section();
-            $this->sectionName['es'] = "General";
-            $this->sectionName['en'] = "General";
-            $this->section->order = 1;
-            $this->addSection();
-            $this->section = new Section();
-            $this->sectionName['es'] = "Agendar Formación";
-            $this->sectionName['en'] = "Agendar Formación";
-            $this->section->order = 2;
-            $this->addSection();
-            $this->section = new Section();
-            $this->sectionName['es'] = "Formación realizada";
-            $this->sectionName['en'] = "Formación realizada";
-            $this->section->order = 3;
+            $this->section->order = $section['order'];
+            $this->sectionName['es'] = $section['name'];
+            $this->sectionName['en'] = $section['name'];
             $this->addSection();
         }
     }

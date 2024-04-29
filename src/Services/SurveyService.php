@@ -6,10 +6,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Models\Survey;
-use MattDaneshvar\Survey\Library\Constants;
-use MattDaneshvar\Survey\Mail\UserNotification;
-use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Models\Section;
+use MattDaneshvar\Survey\Models\Question;
+use MattDaneshvar\Survey\Library\Constants;
+use MattDaneshvar\Survey\Models\SurveyType;
+use MattDaneshvar\Survey\Mail\UserNotification;
 
 class SurveyService
 {
@@ -104,65 +105,19 @@ class SurveyService
         }
     }
 
-    public function getQuestions(Survey $survey, Section $section,$alreadyIn = [])
+    public function getQuestions(Survey $survey, Section $section, $alreadyIn = [])
     {
-        switch ($survey->type) {
-            case "medicalPrescription":
-                return $this->getMedicalPrescriptionQuestions($section,$alreadyIn);
-            case "pharmaciesSale":
-                return $this->getPharmaciesSaleQuestions($section,$alreadyIn);
-            case "training":
-                return $this->getTrainingQuestions($section,$alreadyIn);
-            case "general":
-                return $this->getGeneralQuestions($section,$alreadyIn);
-            default:
-                return [];
-        }
-    }
-
-    public function getMedicalPrescriptionQuestions(Section $section,$alreadyIn)
-    {
-        if ($section->order == 1 || $section->name  == "General") {
-            $sectionTypes = ['all', 'general'];
-        } elseif ($section->order == 2 || $section->name  == "Preguntas") {
-            $sectionTypes = ['all', 'questions'];
+        if ($survey->surveyType) {
+            $defaultSections = json_decode($survey->surveyType->default_sections, true);
+            $generalTypeId = SurveyType::where('name', 'General')->first()->id;
+            foreach ($defaultSections as $key => $value) {
+                if ($section->order == $value["order"] || $section->name  == $value["name"]) {
+                    $sectionTypes = ['all', $section->name];
+                    return Question::whereIn('survey_type', [$survey->surveyType->id, $generalTypeId])->whereIn('section_type', $sectionTypes)->whereNotIn('id', $alreadyIn)->get();
+                }
+            }
         } else {
-            $sectionTypes = ['all', 'general', 'questions'];
+            return [];
         }
-        return Question::whereIn('survey_type', ['medicalPrescription', 'general'])->whereIn('section_type', $sectionTypes)->whereNotIn('id',$alreadyIn)->get();
-    }
-
-    public function getPharmaciesSaleQuestions(Section $section,$alreadyIn)
-    {
-        if ($section->order == 1 || $section->name  == "General") {
-            $sectionTypes = ['all', 'general'];
-        } else {
-            $sectionTypes = ['all', 'general'];
-        }
-        return Question::whereIn('survey_type', ['pharmaciesSale', 'general'])->whereIn('section_type', $sectionTypes)->whereNotIn('id',$alreadyIn)->get();
-    }
-
-    public function getTrainingQuestions(Section $section,$alreadyIn)
-    {
-        if ($section->order == 1 || $section->name  == "General") {
-            $sectionTypes = ['all', 'general'];
-        } elseif ($section->order == 2 || $section->name  == "Agendar Formación") {
-            $sectionTypes = ['all', 'schedule_training'];
-        } elseif ($section->order == 3 || $section->name  == "Formación realizada") {
-            $sectionTypes = ['all', 'training_complete'];
-        } else {
-            $sectionTypes = ['all', 'general', 'schedule_training', 'training_complete'];
-        }
-        return Question::whereIn('survey_type', ['training', 'general'])->whereIn('section_type', $sectionTypes)->whereNotIn('id',$alreadyIn)->get();
-    }
-
-    public function getGeneralQuestions(Section $section,$alreadyIn)
-    {
-        if ($section->order == 1 || $section->name  == "General") {
-            $sectionTypes = ['all', 'general'];
-        } else {
-            $sectionTypes = ['all', 'general'];
-        }
-        return Question::whereIn('survey_type', ['general'])->whereIn('section_type', $sectionTypes)->whereNotIn('id',$alreadyIn)->get();
     }
 }

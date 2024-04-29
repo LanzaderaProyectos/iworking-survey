@@ -188,7 +188,7 @@
                                 {{ $typeAnwers[$question->type] }}
                             </td>
                             <td>
-                                {{ $questionTypes[$question->survey_type] }}
+                                {{ $question->survey_type }}
                             </td>
                             <td>
                                 {{ auth()->user()->applyDateFormat($question->created_at) }}

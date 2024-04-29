@@ -97,9 +97,9 @@
                             <label for="numbers_format">Para que tipo de formulario*:</label>
                             <select wire:model.live="surveyType" class="form-control " id="numbers_format_input"
                                 size="4">
-                                @foreach ($questionTypes as $key => $value)
-                                <option value="{{ $key }}">
-                                    {{ $value }}
+                                @foreach ($surveyTypes as $key => $value)
+                                <option value="{{ $value->id }}">
+                                    {{ $value->name }}
                                 </option>
                                 @endforeach
                             </select>

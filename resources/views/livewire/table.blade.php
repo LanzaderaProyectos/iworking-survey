@@ -190,7 +190,7 @@
                                 {{ $survey->user->first_name }} {{ $survey->user->last_name }}
                             </td>
                             <td>
-                                {{$surveyTypes[$survey->type]}}
+                                {{$survey->surveyType->name ?? ''}}
                             </td>
                             <td>
                                 @lang('survey::status.survey.'.$survey->status ?? '')

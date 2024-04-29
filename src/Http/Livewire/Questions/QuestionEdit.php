@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use MattDaneshvar\Survey\Models\Question;
 use Rap2hpoutre\FastExcel\FastExcel;
 use MattDaneshvar\Survey\Models\Survey;
+use MattDaneshvar\Survey\Models\SurveyType;
 use MattDaneshvar\Survey\Services\QuestionService;
 
 class QuestionEdit extends Component
@@ -47,7 +48,8 @@ class QuestionEdit extends Component
         "training" => "Formación",
     ];
     public $sectionTypes = [];
-
+    
+    public $surveyTypes;
 
     protected $rules = [
         'question.comments'     => 'nullable',
@@ -143,6 +145,7 @@ class QuestionEdit extends Component
         } else {
             $this->question = new Question();
         }
+        $this->surveyTypes = SurveyType::all();
     }
 
     public function render()
@@ -183,32 +186,13 @@ class QuestionEdit extends Component
         }
         if($key == "surveyType")
         {
-            if($value == "general") {
-                $this->sectionTypes = [
-                    "all"       => "Todas",
-                    "general"   => "Sección General",
-                ];
-            }
-            elseif($value == "pharmaciesSale") {
-                $this->sectionTypes = [
-                    "all"       => "Todas",
-                    "general"   => "Sección General",
-                ];
-            }
-            elseif($value == "medicalPrescription") {
-                $this->sectionTypes = [
-                    "all"       => "Todas",
-                    "general"   => "Sección General",
-                    "questions" => "Preguntas"
-                ];
-            }
-            elseif($value == "training") {
-                $this->sectionTypes = [
-                    "all"       => "Todas",
-                    "general"   => "Sección General",
-                    "schedule_training" => "Agendar Formación",
-                    "training_complete" => "Formación Realizada"
-                ];
+            $sections = json_decode($this->surveyTypes->where('id',$this->surveyType)->first()->default_sections,true);
+            $this->sectionTypes = [
+                "all"       => "Todas",
+            ];
+            foreach($sections as $key => $value)
+            {
+                $this->sectionTypes[$value["name"]] = $value["name"];
             }
         }
     }

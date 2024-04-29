@@ -45,8 +45,7 @@
         }
 
         .table-bordered th,
-        .table-bordered td {
-        }
+        .table-bordered td {}
     </style>
 </head>
 
@@ -73,7 +72,9 @@
             </div>
         </div>
         <div>
-                <p><h4>Fecha expiración: {{$survey->expiration ?? ''}} </h4><p>
+            <p>
+            <h4>Fecha expiración: {{$survey->expiration ?? ''}} </h4>
+            <p>
         </div>
         <div id="questions">
             @if(!$onlyOrder)
@@ -88,8 +89,9 @@
                     @include("survey::exports.pdf-survey-types.{$surveyQuestionMain->question->type}",
                     [
                     'surveyQuestion' => $surveyQuestionMain,
-                    'numberQuestion' => $key + 1 . '.',
-                    'value' => ''])
+                    'numberQuestion' => $key + 1,
+                    'value' => '',
+                    'is_child' => false])
                 </div>
                 @endforeach
             </div>

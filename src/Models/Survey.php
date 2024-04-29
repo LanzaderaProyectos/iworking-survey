@@ -135,6 +135,16 @@ class Survey extends Model implements SurveyContract
     }
 
     /**
+     * The survey type.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function surveyType()
+    {
+        return $this->belongsTo(SurveyType::class, 'type');
+    }
+
+    /**
      * The survey entries.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
