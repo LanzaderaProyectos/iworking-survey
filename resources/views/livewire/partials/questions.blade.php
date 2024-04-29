@@ -87,7 +87,7 @@
             <div class="col-md-12 mt-3">
                 <div class="form-group">
                     <label class="form-control-label" for="input-first_name">Pregunta*</label>
-                    <nav id="create-questions">
+                    {{-- <nav id="create-questions">
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
                             <a class="nav-item nav-link active" id="nav-question-tab" data-toggle="tab"
                                 href="#nav-question-es" role="tab" aria-controls="nav-home"
@@ -95,7 +95,7 @@
                             <a class="nav-item nav-link" id="nav-question-tab" data-toggle="tab" href="#nav-question-en"
                                 role="tab" aria-controls="nav-profile" aria-selected="false">Ingles</a>
                         </div>
-                    </nav>
+                    </nav> --}}
                     <div class="tab-content" id="nav-tabContent">
                         <div class="tab-pane fade show active" id="nav-question-es" role="tabpanel"
                             aria-labelledby="nav-home-tab">
@@ -103,12 +103,12 @@
                                 id="question-name-es" class="form-control form-control-alternative"
                                 placeholder="Introduzca nombre">
                         </div>
-                        <div class="tab-pane fade" id="nav-question-en" role="tabpanel"
+                        {{-- <div class="tab-pane fade" id="nav-question-en" role="tabpanel"
                             aria-labelledby="nav-profile-tab">
                             <input disabled wire:model.defer="questionName.en" type="text" name="section-name"
                                 id="question-name-en" class="form-control form-control-alternative"
                                 placeholder="Introduzca nombre">
-                        </div>
+                        </div> --}}
                     </div>
                     @error('questionName.*')
                     <span class="text-danger">{{ $message }}</span>
@@ -155,14 +155,14 @@
                     <thead>
                         <tr>
                             <th style="width: 50%">ES</th>
-                            <th style="width: 50%">EN</th>
+                            {{-- <th style="width: 50%">EN</th> --}}
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($optionES as $keyOption => $option)
                         <tr>
                             <td>{{ $option }}</td>
-                            <td>{{ $optionEN[$keyOption] }}</td>
+                            {{-- <td>{{ $optionEN[$keyOption] }}</td> --}}
                         </tr>
                         @endforeach
                     </tbody>
@@ -211,8 +211,8 @@
                         <th>Sección</th>
                         <td>Orden</td>
                         <th class="col-1">Codigo</th>
-                        <th class="col-5">ES</th>
-                        <th class="col-5">EN</th>
+                        <th class="col-5">Pregunta</th>
+                        {{-- <th class="col-5">EN</th> --}}
                         <th class="col-1">Tipo</th>
                     </tr>
                 </thead>
@@ -268,9 +268,9 @@
                         <td>
                             {{ $item->question->getTranslation('content', 'es') }}
                         </td>
-                        <td>
+                        {{-- <td>
                             {{ $item->question->getTranslation('content', 'en') }}
-                        </td>
+                        </td> --}}
                         <td>
                             {{ $typeAnwers[$item->question->type] ?? $item->question->type }}
                         </td>

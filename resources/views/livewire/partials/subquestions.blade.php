@@ -80,14 +80,14 @@ $this->selectedParentQuestion->type != 'radio')
     <div class="col-md-12">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Pregunta*</label>
-            <nav id="create-questions">
+            {{-- <nav id="create-questions">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-subquestion-tab" data-toggle="tab"
                         href="#nav-subquestion-es" role="tab" aria-controls="nav-home" aria-selected="true">Español</a>
                     <a class="nav-item nav-link" id="nav-subquestion-tab" data-toggle="tab" href="#nav-subquestion-en"
                         role="tab" aria-controls="nav-profile" aria-selected="false">Ingles</a>
                 </div>
-            </nav>
+            </nav> --}}
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-subquestion-es" role="tabpanel"
                     aria-labelledby="nav-home-tab">
@@ -95,11 +95,11 @@ $this->selectedParentQuestion->type != 'radio')
                     type="text" name="section-name" id="subquestion-name-es"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
                 </div>
-                <div class="tab-pane fade" id="nav-subquestion-en" role="tabpanel" aria-labelledby="nav-profile-tab">
+                {{-- <div class="tab-pane fade" id="nav-subquestion-en" role="tabpanel" aria-labelledby="nav-profile-tab">
                     <input disabled {{ $this->formEdit ? '' : 'disabled' }} wire:model="subQuestionName.en"
                     type="text" name="section-name" id="subquestion-name-en"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
-                </div>
+                </div> --}}
             </div>
             @error('subQuestionName.*')
             <span class="text-danger">{{ $message }}</span>
@@ -173,8 +173,8 @@ $this->selectedParentQuestion->type != 'radio')
                     <th>Pregunta superior</th>
                     <th>Condición</th>
                     <td>Orden</td>
-                    <th class="col-5">ES</th>
-                    <th class="col-5">EN</th>
+                    <th class="col-5">Sub Pregunta</th>
+                    {{-- <th class="col-5">EN</th> --}}
                     <th class="col-1">Tipo</th>
                 </tr>
             </thead>
@@ -215,9 +215,9 @@ $this->selectedParentQuestion->type != 'radio')
                     <td>
                         {{ $item->question->getTranslation('content', 'es') }}
                     </td>
-                    <td>
+                    {{-- <td>
                         {{ $item->question->getTranslation('content', 'en') }}
-                    </td>
+                    </td> --}}
                     <td>
                         {{ $typeAnwers[$item->question->type] ?? $item->question->type }}
                     </td>

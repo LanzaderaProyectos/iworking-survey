@@ -26,14 +26,14 @@
     <div class="col-12 col-md-6">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Nombre*</label>
-            <nav id="survey-name-options">
+            {{-- <nav id="survey-name-options">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-survey-es-tab" data-toggle="tab" href="#nav-survey-es"
                         role="tab" aria-controls="nav-survey-es" aria-selected="true">Español</a>
                     <a class="nav-item nav-link" id="nav-survey-en-tab" data-toggle="tab" href="#nav-survey-en"
                         role="tab" aria-controls="nav-survey-en" aria-selected="true">Ingles</a>
                 </div>
-            </nav>
+            </nav> --}}
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-survey-es" role="tabpanel"
                     aria-labelledby="nav-survey-es-tab">
@@ -41,11 +41,11 @@
                     name="section-name-es"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
                 </div>
-                <div class="tab-pane fade" id="nav-survey-en" role="tabpanel" aria-labelledby="nav-survey-es-tab">
+                {{-- <div class="tab-pane fade" id="nav-survey-en" role="tabpanel" aria-labelledby="nav-survey-es-tab">
                     <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="surveyName.en" type="text"
                     name="section-name-en"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
-                </div>
+                </div> --}}
             </div>
             @error('surveyName.*') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
@@ -85,14 +85,14 @@
     <div class="col-12 col-md-6">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Nombre de sección</label>
-            <nav id="create-sections-surveys">
+            {{-- <nav id="create-sections-surveys">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-section-tab" data-toggle="tab" href="#nav-section-es"
                         role="tab" aria-controls="nav-home" aria-selected="true">Español</a>
                     <a class="nav-item nav-link" id="nav-section-tab" data-toggle="tab" href="#nav-section-en"
                         role="tab" aria-controls="nav-profile" aria-selected="false">Ingles</a>
                 </div>
-            </nav>
+            </nav> --}}
             <div class="input-group">
                 <div class="row">
                     <div class="col-8 pr-0">
@@ -104,13 +104,13 @@
                                 id="survey-name-es" class="form-control form-control-alternative"
                                 placeholder="Introduzca nombre">
                             </div>
-                            <div class="tab-pane fade" id="nav-section-en" role="tabpanel"
+                            {{-- <div class="tab-pane fade" id="nav-section-en" role="tabpanel"
                                 aria-labelledby="nav-profile-tab">
                                 <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="sectionName.en"
                                 type="text" name="section-name"
                                 id="survey-name-en" class="form-control form-control-alternative"
                                 placeholder="Introduzca nombre">
-                            </div>
+                            </div> --}}
                         </div>
                         @error('sectionName.*') <span class="text-danger">{{ $message }}</span> @enderror
                     </div>
