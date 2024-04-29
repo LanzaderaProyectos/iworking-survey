@@ -90,7 +90,7 @@ class SurveyQuestion extends Model
      */
     public function parent()
     {
-        return $this->belongsTo(get_class(app()->make(SurveyQuestion::class)));
+        return $this->belongsTo(get_class(app()->make(SurveyQuestion::class)),'parent_id');
     }
 
     /**

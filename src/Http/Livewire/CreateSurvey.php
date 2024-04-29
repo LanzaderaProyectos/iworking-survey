@@ -160,14 +160,14 @@ class CreateSurvey extends Component
         $this->draft            = $draft;
         $this->formEdit         = !Route::is('survey.show');
         $this->initComponent();
-        
+
         $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name', 'asc')->get();
         $userTypes = config('iworking.user-type')::select('*')->where('type', 'like', '%-people')->orderBy('type', 'asc')->pluck('id')->toArray();
         $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name', 'asc')->whereIn('type', $userTypes)->get();
         if ($this->survey->sections()->where('name', 'like', '%General%')->exists()) {
             $this->sectionQuestionSelected = $this->survey->sections()->where('name', 'like', '%General%')->first()->id;
             $this->questionsIn = $this->survey->sections()->where('name', 'like', '%General%')->first()->surveyQuestionsMain()->pluck('question_id')->toArray();
-            $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
+            $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected), $this->questionsIn);
         }
         $this->surveyTypes = SurveyType::all();
     }
@@ -281,7 +281,7 @@ class CreateSurvey extends Component
     public function createSections()
     {
         $sections = json_decode($this->survey->surveyType->default_sections, true);
-        foreach($sections as $section) {
+        foreach ($sections as $section) {
             $this->section = new Section();
             $this->section->order = $section['order'];
             $this->sectionName['es'] = $section['name'];
@@ -455,7 +455,7 @@ class CreateSurvey extends Component
                     }
                 }
                 $this->questionsIn[] = $this->selectedDefaultQuestion;
-                $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
+                $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected), $this->questionsIn);
             } else {
                 session()->flash('questionWarning', 'La pregunta ya existe en el formulario');
                 return;
@@ -537,7 +537,7 @@ class CreateSurvey extends Component
         $this->questionsIn = array_diff($this->questionsIn, [$questionId]);
         SurveyQuestion::destroy($id);
         $this->survey->refresh();
-        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
+        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected), $this->questionsIn);
     }
 
     public function resetValues()
@@ -630,9 +630,9 @@ class CreateSurvey extends Component
     }
 
     public function updatedSectionQuestionSelected()
-    { 
+    {
         $this->questionsIn = Section::find($this->sectionQuestionSelected)->surveyQuestionsMain()->pluck('question_id')->toArray();
-        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
+        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected), $this->questionsIn);
         $this->question = new Question();
         $this->selectedDefaultQuestion = null;
         $this->questionName = [
@@ -691,7 +691,7 @@ class CreateSurvey extends Component
 
     public function refreshQuestions()
     {
-        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected),$this->questionsIn);
+        $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected), $this->questionsIn);
     }
 
     public function exportSurveyToPDF()
@@ -793,5 +793,90 @@ class CreateSurvey extends Component
 
             ];
         });
+    }
+
+    public function upQuestion($id)
+    {
+        $actualQuestion = SurveyQuestion::find($id);
+        if($actualQuestion->order <= 1 && $actualQuestion->position <= 1){
+            return;
+        }
+        foreach ($this->survey->surveyQuestionsMain()->where('section_id', $this->sectionQuestionSelected)->get() as $question) {
+            if ($question->order == $actualQuestion->order - 1 || $question->position == $actualQuestion->position - 1) {
+                $question->order = $actualQuestion->order;
+                $question->position = $actualQuestion->position;
+                $question->save();
+                $actualQuestion->order = $actualQuestion->order - 1;
+                $actualQuestion->position = $actualQuestion->position - 1;
+                $actualQuestion->save();
+                return;
+            }
+        }
+        $actualQuestion->order = $actualQuestion->order - 1;
+        $actualQuestion->position = $actualQuestion->position - 1;
+        $actualQuestion->save();
+    }
+
+    public function downQuestion($id)
+    {
+        $actualQuestion = SurveyQuestion::find($id);
+        foreach ($this->survey->surveyQuestionsMain()->where('section_id', $this->sectionQuestionSelected)->get() as $question) {
+            if ($question->order == $actualQuestion->order + 1 || $question->position == $actualQuestion->position + 1) {
+                $question->order = $actualQuestion->order;
+                $question->position = $actualQuestion->position;
+                $question->save();
+                $actualQuestion->order = $actualQuestion->order + 1;
+                $actualQuestion->position = $actualQuestion->position + 1;
+                $actualQuestion->save();
+                return;
+            }
+        }
+        $actualQuestion->order = $actualQuestion->order + 1;
+        $actualQuestion->position = $actualQuestion->position + 1;
+        $actualQuestion->save();
+    }
+
+    
+    public function upSubQuestion($id)
+    {
+        $actualQuestion = SurveyQuestion::find($id);
+        if($actualQuestion->order <= 1 && $actualQuestion->position <= 1){
+            return;
+        }
+        $parentQuestion = $actualQuestion->parent;
+        foreach ($parentQuestion->children as $question) {
+            if ($question->order == $actualQuestion->order - 1 || $question->position == $actualQuestion->position - 1) {
+                $question->order = $actualQuestion->order;
+                $question->position = $actualQuestion->position;
+                $question->save();
+                $actualQuestion->order = $actualQuestion->order - 1;
+                $actualQuestion->position = $actualQuestion->position - 1;
+                $actualQuestion->save();
+                return;
+            }
+        }
+        $actualQuestion->order = $actualQuestion->order - 1;
+        $actualQuestion->position = $actualQuestion->position - 1;
+        $actualQuestion->save();
+    }
+
+    public function downSubQuestion($id)
+    {
+        $actualQuestion = SurveyQuestion::find($id);
+        $parentQuestion = $actualQuestion->parent;
+        foreach ($parentQuestion->children as $question) {
+            if ($question->order == $actualQuestion->order + 1 || $question->position == $actualQuestion->position + 1) {
+                $question->order = $actualQuestion->order;
+                $question->position = $actualQuestion->position;
+                $question->save();
+                $actualQuestion->order = $actualQuestion->order + 1;
+                $actualQuestion->position = $actualQuestion->position + 1;
+                $actualQuestion->save();
+                return;
+            }
+        }
+        $actualQuestion->order = $actualQuestion->order + 1;
+        $actualQuestion->position = $actualQuestion->position + 1;
+        $actualQuestion->save();
     }
 }

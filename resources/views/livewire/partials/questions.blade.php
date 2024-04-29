@@ -217,7 +217,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($this->survey->surveyQuestionsMain()->where('section_id',$sectionQuestionSelected)->get()
+                    @foreach ($this->survey->surveyQuestionsMain()->where('section_id',$sectionQuestionSelected)->get()->sortBy('position')
                     as $item)
                     <tr>
                         <td nowrap>
@@ -236,6 +236,19 @@
                                 wire:click="deleteQuestion('{{ $item->id }}')"
                                 class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
                                 <i class="fas fa-trash" aria-hidden="true"></i>
+                            </button>
+
+                            <button wire:loading.attr="disabled" wire:click="upQuestion('{{ $item->id }}')" type="button"
+                                class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                                data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
+                                title="Subir orden">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button wire:loading.attr="disabled" wire:click="downQuestion('{{ $item->id }}')" type="button"
+                                class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                                data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
+                                title="Bajar Orden">
+                                <i class="fas fa-arrow-down"></i>
                             </button>
                             @else
                             @if($this->isActive($item->id))

@@ -179,7 +179,7 @@ $this->selectedParentQuestion->type != 'radio')
                 </tr>
             </thead>
             <tbody>
-                @foreach ($this->survey->surveyQuestionsSub as $item)
+                @foreach ($this->survey->surveyQuestionsSub->sortBy('position') as $item)
                 <tr>
                     <td nowrap>
                         <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ? '' :
@@ -195,6 +195,18 @@ $this->selectedParentQuestion->type != 'radio')
                             wire:click="deleteQuestion('{{ $item->id }}')"
                             class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
                             <i class="fas fa-trash" aria-hidden="true"></i>
+                        </button>
+                        <button wire:loading.attr="disabled" wire:click="upSubQuestion('{{ $item->id }}')" type="button"
+                            class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
+                            title="Subir orden">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button wire:loading.attr="disabled" wire:click="downSubQuestion('{{ $item->id }}')" type="button"
+                            class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
+                            title="Bajar Orden">
+                            <i class="fas fa-arrow-down"></i>
                         </button>
                     </td>
                     <td>
