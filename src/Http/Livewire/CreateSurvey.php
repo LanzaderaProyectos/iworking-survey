@@ -816,6 +816,7 @@ class CreateSurvey extends Component
         $actualQuestion->order = $actualQuestion->order - 1;
         $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
+        $this->render();
     }
 
     public function downQuestion($id)
@@ -835,6 +836,7 @@ class CreateSurvey extends Component
         $actualQuestion->order = $actualQuestion->order + 1;
         $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
+        $this->render();
     }
 
     
@@ -859,6 +861,7 @@ class CreateSurvey extends Component
         $actualQuestion->order = $actualQuestion->order - 1;
         $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
+        $this->render();
     }
 
     public function downSubQuestion($id)
@@ -879,5 +882,6 @@ class CreateSurvey extends Component
         $actualQuestion->order = $actualQuestion->order + 1;
         $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
+        $this->render();
     }
 }
