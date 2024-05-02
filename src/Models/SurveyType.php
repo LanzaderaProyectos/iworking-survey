@@ -23,4 +23,9 @@ class SurveyType extends Model
         'default_sections' => 'array',
     ];
 
+    public function surveys()
+    {
+        return $this->hasMany(Survey::class,'type');
+    }
+
 }

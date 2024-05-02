@@ -517,7 +517,7 @@ class CreateSurvey extends Component
             $this->orderSubQuestion            = $this->subSurveyQuestion->position;
             $this->requiredSubQuestion         = $this->subSurveyQuestion->mandatory;
             $this->subTypeSelected             = $this->subQuestion->type;
-            $this->selectedParentQuestionId    = $this->subSurveyQuestion->id;
+            $this->selectedParentQuestionId    = $this->subSurveyQuestion->parent->id;
             $this->selectedParentQuestion      = $this->subSurveyQuestion->parent->question;
             $this->parentQuestionRadio         = $this->subSurveyQuestion->condition;
             $this->subQuestionName['es']       = $this->subQuestion->getTranslation('content', 'es');
@@ -528,6 +528,7 @@ class CreateSurvey extends Component
                 $this->subOptionEs = $this->question->getTranslation('options', 'es');
                 $this->subOptionEn = $this->question->getTranslation('options', 'en');
             }
+            $this->defaultQuestionsSub = (new SurveyService())->getQuestions($this->survey, $this->subSurveyQuestion->parent->section);
         }
     }
 

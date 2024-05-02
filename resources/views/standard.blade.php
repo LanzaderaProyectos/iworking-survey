@@ -1,9 +1,9 @@
-<div>
+<div class="col-12">
     <div class="card mt-5">
         <div class="card-header bg-white p-4">
             <div class="row">
                 <div class="col-10">
-                    <h1 class="mb-0 mt-2">{{ $this->survey->name }}</h1>
+                    <h1 class="mb-0 mt-2">{{ $survey->name }}</h1>
                     @if ($this->entry ?? false)
                     <h3 class="mt-2 text-muted"> {{ $this->entry->surveyed->name ?? '' }} -
                         {{ $this->entry->surveyed->contact_person ?? '' }}
@@ -20,15 +20,15 @@
         </div>
         {{-- @include('survey::sections.profesional') --}}
         @php($numberQuestion = 1)
-        @foreach ($this->survey->sections as $index => $section)
+        @foreach ($survey->sections as $index => $section)
         @include('survey::sections.single')
         @php($numberQuestion += $section->questions->count())
         @endforeach
-        @if($this->survey->type == "pharmaciesSale")
+        @if($survey->surveyType->has_order)
         @include('survey::sections.pharmaciesSale')
         @endif
     </div>
-    @if ($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)
+    @if ($survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)
     @if (session()->has('answersAlert'))
     <div id="answersAlert" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
         <span> {{ session('answersAlert') }}</span>
