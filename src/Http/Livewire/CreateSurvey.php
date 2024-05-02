@@ -805,16 +805,16 @@ class CreateSurvey extends Component
         foreach ($this->survey->surveyQuestionsMain()->where('section_id', $this->sectionQuestionSelected)->get() as $question) {
             if ($question->order == $actualQuestion->order - 1 || $question->position == $actualQuestion->position - 1) {
                 $question->order = $actualQuestion->order;
-                $question->position = $actualQuestion->position;
+                $question->position = $actualQuestion->order;
                 $question->save();
                 $actualQuestion->order = $actualQuestion->order - 1;
-                $actualQuestion->position = $actualQuestion->position - 1;
+                $actualQuestion->position = $actualQuestion->order;
                 $actualQuestion->save();
                 return;
             }
         }
         $actualQuestion->order = $actualQuestion->order - 1;
-        $actualQuestion->position = $actualQuestion->position - 1;
+        $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
     }
 
@@ -824,16 +824,16 @@ class CreateSurvey extends Component
         foreach ($this->survey->surveyQuestionsMain()->where('section_id', $this->sectionQuestionSelected)->get() as $question) {
             if ($question->order == $actualQuestion->order + 1 || $question->position == $actualQuestion->position + 1) {
                 $question->order = $actualQuestion->order;
-                $question->position = $actualQuestion->position;
+                $question->position = $actualQuestion->order;
                 $question->save();
                 $actualQuestion->order = $actualQuestion->order + 1;
-                $actualQuestion->position = $actualQuestion->position + 1;
+                $actualQuestion->position = $actualQuestion->order;
                 $actualQuestion->save();
                 return;
             }
         }
         $actualQuestion->order = $actualQuestion->order + 1;
-        $actualQuestion->position = $actualQuestion->position + 1;
+        $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
     }
 
@@ -848,16 +848,16 @@ class CreateSurvey extends Component
         foreach ($parentQuestion->children as $question) {
             if ($question->order == $actualQuestion->order - 1 || $question->position == $actualQuestion->position - 1) {
                 $question->order = $actualQuestion->order;
-                $question->position = $actualQuestion->position;
+                $question->position = $actualQuestion->order;
                 $question->save();
                 $actualQuestion->order = $actualQuestion->order - 1;
-                $actualQuestion->position = $actualQuestion->position - 1;
+                $actualQuestion->position = $actualQuestion->order;
                 $actualQuestion->save();
                 return;
             }
         }
         $actualQuestion->order = $actualQuestion->order - 1;
-        $actualQuestion->position = $actualQuestion->position - 1;
+        $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
     }
 
@@ -871,13 +871,13 @@ class CreateSurvey extends Component
                 $question->position = $actualQuestion->position;
                 $question->save();
                 $actualQuestion->order = $actualQuestion->order + 1;
-                $actualQuestion->position = $actualQuestion->position + 1;
+                $actualQuestion->position = $actualQuestion->order;
                 $actualQuestion->save();
                 return;
             }
         }
         $actualQuestion->order = $actualQuestion->order + 1;
-        $actualQuestion->position = $actualQuestion->position + 1;
+        $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
     }
 }
