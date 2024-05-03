@@ -1,5 +1,5 @@
 <div class="col-12">
-    <h3>Sección: Comanda</h3>
+    <h3>Etapa: Comanda</h3>
     <div class="col-12" style="
     page-break-after:auto;
     page-break-before:auto;">

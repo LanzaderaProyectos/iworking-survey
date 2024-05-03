@@ -334,7 +334,7 @@ class CreateSurvey extends Component
             $this->section = new Section();
             $this->survey->refresh();
         } else {
-            session()->flash('sectionSaved', 'Error al guardar la sección');
+            session()->flash('sectionSaved', 'Error al guardar la etapa');
         }
     }
 
@@ -796,10 +796,13 @@ class CreateSurvey extends Component
         });
     }
 
+    /**
+     * Move question up
+     */
     public function upQuestion($id)
     {
         $actualQuestion = SurveyQuestion::find($id);
-        if($actualQuestion->order <= 1 && $actualQuestion->position <= 1){
+        if ($actualQuestion->order <= 1 && $actualQuestion->position <= 1) {
             return;
         }
         foreach ($this->survey->surveyQuestionsMain()->where('section_id', $this->sectionQuestionSelected)->get() as $question) {
@@ -810,15 +813,19 @@ class CreateSurvey extends Component
                 $actualQuestion->order = $actualQuestion->order - 1;
                 $actualQuestion->position = $actualQuestion->order;
                 $actualQuestion->save();
+                $this->survey->refresh();
                 return;
             }
         }
         $actualQuestion->order = $actualQuestion->order - 1;
         $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
-        $this->render();
+        $this->survey->refresh();
     }
 
+    /**
+     * Move question down
+     */
     public function downQuestion($id)
     {
         $actualQuestion = SurveyQuestion::find($id);
@@ -830,20 +837,23 @@ class CreateSurvey extends Component
                 $actualQuestion->order = $actualQuestion->order + 1;
                 $actualQuestion->position = $actualQuestion->order;
                 $actualQuestion->save();
+                $this->survey->refresh();
                 return;
             }
         }
         $actualQuestion->order = $actualQuestion->order + 1;
         $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
-        $this->render();
+        $this->survey->refresh();
     }
 
-    
+    /**
+     * Move sub question up
+     */
     public function upSubQuestion($id)
     {
         $actualQuestion = SurveyQuestion::find($id);
-        if($actualQuestion->order <= 1 && $actualQuestion->position <= 1){
+        if ($actualQuestion->order <= 1 && $actualQuestion->position <= 1) {
             return;
         }
         $parentQuestion = $actualQuestion->parent;
@@ -855,15 +865,19 @@ class CreateSurvey extends Component
                 $actualQuestion->order = $actualQuestion->order - 1;
                 $actualQuestion->position = $actualQuestion->order;
                 $actualQuestion->save();
+                $this->survey->refresh();
                 return;
             }
         }
         $actualQuestion->order = $actualQuestion->order - 1;
         $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
-        $this->render();
+        $this->survey->refresh();
     }
 
+    /**
+     * Move sub question down
+     */
     public function downSubQuestion($id)
     {
         $actualQuestion = SurveyQuestion::find($id);
@@ -876,12 +890,58 @@ class CreateSurvey extends Component
                 $actualQuestion->order = $actualQuestion->order + 1;
                 $actualQuestion->position = $actualQuestion->order;
                 $actualQuestion->save();
+                $this->survey->refresh();
                 return;
             }
         }
         $actualQuestion->order = $actualQuestion->order + 1;
         $actualQuestion->position = $actualQuestion->order;
         $actualQuestion->save();
-        $this->render();
+        $this->survey->refresh();
+    }
+
+    /**
+     * Move section up
+     */
+    public function upSection($id)
+    {
+        $actualSection = Section::find($id);
+        if ($actualSection->order <= 1) {
+            return;
+        }
+        foreach ($this->survey->sections as $section) {
+            if ($section->order == $actualSection->order - 1) {
+                $section->order = $actualSection->order;
+                $section->save();
+                $actualSection->order = $actualSection->order - 1;
+                $actualSection->save();
+                $this->survey->refresh();
+                return;
+            }
+        }
+        $actualSection->order = $actualSection->order - 1;
+        $actualSection->save();
+        $this->survey->refresh();
+    }
+
+    /**
+     * Move section down
+     */
+    public function downSection($id)
+    {
+        $actualSection = Section::find($id);
+        foreach ($this->survey->sections as $section) {
+            if ($section->order == $actualSection->order + 1) {
+                $section->order = $actualSection->order;
+                $section->save();
+                $actualSection->order = $actualSection->order + 1;
+                $actualSection->save();
+                $this->survey->refresh();
+                return;
+            }
+        }
+        $actualSection->order = $actualSection->order + 1;
+        $actualSection->save();
+        $this->survey->refresh();
     }
 }

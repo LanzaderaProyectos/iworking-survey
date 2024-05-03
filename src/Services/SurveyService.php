@@ -116,6 +116,7 @@ class SurveyService
                     return Question::whereIn('survey_type', [$survey->surveyType->id, $generalTypeId])->whereIn('section_type', $sectionTypes)->whereNotIn('id', $alreadyIn)->get();
                 }
             }
+            return Question::whereIn('survey_type', [$survey->surveyType->id, $generalTypeId])->whereNotIn('id', $alreadyIn)->get();
         } else {
             return [];
         }

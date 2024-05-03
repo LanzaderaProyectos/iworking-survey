@@ -84,7 +84,7 @@
 <div class="row my-5">
     <div class="col-12 col-md-6">
         <div class="form-group">
-            <label class="form-control-label" for="input-first_name">Nombre de sección</label>
+            <label class="form-control-label" for="input-first_name">Nombre de la etapa</label>
             {{-- <nav id="create-sections-surveys">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-section-tab" data-toggle="tab" href="#nav-section-es"
@@ -147,6 +147,18 @@
                             wire:click="deleteSection('{{ $section->id }}')"
                             class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
                             <i class="fas fa-trash" aria-hidden="true"></i>
+                        </button>
+                        <button wire:loading.attr="disabled" wire:click="upSection('{{ $section->id }}')" type="button"
+                            class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
+                            title="Subir orden">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
+                        <button wire:loading.attr="disabled" wire:click="downSection('{{ $section->id }}')" type="button"
+                            class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
+                            title="Bajar Orden">
+                            <i class="fas fa-arrow-down"></i>
                         </button>
                     </td>
                     <td>

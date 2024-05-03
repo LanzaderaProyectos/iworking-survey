@@ -117,26 +117,26 @@ class QuestionEdit extends Component
                 if($this->surveyType == "general") {
                     $this->sectionTypes = [
                         "all"       => "Todas",
-                        "general"   => "Sección General",
+                        "general"   => "Etapa General",
                     ];
                 }
                 elseif($this->surveyType == "pharmaciesSale") {
                     $this->sectionTypes = [
                         "all"       => "Todas",
-                        "general"   => "Sección General",
+                        "general"   => "Etapa General",
                     ];
                 }
                 elseif($this->surveyType == "medicalPrescription") {
                     $this->sectionTypes = [
                         "all"       => "Todas",
-                        "general"   => "Sección General",
+                        "general"   => "Etapa General",
                         "questions" => "Preguntas"
                     ];
                 }
                 elseif($this->surveyType == "training") {
                     $this->sectionTypes = [
                         "all"       => "Todas",
-                        "general"   => "Sección General",
+                        "general"   => "Etapa General",
                         "schedule_training" => "Agendar Formación",
                         "training_complete" => "Formación Realizada"
                     ];

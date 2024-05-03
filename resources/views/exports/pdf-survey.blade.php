@@ -81,7 +81,7 @@
             @php($numberQuestion = 1)
             @foreach ($survey->sections as $index => $section)
             <div class="col-12">
-                <h3>Sección: {{ $section->name }}</h3>
+                <h3>Etapa: {{ $section->name }}</h3>
                 @foreach ($section->surveyQuestionsMain as $key => $surveyQuestionMain)
                 <div class="col-12" style="
                     page-break-after:auto;

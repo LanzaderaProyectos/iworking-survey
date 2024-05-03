@@ -111,7 +111,7 @@
                     @if($surveyType)
                     <div class="col-12">
                         <div class="form-group mb-3">
-                            <label for="section_select">Para que Sección del formulario*:</label>
+                            <label for="section_select">Para que Etapa del formulario*:</label>
                             <select wire:model.live="sectionType" class="form-control " id="section_select" size="4">
                                 @foreach ($sectionTypes as $key => $value)
                                 <option value="{{ $key }}">

@@ -24,7 +24,7 @@
         <div class="row">
             <div class="col-md-6 col-12">
                 <div class="form-group ">
-                    <label for="numbers_format">Sección*:</label>
+                    <label for="numbers_format">Etapa*:</label>
                     <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="sectionQuestionSelected"
                         class="form-control "
                         id="numbers_format_input" size="3">
@@ -57,7 +57,7 @@
                 <button class="btn btn-link collapsed d-flex align-items-center"
                     style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseQuestionsAdd" aria-expanded="true" aria-controls="collapseQuestionsAdd">
-                    <span class="h3">Vincular pregunta a sección:</span>
+                    <span class="h3">Vincular pregunta a etapa:</span>
                     <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>
@@ -208,7 +208,7 @@
                 <thead>
                     <tr>
                         <th>Acción</th>
-                        <th>Sección</th>
+                        <th>Etapa</th>
                         <td>Orden</td>
                         <th class="col-1">Codigo</th>
                         <th class="col-5">Pregunta</th>

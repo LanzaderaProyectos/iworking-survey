@@ -168,7 +168,7 @@ $this->selectedParentQuestion->type != 'radio')
             <thead>
                 <tr>
                     <th>Acción</th>
-                    <th>Sección</th>
+                    <th>Etapa</th>
                     <th>Pregunta original</th>
                     <th>Pregunta superior</th>
                     <th>Condición</th>
