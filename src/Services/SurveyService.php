@@ -30,6 +30,8 @@ class SurveyService
 
             if ($newSurvey) {
                 $survey->status = $surveyStatus;
+                $survey->original_id = (string)$survey->id;
+                $survey->save();
                 $survey->audit()->create([
                     'user_id'   => auth()->id(),
                     'status'    => $surveyStatus,

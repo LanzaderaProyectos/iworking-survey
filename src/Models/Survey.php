@@ -61,6 +61,26 @@ class Survey extends Model implements SurveyContract
         });
     }
 
+    /**
+     * The survey parent.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function parent()
+    {
+        return $this->belongsTo(get_class(app()->make(Survey::class)), 'parent_id');
+    }
+
+
+    /**
+     * The survey original.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function original()
+    {
+        return $this->belongsTo(get_class(app()->make(Survey::class)), 'original_id');
+    }
   
 
     /**
