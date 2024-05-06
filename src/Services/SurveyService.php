@@ -19,7 +19,7 @@ class SurveyService
         try {
             $survey->author             = $authorId;
             if ($newSurvey) {
-                $lastSurveyNumber       = Survey::where('survey_number', '!=', null)->orderBy('survey_number', 'desc')->first();
+                $lastSurveyNumber       = Survey::where('survey_number', '!=', null)->whereNull('parent_id')->orderBy('survey_number', 'desc')->first();
                 $survey->survey_number  = ($lastSurveyNumber && $lastSurveyNumber->survey_number > 0) ? $lastSurveyNumber->survey_number + 1 : 10000;
             }
             $survey

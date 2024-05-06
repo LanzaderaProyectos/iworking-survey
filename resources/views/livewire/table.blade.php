@@ -118,6 +118,12 @@
                             @endforeach
                         </select>
                     </div>
+                    @if(auth()->user()->hasRole('admin'))
+                    <div class="col-6 col-lg-3 col-xl-2 mt-2">
+                        <label class="font-weight-bold">Originales</label><br>
+                        <input type="checkbox" wire:model.live="onlyOriginal" id="originals" name="originals">
+                    </div>
+                    @endif
                 </div>
             </div>
             <div class="table-responsive">

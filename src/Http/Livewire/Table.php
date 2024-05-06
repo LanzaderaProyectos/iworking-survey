@@ -22,6 +22,7 @@ class Table extends Component
     public $columsSelected = [];
     public $orderLinePA = null;
     public $search = [];
+    public $onlyOriginal = true;
 
     public $surveyTypes = [
         'pharmaciesSale' => "Venta Farmacias",
@@ -107,6 +108,10 @@ class Table extends Component
     public function render()
     {
         $surveys = Survey::orderBy($this->sortBy, $this->sortDirection);
+        if($this->onlyOriginal)
+        {
+            $surveys->whereNull('parent_id');
+        }
         if ($this->draft) {
             $surveys->where('status', '=', 0);
         } else {
@@ -121,6 +126,10 @@ class Table extends Component
     public function exportToExcel($path)
     {
         $surveys = Survey::orderBy($this->sortBy, $this->sortDirection);
+        if($this->onlyOriginal)
+        {
+            $surveys->whereNull('parent_id');
+        }
         if ($this->draft) {
             $surveys->where('status', '=', 0);
         } else {
