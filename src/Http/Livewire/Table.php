@@ -8,6 +8,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Iworking\IworkingBoilerplate\Library\Constants;
 use MattDaneshvar\Survey\Models\Survey;
+use App\Models\ProjectSurvey;
 
 class Table extends Component
 {
@@ -197,5 +198,18 @@ class Table extends Component
             fn () => print($pdf),
             'surveys.pdf'
         );
+    }
+
+    public function getProjectSurvey($id)
+    {
+        $projectSurvey = ProjectSurvey::where('survey_id', $id)->first();
+        if($projectSurvey)
+        {
+            return $projectSurvey->project->code;
+        }
+        else
+        {
+            return '';
+        }
     }
 }

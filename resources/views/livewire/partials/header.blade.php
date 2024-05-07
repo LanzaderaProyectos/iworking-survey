@@ -134,13 +134,18 @@
                     <th class="col-1">Acción</th>
                     <th class="col-1">Orden</th>
                     <td>ES</td>
-                    <th>EN</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($this->survey->sections as $section)
                 <tr>
                     <td nowrap>
+                        <button wire:loading.attr="disabled" wire:click="editSection('{{ $section->id }}')"
+                            type="button" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
+                            title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
                         <button type="button" {{ $this->formEdit ? '' : 'disabled'}}
                             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
                             event.stopImmediatePropagation();"
@@ -166,9 +171,6 @@
                     </td>
                     <td>
                         {{$section->getTranslation('name','es')}}
-                    </td>
-                    <td>
-                        {{$section->getTranslation('name','en')}}
                     </td>
                 </tr>
                 @endforeach

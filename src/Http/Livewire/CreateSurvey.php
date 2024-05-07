@@ -169,6 +169,11 @@ class CreateSurvey extends Component
             $this->questionsIn = $this->survey->sections()->where('name', 'like', '%General%')->first()->surveyQuestionsMain()->pluck('question_id')->toArray();
             $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected), $this->questionsIn);
         }
+        elseif(!empty($this->survey->sections()->first())) {
+            $this->sectionQuestionSelected = $this->survey->sections()->first()->id;
+            $this->questionsIn = $this->survey->sections()->first()->surveyQuestionsMain()->pluck('question_id')->toArray();
+            $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected), $this->questionsIn);
+        }
         $this->surveyTypes = SurveyType::all();
     }
 
@@ -268,6 +273,13 @@ class CreateSurvey extends Component
         }
     }
 
+    public function editSection($id)
+    {
+        $this->section = Section::find($id);
+        $this->sectionName['es'] = $this->section->getTranslation('name', 'es');
+        $this->sectionName['en'] = $this->section->getTranslation('name', 'en');
+    }
+
     public function deleteSurvey()
     {
         $this->survey->sections()->delete();
@@ -354,7 +366,7 @@ class CreateSurvey extends Component
         ]);
         // $this->question->update(['original_id' => $this->question->id]);
         if (empty($this->surveyQuestion->id)) {
-            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->question->id)->whereNull('parent_id')->exists()) {
+            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->question->id)->where('section_id', $this->sectionQuestionSelected)->whereNull('parent_id')->exists()) {
                 $this->surveyQuestion->survey_id = $this->survey->id;
                 $this->surveyQuestion->question_id = $this->question->id;
                 $this->surveyQuestion->order = $this->orderQuestion;
@@ -438,7 +450,7 @@ class CreateSurvey extends Component
             ], [
                 'selectedDefaultQuestion.required' => 'Seleccione una pregunta por defecto',
             ]);
-            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->selectedDefaultQuestion)->whereNull('parent_id')->exists()) {
+            if (!SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->selectedDefaultQuestion)->where('section_id', $this->sectionQuestionSelected)->whereNull('parent_id')->exists()) {
                 $this->question                     = Question::find($this->selectedDefaultQuestion);
                 $this->questionName['es']           = $this->question->getTranslation('content', 'es');
                 $this->questionName['en']           = $this->question->getTranslation('content', 'en');

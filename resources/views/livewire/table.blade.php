@@ -120,7 +120,7 @@
                     </div>
                     @if(auth()->user()->hasRole('admin'))
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
-                        <label class="font-weight-bold">Originales</label><br>
+                        <label class="font-weight-bold">Mostrar sin proyecto vinculados</label><br>
                         <input type="checkbox" wire:model.live="onlyOriginal" id="originals" name="originals">
                     </div>
                     @endif
@@ -158,9 +158,11 @@
                             <th>
                                 Vencimiento
                             </th>
+                            @if(!$onlyOriginal)
                             <th>
-                                Puntuación media
+                                Proyecto
                             </th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -207,13 +209,11 @@
                             <td>
                                 {{ auth()->user()->applyDateFormat($survey->expiration) }}
                             </td>
+                            @if(!$onlyOriginal)
                             <td>
-                                {{
-                                number_format($survey->entries->sum('sum_score') / ($survey->entries->count() == 0 ? 1 :
-                                $survey->entries->count()), 2, ',',
-                                '.')
-                                }}
+                                {{ $this->getProjectSurvey($survey->id) }}
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>
