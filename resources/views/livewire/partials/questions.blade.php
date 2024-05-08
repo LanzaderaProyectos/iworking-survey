@@ -146,16 +146,16 @@
             <div class="col-12">
                 <div class="row">
                     <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
-                        <input type="checkbox" @if($indicatedQuestion || $targetQuestion) disabled @endif
-                            wire:model.defer="requiredQuestion">
+                        <input type="checkbox" @if($indicatedQuestion || $targetQuestion) disabled checked @endif
+                            wire:model.live="requiredQuestion">
                         <label for="numbers_format">Obligatoria</label>
                     </div>
                     <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
-                        <input type="checkbox" wire:model.live="indicatedQuestion">
+                        <input type="checkbox"@if($indicatedQuestion) checked @endif wire:model.live="indicatedQuestion">
                         <label for="numbers_format">Indicador</label>
                     </div>
                     <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
-                        <input type="checkbox" wire:model.live="targetQuestion">
+                        <input type="checkbox" @if($targetQuestion) checked @endif wire:model.live="targetQuestion">
                         <label for="numbers_format">Objetivo</label>
                     </div>
                 </div>

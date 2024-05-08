@@ -161,7 +161,14 @@ class CreateSurvey extends Component
         'selectedProfessional.mail_contact'                 => 'nullable',
         'selectedProfessional.other_contact_information'    => 'nullable',
         'selectedProfessional.consent_request'              => 'nullable',
-        'selectedProfessional.consent'                      => 'nullable'
+        'selectedProfessional.consent'                      => 'nullable',
+
+        'requiredQuestion'                                  => 'nullable',
+        'indicatedQuestion'                                 => 'nullable',
+        'targetQuestion'                                    => 'nullable',
+        'requiredSubQuestion'                               => 'nullable',
+        'indicatedSubQuestion'                              => 'nullable',
+        'targetSubQuestion'                                 => 'nullable',
     ];
 
     public function mount($draft = false)
@@ -505,7 +512,6 @@ class CreateSurvey extends Component
         ]);
         // $this->question->update(['original_id' => $this->question->id]);
         if (empty($this->surveyQuestion->id)) {
-
             $this->question = new Question();
             $this->question->setTranslation('content', 'es', $this->questionName['es']);
             $this->question->setTranslation('content', 'en', $this->questionName['en']);
@@ -537,6 +543,7 @@ class CreateSurvey extends Component
             $this->surveyQuestion->indicated = $this->indicatedQuestion;
             $this->surveyQuestion->target = $this->targetQuestion;
             $this->surveyQuestion->disabled = false;
+            dd($this->surveyQuestion);
             $this->surveyQuestion->save();
             $this->surveyQuestion->update(['original_id' => $this->surveyQuestion->id]);
             $this->surveyQuestion = new SurveyQuestion();
@@ -550,11 +557,12 @@ class CreateSurvey extends Component
             ]);
             $this->question->save();
             $this->surveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->question->id)->first();
-            $this->surveyQuestion->update(['position' => $this->orderQuestion]);
-            $this->surveyQuestion->update(['section_id' => $this->sectionQuestionSelected]);
-            $this->surveyQuestion->update(['mandatory' => $this->requiredQuestion]);
-            $this->surveyQuestion->update(['indicated' => $this->indicatedQuestion]);
-            $this->surveyQuestion->update(['target' => $this->targetQuestion]);
+            $this->surveyQuestion->position = $this->orderQuestion;
+            $this->surveyQuestion->section_id = $this->sectionQuestionSelected;
+            $this->surveyQuestion->mandatory = $this->requiredQuestion;
+            $this->surveyQuestion->indicated = $this->indicatedQuestion;
+            $this->surveyQuestion->target = $this->targetQuestion;
+            $this->surveyQuestion->save();
         }
         $this->reset('questionName');
         $this->resetValues();
@@ -564,6 +572,10 @@ class CreateSurvey extends Component
         $this->optionES = [];
         $this->customOptions = false;
         $this->updateOption = null;
+        $this->requiredQuestion = false;
+        $this->indicatedQuestion = false;
+        $this->targetQuestion = false;
+
     }
 
     public function saveSubQuestion()
@@ -712,6 +724,8 @@ class CreateSurvey extends Component
             $this->orderQuestion            = $this->surveyQuestion->position;
             $this->sectionQuestionSelected  = $this->surveyQuestion->section_id;
             $this->requiredQuestion         = $this->surveyQuestion->mandatory;
+            $this->indicatedQuestion        = $this->surveyQuestion->indicated;
+            $this->targetQuestion           = $this->surveyQuestion->target;
             $this->typeSelected             = $this->question->type;
             $this->questionName['es']       = $this->question->getTranslation('content', 'es');
             $this->questionName['en']       = $this->question->getTranslation('content', 'en');
@@ -730,6 +744,9 @@ class CreateSurvey extends Component
             $this->selectedParentQuestionId    = $this->subSurveyQuestion->parent->id;
             $this->selectedParentQuestion      = $this->subSurveyQuestion->parent->question;
             $this->parentQuestionRadio         = $this->subSurveyQuestion->condition;
+            $this->indicatedSubQuestion        = $this->subSurveyQuestion->indicated;
+            $this->targetSubQuestion           = $this->subSurveyQuestion->target;
+
             $this->subQuestionName['es']       = $this->subQuestion->getTranslation('content', 'es');
             $this->subQuestionName['en']       = $this->subQuestion->getTranslation('content', 'en');
             $this->subEditModeQuestion         = true;
@@ -759,6 +776,11 @@ class CreateSurvey extends Component
         $this->subEditModeQuestion  = false;
         $this->orderQuestion        = null;
         $this->requiredQuestion     = false;
+        $this->indicatedQuestion    = false;
+        $this->targetQuestion       = false;
+        $this->requiredSubQuestion  = false;
+        $this->indicatedSubQuestion = false;
+        $this->targetSubQuestion    = false;
         $this->optionEN             = [];
         $this->optionES             = [];
         $this->customOptions        = false;
