@@ -4,6 +4,10 @@
 ])
 {{-- Admin view --}}
 @php($listQuestions = $lang ? $surveyQuestion->question->getTranslation('options',$lang) : $surveyQuestion->question->options)
+
+@if(!is_array($listQuestions))
+@php($listQuestions = json_decode($listQuestions,true))
+@endif
 @foreach($listQuestions as $option)
 <div class="custom-control custom-radio" wire:key="{{str()->random(5)}}">
     <input type="radio" wire:model.live="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}"

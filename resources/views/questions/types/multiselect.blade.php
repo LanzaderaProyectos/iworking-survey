@@ -4,7 +4,12 @@
 ])
 
 @if(!empty($surveyQuestion->question->options))
-@foreach ($surveyQuestion->question->options as $keyOption => $option)
+@if(!is_array($surveyQuestion->question->options))
+@php($optionsForeach = json_decode($surveyQuestion->question->options,true))
+@else
+@php($optionsForeach = $surveyQuestion->question->options)
+@endif
+@foreach ($optionsForeach['es'] as $keyOption => $option)
 <div class="custom-control custom-checkbox">
     <input type="checkbox" wire:key="multiple-{{ $keyOption }}-{{$surveyQuestion->id}}" wire:model.live="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}[]" id="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}" value="{{ $option }}" class="custom-control-input" {{
         ($value ?? old($surveyQuestion->question->key)) == $option ? 'checked' : '' }}

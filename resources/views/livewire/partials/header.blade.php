@@ -81,6 +81,23 @@
     </div>
 </div>
 @if($this->survey->id)
+
+<div class="row my-5">
+    <div class="col-6 col-md-3 col-xl-2">
+        <div class="form-group">
+            <label class="form-control-label" for="input-first_name">Tiene Comanda</label><br>
+            <input type="checkbox" wire:model.defer="survey.has_order" name="has_order" id="has_order"
+                class="">
+        </div>
+    </div>
+    <div class="col-6 col-md-3 col-xl-2">
+        <div class="form-group">
+            <label class="form-control-label" for="input-first_name">Tiene Material Promocional</label><br>
+            <input type="checkbox" wire:model.defer="survey.has_promotional_material" name="has_order" id="has_order"
+                class="">
+        </div>
+    </div>
+</div>
 <div class="row my-5">
     <div class="col-12 col-md-6">
         <div class="form-group">
@@ -133,7 +150,7 @@
                 <tr>
                     <th class="col-1">Acción</th>
                     <th class="col-1">Orden</th>
-                    <td>ES</td>
+                    <td>Nombre Etapa</td>
                 </tr>
             </thead>
             <tbody>

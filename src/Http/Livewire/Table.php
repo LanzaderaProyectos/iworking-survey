@@ -23,7 +23,7 @@ class Table extends Component
     public $columsSelected = [];
     public $orderLinePA = null;
     public $search = [];
-    public $onlyOriginal = true;
+    public $onlyOriginal = false;
 
     public $surveyTypes = [
         'pharmaciesSale' => "Venta Farmacias",

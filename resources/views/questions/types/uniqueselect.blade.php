@@ -7,7 +7,12 @@
 $surveyQuestion->question->options)
 {{-- End admin view --}}
 @if(!empty($listQuestions))
-@foreach($listQuestions as $option)
+@if(!is_array($surveyQuestion->question->options))
+@php($optionsForeach = json_decode($surveyQuestion->question->options,true))
+@else
+@php($optionsForeach = $surveyQuestion->question->options)
+@endif
+@foreach($optionsForeach['es'] as $option)
 <div class="custom-control custom-radio" wire:key="{{str()->random(5)}}">
     <input type="radio" wire:model.live="answers.{{$surveyQuestion->id}}.value"
         name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}"

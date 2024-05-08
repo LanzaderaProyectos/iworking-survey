@@ -24,8 +24,11 @@
         @include('survey::sections.single')
         @php($numberQuestion += $section->questions->count())
         @endforeach
-        @if($survey->surveyType->has_order)
+        @if($survey->has_order ?? false)
         @include('survey::sections.pharmaciesSale')
+        @endif
+        @if($survey->has_promotional_material ?? false)
+
         @endif
     </div>
     @if ($survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)

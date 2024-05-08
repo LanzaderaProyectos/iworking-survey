@@ -23,7 +23,8 @@
                 @foreach ($this->survey->surveyQuestionsMain as $element)
                 @if (in_array($element->question->type, ['radio','multiselect','uniqueselect']))
                 <option value="{{ $element->id }}">
-                    {{ $element->section->name }} - {{ $element->position }} - {{ $element->question->getTranslation('content', 'es') }} - {{$typeAnwers[$element->question->type]}}
+                    {{ $element->section->name }} - {{ $element->position }} - {{
+                    $element->question->getTranslation('content', 'es') }} - {{$typeAnwers[$element->question->type]}}
                 </option>
                 @endif
                 @endforeach
@@ -57,7 +58,7 @@
 @if (
 ($this->selectedParentQuestion->type == 'radio' && $this->parentQuestionRadio != null) ||
 $this->selectedParentQuestion->type != 'radio')
-<div class="col-md-4 col-12 mt-3">
+{{-- <div class="col-md-4 col-12 mt-3">
     <div class="form-group ">
         <label for="numbers_format">Sub pregunta por defecto:</label>
         <div class="d-flex">
@@ -75,7 +76,7 @@ $this->selectedParentQuestion->type != 'radio')
 
     </div>
 
-</div>
+</div> --}}
 <div class="row">
     <div class="col-md-12">
         <div class="form-group">
@@ -91,11 +92,12 @@ $this->selectedParentQuestion->type != 'radio')
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-subquestion-es" role="tabpanel"
                     aria-labelledby="nav-home-tab">
-                    <input disabled {{ $this->formEdit ? '' : 'disabled' }} wire:model="subQuestionName.es"
+                    <input {{ $this->formEdit ? '' : 'disabled' }} wire:model="subQuestionName.es"
                     type="text" name="section-name" id="subquestion-name-es"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
                 </div>
-                {{-- <div class="tab-pane fade" id="nav-subquestion-en" role="tabpanel" aria-labelledby="nav-profile-tab">
+                {{-- <div class="tab-pane fade" id="nav-subquestion-en" role="tabpanel"
+                    aria-labelledby="nav-profile-tab">
                     <input disabled {{ $this->formEdit ? '' : 'disabled' }} wire:model="subQuestionName.en"
                     type="text" name="section-name" id="subquestion-name-en"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
@@ -111,7 +113,7 @@ $this->selectedParentQuestion->type != 'radio')
     <div class="col-md-5 col-12">
         <div class="form-group mb-3">
             <label for="numbers_format">Tipo*:</label>
-            <select disabled {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="subTypeSelected"
+            <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="subTypeSelected"
                 class="form-control " id="numbers_format_input" size="3">
                 @foreach ($subTypeAnwers as $key => $value)
                 <option value="{{ $key }}">
@@ -136,17 +138,85 @@ $this->selectedParentQuestion->type != 'radio')
             <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
-        <div class="form-group mt-n3">
-            <input type="checkbox" wire:model.defer="requiredSubQuestion">
-            <label for="numbers_format">Obligatoria</label>
+    </div>
+    <div class="col-12">
+        <div class="row">
+            <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
+                <input type="checkbox" @if($indicatedSubQuestion || $targetSubQuestion) disabled @endif
+                    wire:model.defer="requiredSubQuestion">
+                <label for="numbers_format">Obligatoria</label>
+            </div>
+            <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
+                <input type="checkbox" wire:model.live="indicatedSubQuestion">
+                <label for="numbers_format">Indicador</label>
+            </div>
+            <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
+                <input type="checkbox" wire:model.live="targetSubQuestion">
+                <label for="numbers_format">Objetivo</label>
+            </div>
         </div>
     </div>
 </div>
+@if($subTypeSelected == "multiselect" || $subTypeSelected == "uniqueselect")
+<div class="col-md-12 mt-n2">
+    <label class="form-control-label" for="input-first_name">Obción</label>
+    <div class="row">
+        <div class="col-10">
+            <input type="text" wire:model.defer="newSubOptionES" class="form-control form-control-alternative"
+                placeholder="Introduzca obción">
+        </div>
+        <div class="col-2">
+            <button wire:click="addSubOption" class="btn btn-dark" type="button" title="Añadir">+</button>
+        </div>
+    </div>
+</div>
+<div class="col-md-12 mt-3">
+    <label class="form-control-label" for="input-first_name">Opciónes</label>
+    <table class="table table-striped table-bordered table-hover table-checkable">
+        <thead>
+            <tr>
+                <th style="width: 15%">Obciones</th>
+                <th style="width: 85%">ES</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($subOptionEs as $keyOption => $option)
+            <tr>
+                <td>
+                    <button wire:loading.attr="disabled" wire:click="editSubOption({{ $keyOption }})" type="button"
+                        class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                        data-target="#delete_modal" data-toggle="tooltip" data-placement="top" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" {{ $this->formEdit ? '' : 'disabled'}}
+                        onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
+                        event.stopImmediatePropagation();"
+                        wire:click="deleteSubOption({{ $keyOption }})"
+                        class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                    </button>
+                    <button wire:loading.attr="disabled" wire:click="upSubOption({{ $keyOption }})" type="button"
+                        class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                        data-target="#delete_modal" data-toggle="tooltip" data-placement="top" title="Subir orden">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <button wire:loading.attr="disabled" wire:click="downSubOption({{ $keyOption }})" type="button"
+                        class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                        data-target="#delete_modal" data-toggle="tooltip" data-placement="top" title="Bajar Orden">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                </td>
+                <td>{{ $option }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endif
 @if ($this->formEdit)
 <div class="row justify-content-end mb-4">
     <div class="col-4">
         <div class="text-right" aria-label="">
-            @if (!empty($this->subQuestion->id))
             <button type="button" wire:click="resetValues" class="btn btn-sm btn-dark mr-2"
                 wire:loading.attr="disabled">
                 Cancelar
@@ -154,12 +224,10 @@ $this->selectedParentQuestion->type != 'radio')
             <button type="button" wire:click="saveSubQuestion" class="btn btn-sm btn-info" wire:loading.attr="disabled">
                 Guardar Sub pregunta
             </button>
-            @endif
         </div>
     </div>
 </div>
 @endif
-
 @endif
 @endif
 <div class="row">
@@ -198,16 +266,30 @@ $this->selectedParentQuestion->type != 'radio')
                         </button>
                         <button wire:loading.attr="disabled" wire:click="upSubQuestion('{{ $item->id }}')" type="button"
                             class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
-                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
-                            title="Subir orden">
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top" title="Subir orden">
                             <i class="fas fa-arrow-up"></i>
                         </button>
-                        <button wire:loading.attr="disabled" wire:click="downSubQuestion('{{ $item->id }}')" type="button"
-                            class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
-                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
-                            title="Bajar Orden">
+                        <button wire:loading.attr="disabled" wire:click="downSubQuestion('{{ $item->id }}')"
+                            type="button" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top" title="Bajar Orden">
                             <i class="fas fa-arrow-down"></i>
                         </button>
+
+                        @if($this->isActive($item->id))
+                        <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
+                            wire:click="activeQuestion('{{ $item->id }}')"
+                            class="btn btn-sm btn-clean btn-icon btn-icon-md"
+                            title="Pulsa para Desactivar">
+                            <i class="fas fa-toggle-on fa-xl" aria-hidden="true"></i>
+                        </button>
+                        @else
+                        <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
+                            wire:click="activeQuestion('{{ $item->id }}')"
+                            class="btn btn-sm btn-clean btn-icon btn-icon-md"
+                            title="Pulsa para Activar">
+                            <i class="fas fa-toggle-off fa-xl" aria-hidden="true"></i>
+                        </button>
+                        @endif
                     </td>
                     <td>
                         {{ $item->section->name ?? '' }}
