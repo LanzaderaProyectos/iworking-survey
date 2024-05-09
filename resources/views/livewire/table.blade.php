@@ -123,6 +123,18 @@
                         <label class="font-weight-bold">Mostrar sin proyecto vinculados</label><br>
                         <input type="checkbox" wire:model.live="onlyOriginal" id="originals" name="originals">
                     </div>
+                    @if(!$onlyOriginal)
+                    <div class="col-6 col-lg-3 col-xl-2 mt-2">
+                        <label for="statusCompany" class="font-weight-bold">Proyecto:</label>
+                        <select wire:model.live="projectSelected" name="status" id="status"
+                            class="form-control form-control-sm">
+                            <option value=""> ---- </option>
+                            @foreach($projects as $project)
+                            <option value="{{ $project['id'] }}">{{ $project['code'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    @endif
                     @endif
                 </div>
             </div>

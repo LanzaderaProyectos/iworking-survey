@@ -28,7 +28,7 @@
         @include('survey::sections.pharmaciesSale')
         @endif
         @if($survey->has_promotional_material ?? false)
-
+        @include('survey::sections.promotionalMaterial')
         @endif
     </div>
     @if ($survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)

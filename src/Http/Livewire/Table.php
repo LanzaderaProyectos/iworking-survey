@@ -9,6 +9,7 @@ use Rap2hpoutre\FastExcel\FastExcel;
 use Iworking\IworkingBoilerplate\Library\Constants;
 use MattDaneshvar\Survey\Models\Survey;
 use App\Models\ProjectSurvey;
+use App\Models\Project;
 
 class Table extends Component
 {
@@ -24,6 +25,8 @@ class Table extends Component
     public $orderLinePA = null;
     public $search = [];
     public $onlyOriginal = false;
+    public $projectSelected = null;
+    public $projects = [];
 
     public $surveyTypes = [
         'pharmaciesSale' => "Venta Farmacias",
@@ -48,6 +51,8 @@ class Table extends Component
                 }
             }
         }
+        $this->projects = Project::select('id', 'code')->get()->toArray();
+
     }
 
     public function sortByTable($field)
@@ -109,9 +114,12 @@ class Table extends Component
     public function render()
     {
         $surveys = Survey::orderBy($this->sortBy, $this->sortDirection);
-        if($this->onlyOriginal)
-        {
+        if ($this->onlyOriginal) {
             $surveys->whereNull('parent_id');
+        } else {
+            if ($this->projectSelected) {
+                $surveys = $this->getByProject($surveys);
+            }
         }
         if ($this->draft) {
             $surveys->where('status', '=', 0);
@@ -127,9 +135,12 @@ class Table extends Component
     public function exportToExcel($path)
     {
         $surveys = Survey::orderBy($this->sortBy, $this->sortDirection);
-        if($this->onlyOriginal)
-        {
+        if ($this->onlyOriginal) {
             $surveys->whereNull('parent_id');
+        } else {
+            if ($this->projectSelected) {
+                $surveys = $this->getByProject($surveys);
+            }
         }
         if ($this->draft) {
             $surveys->where('status', '=', 0);
@@ -139,20 +150,28 @@ class Table extends Component
         $surveys->tableSearch($this->search);
 
         return (new FastExcel($surveys->get()))->export($path, function ($survey) {
-            return [
-                'Nº Formulario' => $survey->survey_number ?? '',
-                'Nombre' => $survey->name ?? '',
-                'Autor' => $survey->author ?? '',
-                'Estado' => __('survey::status.survey.' . $survey->status) ?? '',
-                'Fecha creación' =>  auth()->user()->applyDateFormat($survey->created_at) ?? '',
-                'Vencimiento' =>  auth()->user()->applyDateFormat($survey->expiration) ?? '',
-                'Media' =>  number_format(
-                    $survey->entries->sum('sum_score') / $survey->entries->count(),
-                    2,
-                    ',',
-                    '.'
-                ),
-            ];
+            if($this->onlyOriginal)
+            {
+                return [
+                    'Nº Formulario' => $survey->survey_number ?? '',
+                    'Nombre' => $survey->name ?? '',
+                    'Autor' => $survey->author ?? '',
+                    'Estado' => __('survey::status.survey.' . $survey->status) ?? '',
+                    'Fecha creación' =>  auth()->user()->applyDateFormat($survey->created_at) ?? '',
+                    'Vencimiento' =>  auth()->user()->applyDateFormat($survey->expiration) ?? ''
+                ];
+            }
+            else{
+                return [
+                    'Nº Formulario' => $survey->survey_number ?? '',
+                    'Nombre' => $survey->name ?? '',
+                    'Autor' => $survey->author ?? '',
+                    'Estado' => __('survey::status.survey.' . $survey->status) ?? '',
+                    'Fecha creación' =>  auth()->user()->applyDateFormat($survey->created_at) ?? '',
+                    'Vencimiento' =>  auth()->user()->applyDateFormat($survey->expiration) ?? '',
+                    'Proyecto' =>  $this->getProjectSurvey($survey->id) ?? '',
+                ];
+            }
         });
     }
 
@@ -182,6 +201,13 @@ class Table extends Component
     public function exportToPDF()
     {
         $surveys = Survey::orderBy($this->sortBy, $this->sortDirection);
+        if ($this->onlyOriginal) {
+            $surveys->whereNull('parent_id');
+        } else {
+            if ($this->projectSelected) {
+                $surveys = $this->getByProject($surveys);
+            }
+        }
         if ($this->draft) {
             $surveys->where('status', '=', 0);
         } else {
@@ -203,13 +229,16 @@ class Table extends Component
     public function getProjectSurvey($id)
     {
         $projectSurvey = ProjectSurvey::where('survey_id', $id)->first();
-        if($projectSurvey)
-        {
+        if ($projectSurvey) {
             return $projectSurvey->project->code;
-        }
-        else
-        {
+        } else {
             return '';
         }
+    }
+
+    public function getByProject($query)
+    {
+        $id = ProjectSurvey::where('project_id', $this->projectSelected)->pluck('survey_id')->toArray();
+        return $query->whereIn('id', $id);
     }
 }

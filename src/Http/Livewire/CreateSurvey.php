@@ -169,6 +169,8 @@ class CreateSurvey extends Component
         'requiredSubQuestion'                               => 'nullable',
         'indicatedSubQuestion'                              => 'nullable',
         'targetSubQuestion'                                 => 'nullable',
+        'survey.has_order'                                  => 'nullable',
+        'survey.has_promotional_material'                   => 'nullable',
     ];
 
     public function mount($draft = false)
@@ -365,8 +367,11 @@ class CreateSurvey extends Component
     {
         $this->validate();
         $surveyService          = new SurveyService();
-        $this->survey->has_order                = $this->survey->surveyType->has_order;
-        $this->survey->has_promotional_material = $this->survey->surveyType->has_promotional_material;
+        if(empty($this->survey->id))
+        {
+            $this->survey->has_order                = $this->survey->surveyType->has_order;
+            $this->survey->has_promotional_material = $this->survey->surveyType->has_promotional_material;
+        }
         $result                 = $surveyService->saveSurvey(
             survey: $this->survey,
             authorId: auth()->user()->id,
@@ -624,19 +629,19 @@ class CreateSurvey extends Component
             $this->subSurveyQuestion->save();
             $this->subSurveyQuestion = new SurveyQuestion();
         } else {
-            $this->question->setTranslation('content', 'es', $this->subQuestionName['es']);
-            $this->question->setTranslation('content', 'en', $this->subQuestionName['en']);
-            $this->question->type = $this->subTypeSelected;
-            $this->question->options = json_encode([
+            $this->subQuestion->setTranslation('content', 'es', $this->subQuestionName['es']);
+            $this->subQuestion->setTranslation('content', 'en', $this->subQuestionName['en']);
+            $this->subQuestion->type = $this->subTypeSelected;
+            $this->subQuestion->options = json_encode([
                 'es' => $this->subOptionEs,
                 'en' => $this->subOptionEn
             ]);
-            $this->question->save();
+            $this->subQuestion->save();
             $this->subSurveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id', $this->selectedParentQuestionId)->first();
-            $this->subSurveyQuestion->update(['position' => $this->orderSubQuestion]);
-            $this->subSurveyQuestion->update(['mandatory' => $this->requiredSubQuestion]);
-            $this->subSurveyQuestion->update(['indicated' => $this->indicatedSubQuestion]);
-            $this->subSurveyQuestion->update(['target' => $this->targetSubQuestion]);
+            $this->subSurveyQuestion->position = $this->orderSubQuestion;
+            $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
+            $this->subSurveyQuestion->indicated = $this->indicatedSubQuestion;
+            $this->subSurveyQuestion->target = $this->targetSubQuestion;
         }
         $this->reset('questionName');
         $this->resetValues();
@@ -731,8 +736,8 @@ class CreateSurvey extends Component
             $this->editModeQuestion         = true;
             if ($this->typeSelected == "multiselect" || $this->typeSelected == "uniqueselect") {
                 $this->customOptions = true;
-                $this->optionES = $this->question->getTranslation('options', 'es');
-                $this->optionEN = $this->question->getTranslation('options', 'en');
+                $this->optionES = json_decode($this->question->options,true)['es'];
+                $this->optionEN = json_decode($this->question->options,true)['en'];
             }
         } else {
             $this->subSurveyQuestion           = SurveyQuestion::find($id);
@@ -771,6 +776,7 @@ class CreateSurvey extends Component
     {
         $this->question             = new Question();
         $this->subQuestion          = new Question();
+        $this->surveyQuestion       = new SurveyQuestion();
         $this->editModeQuestion     = false;
         $this->subEditModeQuestion  = false;
         $this->orderQuestion        = null;

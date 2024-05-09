@@ -60,7 +60,7 @@ class SurveyQuestion extends Model
      */
     public function children()
     {
-        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)),'parent_id')->orderBy('position','asc');
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)),'parent_id')->where('disabled','!=',true)->orderBy('position','asc');
     }
 
     /**

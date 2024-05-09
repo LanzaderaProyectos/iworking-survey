@@ -126,11 +126,11 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <input {{ $this->typeSelected != 'radio' ? 'disabled' : '' }} type="checkbox"
                     wire:model.defer="question.comments">
                     <label for="numbers_format">Comentarios</label>
-                </div>
+                </div> --}}
             </div>
             <div class="col-md-2">
                 <div class="form-group">

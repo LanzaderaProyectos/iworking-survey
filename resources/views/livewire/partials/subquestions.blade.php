@@ -122,11 +122,11 @@ $this->selectedParentQuestion->type != 'radio')
                 @endforeach
             </select>
         </div>
-        <div class="form-group">
+        {{-- <div class="form-group">
             <input {{ $this->subTypeSelected != 'radio' ? 'disabled' : '' }} type="checkbox"
             wire:model.defer="subQuestion.comments">
             <label for="numbers_format">Comentarios</label>
-        </div>
+        </div> --}}
     </div>
     <div class="col-md-2">
         <div class="form-group">

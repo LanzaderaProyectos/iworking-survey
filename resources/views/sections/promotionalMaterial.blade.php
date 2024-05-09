@@ -6,7 +6,7 @@
                     style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseSectionProfesional" aria-expanded="true"
                     aria-controls="collapseSectionProfesional">
-                    <span class="h3">Comanda</span>
+                    <span class="h3">Material Promocional</span>
                     <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>
@@ -30,13 +30,9 @@
                         id="comandTable">
                         <thead>
                             <tr>
-                                <th style="width: 8%;">Acción</th>
-                                <th style="width: 13%;">Tipo de pedido</th>
-                                <th style="width: 13%;">Producto</th>
-                                <th style="width: 8%;">Unidades</th>
-                                <th style="width: 13%;">Facturación sin iva</th>
-                                <th style="width: 20%;">Motivos no interesado</th>
-                                <th style="width: 25%;">Comentarios</th>
+                                <th style="width: 10%;">Acción</th>
+                                <th style="width: 70%;">Material Promocional</th>
+                                <th style="width: 20%;">Unidades</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,35 +42,13 @@
                                 </td>
                                 <td>
                                     <select {{ ($disabled ?? false) ? 'disabled' : '' }} class="form-control">
-                                        <option value="">Seleccione opción</option>
-                                        <option value="1">Preventa</option>
-                                        <option value="2">Campaña</option>
-                                        <option value="3">Pedido normal</option>
+                                        <option value="">Seleccione material</option>
+                                        
                                     </select>
-                                </td>
-                                <td>
-                                    Producto correspondiente
                                 </td>
                                 <td>
                                     <input {{ ($disabled ?? false) ? 'disabled' : '' }} type="number"
                                         class="form-control">
-                                </td>
-                                <td>
-                                    <div class="input-group mb-3">
-                                        <input type="number" class="form-control" {{ ($disabled ?? false) ? 'disabled'
-                                            : '' }}>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">€</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <input type="text" class="form-control" {{ ($disabled ?? false) ? 'disabled' : ''
-                                        }}>
-                                </td>
-                                <td>
-                                    <textarea class="form-control" {{ ($disabled ?? false) ? 'disabled' : '' }}
-                                        style="resize: vertical" rows="1"></textarea>
                                 </td>
                             </tr>
                         </tbody>

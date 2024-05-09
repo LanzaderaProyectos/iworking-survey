@@ -45,6 +45,8 @@ class Survey extends Model implements SurveyContract
      */
     protected $casts = [
         'settings' => 'array',
+        'has_order' => 'boolean',
+        'has_promotional_material' => 'boolean',
     ];
 
     /**

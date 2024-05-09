@@ -86,14 +86,14 @@
     <div class="col-6 col-md-3 col-xl-2">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Tiene Pedido</label><br>
-            <input type="checkbox" wire:model.defer="survey.has_order" name="has_order" id="has_order"
+            <input type="checkbox" wire:model.live="survey.has_order" name="has_order" id="has_order"
                 class="">
         </div>
     </div>
     <div class="col-6 col-md-3 col-xl-2">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Tiene Material Promocional</label><br>
-            <input type="checkbox" wire:model.defer="survey.has_promotional_material" name="has_order" id="has_order"
+            <input type="checkbox" wire:model.live="survey.has_promotional_material" name="has_order" id="has_order"
                 class="">
         </div>
     </div>
