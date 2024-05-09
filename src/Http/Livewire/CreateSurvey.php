@@ -543,7 +543,6 @@ class CreateSurvey extends Component
             $this->surveyQuestion->indicated = $this->indicatedQuestion;
             $this->surveyQuestion->target = $this->targetQuestion;
             $this->surveyQuestion->disabled = false;
-            dd($this->surveyQuestion);
             $this->surveyQuestion->save();
             $this->surveyQuestion->update(['original_id' => $this->surveyQuestion->id]);
             $this->surveyQuestion = new SurveyQuestion();
