@@ -143,11 +143,16 @@
                     class="table table-striped- table-bordered table-hover table-checkable mt-4" id="users_list_table">
                     <thead scope="col">
                         <tr class="text-uppercase">
-                            <th style="width: 20px">Acciones</th>
+                            <th style="width: 40px">Acciones</th>
                             <th wire:click="sortByTable('survey_number')" style="cursor: pointer">
                                 Nº Formulario
                                 @include('iworking::partials._sort-icon',['field'=>'survey_number'])
                             </th>
+                            @if(!$onlyOriginal)
+                            <th>
+                                Proyecto
+                            </th>
+                            @endif
                             <th wire:click="sortByTable('name')">
                                 Nombre
                                 @include('iworking::partials._sort-icon',['field'=>'name'])
@@ -170,24 +175,19 @@
                             <th>
                                 Vencimiento
                             </th>
-                            @if(!$onlyOriginal)
-                            <th>
-                                Proyecto
-                            </th>
-                            @endif
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($surveys as $survey)
                         <tr>
                             <td class="text-center">
-                                @if($draft)
+                                {{-- @if($draft) --}}
                                 <a href="{{ route('survey.edit',$survey->id) }}" type="button"
                                     class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
                                     data-placement="top" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                @else
+                                {{-- @else
                                 <a href="{{ route('survey.show',$survey->id) }}" type="button"
                                     class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
                                     data-placement="top" title="Visualizar">
@@ -198,11 +198,16 @@
                                     data-placement="top" title="Visualizar entradas">
                                     <i class="fas fa-users"></i>
                                 </a>
-                                @endif
+                                @endif --}}
                             </td>
                             <td>
                                 {{ $survey->survey_number }}
                             </td>
+                            @if(!$onlyOriginal)
+                            <td>
+                                {{ $this->getProjectSurvey($survey->id) }}
+                            </td>
+                            @endif
                             <td>
                                 {{ $survey->name }}
                             </td>
@@ -221,11 +226,6 @@
                             <td>
                                 {{ auth()->user()->applyDateFormat($survey->expiration) }}
                             </td>
-                            @if(!$onlyOriginal)
-                            <td>
-                                {{ $this->getProjectSurvey($survey->id) }}
-                            </td>
-                            @endif
                         </tr>
                         @endforeach
                     </tbody>

@@ -22,6 +22,7 @@ use MattDaneshvar\Survey\Services\SectionService;
 use MattDaneshvar\Survey\Services\QuestionService;
 use MattDaneshvar\Survey\Mail\ReminderNotification;
 use MattDaneshvar\Survey\Models\SurveyType;
+use App\Models\ProjectSurvey;
 
 class CreateSurvey extends Component
 {
@@ -45,6 +46,8 @@ class CreateSurvey extends Component
         'es'    => '',
         'en'    => ''
     ];
+
+    public $projectCode = "";
 
     public $surveyTypes;
     public $surveyQuestion  = null;
@@ -192,6 +195,14 @@ class CreateSurvey extends Component
             $this->defaultQuestions = (new SurveyService())->getQuestions($this->survey, Section::find($this->sectionQuestionSelected), $this->questionsIn);
         }
         $this->surveyTypes = SurveyType::all();
+
+        if(!empty($this->survey->id))
+        {
+            $projectSurvey = ProjectSurvey::where('survey_id', $this->survey->id)->first();
+            if ($projectSurvey) {
+                $this->projectCode = $projectSurvey->project->code;
+            } 
+        }
     }
 
     public function initComponent()

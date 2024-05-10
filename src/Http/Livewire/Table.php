@@ -121,11 +121,11 @@ class Table extends Component
                 $surveys = $this->getByProject($surveys);
             }
         }
-        if ($this->draft) {
-            $surveys->where('status', '=', 0);
-        } else {
-            $surveys->where('status', '>', 0);
-        }
+        // if ($this->draft) {
+        //     $surveys->where('status', '=', 0);
+        // } else {
+        //     $surveys->where('status', '>', 0);
+        // }
         $surveys->tableSearch($this->search);
         return view('survey::livewire.table', [
             'surveys' => $surveys->get()
@@ -142,11 +142,11 @@ class Table extends Component
                 $surveys = $this->getByProject($surveys);
             }
         }
-        if ($this->draft) {
-            $surveys->where('status', '=', 0);
-        } else {
-            $surveys->where('status', '>', 0);
-        }
+        // if ($this->draft) {
+        //     $surveys->where('status', '=', 0);
+        // } else {
+        //     $surveys->where('status', '>', 0);
+        // }
         $surveys->tableSearch($this->search);
 
         return (new FastExcel($surveys->get()))->export($path, function ($survey) {
@@ -208,11 +208,11 @@ class Table extends Component
                 $surveys = $this->getByProject($surveys);
             }
         }
-        if ($this->draft) {
-            $surveys->where('status', '=', 0);
-        } else {
-            $surveys->where('status', '>', 0);
-        }
+        // if ($this->draft) {
+        //     $surveys->where('status', '=', 0);
+        // } else {
+        //     $surveys->where('status', '>', 0);
+        // }
         $surveys->tableSearch($this->search);
         $data = [
             'surveys' => $surveys->get()

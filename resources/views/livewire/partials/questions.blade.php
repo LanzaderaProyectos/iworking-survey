@@ -151,7 +151,8 @@
                         <label for="numbers_format">Obligatoria</label>
                     </div>
                     <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
-                        <input type="checkbox"@if($indicatedQuestion) checked @endif wire:model.live="indicatedQuestion">
+                        <input type="checkbox" @if($indicatedQuestion) checked @endif
+                            wire:model.live="indicatedQuestion">
                         <label for="numbers_format">Indicador</label>
                     </div>
                     <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
@@ -162,11 +163,11 @@
             </div>
             @if($customOptions)
             <div class="col-md-12 mt-n2">
-                <label class="form-control-label" for="input-first_name">Obción</label>
+                <label class="form-control-label" for="input-first_name">Opción</label>
                 <div class="row">
                     <div class="col-10">
                         <input type="text" wire:model.defer="newOptionES" class="form-control form-control-alternative"
-                            placeholder="Introduzca obción">
+                            placeholder="Introduzca opción">
                     </div>
                     <div class="col-2">
                         <button wire:click="addOption" class="btn btn-dark" type="button" title="Añadir">+</button>
@@ -178,7 +179,7 @@
                 <table class="table table-striped table-bordered table-hover table-checkable">
                     <thead>
                         <tr>
-                            <th style="width: 15%">Obciones</th>
+                            <th style="width: 15%">Opciones</th>
                             <th style="width: 85%">ES</th>
                         </tr>
                     </thead>
@@ -265,8 +266,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($this->survey->surveyQuestionsMain()->get()->sortBy('position')
-                    as $item)
+                    @foreach ($survey->sections as $index => $section)
+                    @foreach ($section->surveyQuestionsMain()->get()->sortBy('position') as $key => $item)
                     <tr>
                         <td nowrap>
                             <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ?
@@ -331,6 +332,7 @@
                             {{ $typeAnwers[$item->question->type] ?? $item->question->type }}
                         </td>
                     </tr>
+                    @endforeach
                     @endforeach
                 </tbody>
             </table>

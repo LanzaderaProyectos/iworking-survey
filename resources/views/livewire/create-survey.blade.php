@@ -17,7 +17,7 @@
     <div>
         <div class="row mt-2">
             <div class="col-12 col-md-6 py-2">
-                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de {{ $this->survey->surveyType->name ?? ''}}</h4>
+                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de {{ $this->survey->surveyType->name ?? ''}} @if($projectCode != "") del proyecto {{$projectCode}}  @endif</h4>
             </div>
         </div>
         <div class="row">

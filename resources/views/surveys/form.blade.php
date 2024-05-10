@@ -19,7 +19,11 @@
         <div class="kt-portlet__head-toolbar">
             <div class="kt-portlet__head-wrapper">
                 <div class="kt-portlet__head-actions">
+                    @if(str_contains(url()->previous(),'project'))
+                    <a href="{{ url()->previous() }}" class="btn btn-brand btn-elevate btn-sm">Volver al proyecto</a>
+                    @else
                     <a href="{{ route('survey.list') }}" class="btn btn-brand btn-elevate btn-sm">Volver al listado</a>
+                    @endif
                 </div>
             </div>
         </div>

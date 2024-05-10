@@ -159,11 +159,11 @@ $this->selectedParentQuestion->type != 'radio')
 </div>
 @if($subTypeSelected == "multiselect" || $subTypeSelected == "uniqueselect")
 <div class="col-md-12 mt-n2">
-    <label class="form-control-label" for="input-first_name">Obción</label>
+    <label class="form-control-label" for="input-first_name">Opción</label>
     <div class="row">
         <div class="col-10">
             <input type="text" wire:model.defer="newSubOptionES" class="form-control form-control-alternative"
-                placeholder="Introduzca obción">
+                placeholder="Introduzca opción">
         </div>
         <div class="col-2">
             <button wire:click="addSubOption" class="btn btn-dark" type="button" title="Añadir">+</button>
@@ -175,7 +175,7 @@ $this->selectedParentQuestion->type != 'radio')
     <table class="table table-striped table-bordered table-hover table-checkable">
         <thead>
             <tr>
-                <th style="width: 15%">Obciones</th>
+                <th style="width: 15%">Opciones</th>
                 <th style="width: 85%">ES</th>
             </tr>
         </thead>

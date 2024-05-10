@@ -22,11 +22,11 @@
         <div class="row mt-2">
             <div class="col-12">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation" wire:ignore>
+                    {{-- <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link active" id="order-orders-tab" data-toggle="tab" href="#order-orders"
                             role="tab" aria-controls="order-orders" aria-selected="true">Formularios</a>
-                    </li>
-                    <li class="nav-item" role="presentation" wire:ignore>
+                    </li> --}}
+                    {{-- <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link" id="order-draft-tab" data-toggle="tab" href="#order-draft" role="tab"
                             aria-controls="order-draft" aria-selected="true">
                             @if(Auth::user()->hasAnyRole(['admin']))
@@ -35,7 +35,7 @@
                             Mis borradores
                             @endif
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
                 <div class="tab-content" id="orderContent">
                     <div class="tab-pane fade show active" id="order-orders" role="tabpanel"
@@ -46,7 +46,7 @@
                         'admin' => $admin ?? false
                         ])
                     </div>
-                    <div class="tab-pane fade" id="order-draft" role="tabpanel" aria-labelledby="order-lines-tab"
+                    {{-- <div class="tab-pane fade" id="order-draft" role="tabpanel" aria-labelledby="order-lines-tab"
                         wire:ignore.self>
                         @livewire('iworking-survery::survey-list',[
                         'task' => true,
@@ -54,7 +54,7 @@
                         'admin' => $admin ?? false,
                         'draft' => true,
                         ])
-                    </div>
+                    </div> --}}
                 </div>
 
             </div>
