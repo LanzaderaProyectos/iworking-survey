@@ -111,6 +111,13 @@ class Table extends Component
         ];
     }
 
+    public function delete($id)
+    {
+        // $survey = Survey::find($id);
+        // $survey->delete();
+        // $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Formulario eliminado correctamente']);
+    }
+
     public function render()
     {
         $surveys = Survey::orderBy($this->sortBy, $this->sortDirection);

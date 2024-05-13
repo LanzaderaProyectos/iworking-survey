@@ -66,11 +66,11 @@
                             : ''}}" id="survey-files-tab" data-toggle="tab" href="#survey-files" role="tab"
                             aria-controls="survey-files" aria-selected="true">Archivos</a>
                     </li>
-                    <li class="nav-item" role="presentation" wire:ignore>
+                    {{-- <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-audit-tab" data-toggle="tab" href="#survey-audit" role="tab"
                             aria-controls="survey-audit" aria-selected="true">Auditoría</a>
-                    </li>
+                    </li> --}}
                 </ul>
                 <div class="tab-content" id="orderContent">
                     <div class="tab-pane fade show active" id="survey-header" role="tabpanel"
@@ -116,13 +116,13 @@
                         'enableDelete' => true,
                         ], key(time() . 'file-uploader'))
                     </div>
-                    <div class="tab-pane fade" id="survey-audit" role="tabpanel" aria-labelledby="survey-audit"
+                    {{-- <div class="tab-pane fade" id="survey-audit" role="tabpanel" aria-labelledby="survey-audit"
                         wire:ignore.self>
                         @livewire('iworking::common-audit-table',[
                         'dataValue' => $survey,
                         'nameStatus' => 'surveys'
                         ])
-                    </div>
+                    </div> --}}
                     @endif
                 </div>
             </div>
@@ -144,14 +144,14 @@
             <div class="col-12 col-md-6">
                 <div class="text-right">
                     <div class="btn-group my-1" role="group" aria-label="">
-                        @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_DRAFT &&
+                        {{-- @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_DRAFT &&
                         $this->survey->author == auth()->user()->id)
                         <button type="button" wire:click="deleteSurvey"
                             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
                             class="btn btn-sm btn-danger d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
                             Eliminar
                         </button>
-                        @endif
+                        @endif --}}
                         @if(is_null($this->survey->id))
                         <button type="button" wire:click="saveSurvey"
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
@@ -162,13 +162,13 @@
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
                             Guardar borrador
                         </button>
-                        <button class="btn btn-warning" {{ $this->survey->questions->count() ?
+                        {{-- <button class="btn btn-warning" {{ $this->survey->questions->count() ?
                             '' : 'disabled'}}
                             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
                             event.stopImmediatePropagation();"
                             wire:click="sendSurvey">
                             Enviar
-                        </button>
+                        </button> --}}
                         @endif
                     </div>
                 </div>

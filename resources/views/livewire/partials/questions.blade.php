@@ -266,8 +266,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($survey->sections as $index => $section)
-                    @foreach ($section->surveyQuestionsMain()->get()->sortBy('position') as $key => $item)
+                    @if (!empty($sectionQuestionSelected))
+                    @foreach ($survey->sections()->find($sectionQuestionSelected)->surveyQuestionsMain()->get()->sortBy('position') as $key => $item)
                     <tr>
                         <td nowrap>
                             <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ?
@@ -333,7 +333,7 @@
                         </td>
                     </tr>
                     @endforeach
-                    @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>

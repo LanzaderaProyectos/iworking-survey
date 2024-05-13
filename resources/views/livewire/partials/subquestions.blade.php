@@ -20,7 +20,7 @@
             <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="selectedParentQuestionId"
                 class="form-control " id="numbers_format_input">
                 <option value="">Seleccione una pregunta</option>
-                @foreach ($this->survey->surveyQuestionsMain as $element)
+                @foreach ($survey->sections()->find($sectionQuestionSelected)->surveyQuestionsMain() as $element)
                 @if (in_array($element->question->type, ['radio','multiselect','uniqueselect']))
                 <option value="{{ $element->id }}">
                     {{ $element->section->name }} - {{ $element->position }} - {{

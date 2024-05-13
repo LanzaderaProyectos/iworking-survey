@@ -590,6 +590,7 @@ class CreateSurvey extends Component
         $this->requiredQuestion = false;
         $this->indicatedQuestion = false;
         $this->targetQuestion = false;
+        $this->orderQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('section_id', $this->sectionQuestionSelected)->count() + 1;
 
     }
 
