@@ -105,7 +105,7 @@
                     </div>
                     <div class="tab-pane fade" id="survey-files" role="tabpanel" aria-labelledby="survey-files"
                         wire:ignore.self>
-                        @livewire('iworking::common-file-upload', [
+                        @livewire('common.file-upload', [
                         's3' => true,
                         'path' => config('custom.iworking_public_bucket_folder_surveys') .
                         '/' . now()->format('Y/m/d') . '/' . (string)$survey->id,
