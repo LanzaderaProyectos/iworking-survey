@@ -3,7 +3,12 @@
     <label style="font-size:1.1rem">{{ $numberQuestion }}. {!! $question->content
         !!}</label>@if($surveyQuestion->mandatory)*@endif:
     @php($listQuestions = 'es' ? $question->getTranslation('options','es') : $question->options)
-    @foreach($listQuestions as $option)
+    @if(!is_array($surveyQuestion->question->options))
+    @php($optionsForeach = json_decode($listQuestions,true))
+    @else
+    @php($optionsForeach = $listQuestions)
+    @endif
+    @foreach($optionsForeach['es'] as $option)
     <div class="custom-control custom-radio">
         <input type="radio" class="custom-control-input">
         <label class="custom-control-label">

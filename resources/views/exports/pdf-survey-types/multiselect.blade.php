@@ -4,7 +4,12 @@
         !!}</label>@if($surveyQuestion->mandatory)*@endif:
     @php($listQuestions = 'es' ? $question->getTranslation('options','es') : $question->options)
     @if(!empty($listQuestions))
-    @foreach($listQuestions as $option)
+    @if(!is_array($surveyQuestion->question->options))
+    @php($optionsForeach = json_decode($listQuestions,true))
+    @else
+    @php($optionsForeach = $listQuestions)
+    @endif
+    @foreach($optionsForeach['es'] as $option)
     <div class="custom-control custom-checkbox">
         <input type="checkbox" class="custom-control-input">
         <label class="custom-control-label">{{ $option }}
@@ -15,8 +20,9 @@
     <br>
     <label>Pendiente de definir opciones</label>
     @endif
-    @if(count($surveyQuestion->children) > 0) 
-    <label style="margin-left: 20px; margin-top: 20px;">En caso que la pregunta "{{ $numberQuestion }}" sea respondida</label>
+    @if(count($surveyQuestion->children) > 0)
+    <label style="margin-left: 20px; margin-top: 20px;">En caso que la pregunta "{{ $numberQuestion }}" sea
+        respondida</label>
     @foreach($surveyQuestion->children as $key => $surveyQuestionChild)
     <div style="
     margin-left: 20px;
