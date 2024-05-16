@@ -7,6 +7,14 @@
         </button>
     </div>
     @endif
+    @if (session()->has('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <span> {{ session('success') }}</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    @endif
     <div class="kt-portlet__head kt-portlet__head--lg">
         <div class="kt-portlet__head-label">
             <span class="kt-portlet__head-icon">
@@ -143,7 +151,7 @@
                     class="table table-striped- table-bordered table-hover table-checkable mt-4" id="users_list_table">
                     <thead scope="col">
                         <tr class="text-uppercase">
-                            <th style="width: 40px">Acciones</th>
+                            <th style="width: 100px">Acciones</th>
                             <th wire:click="sortByTable('survey_number')" style="cursor: pointer">
                                 Nº Formulario
                                 @include('iworking::partials._sort-icon',['field'=>'survey_number'])
@@ -187,18 +195,25 @@
                                     data-placement="top" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                {{-- @else
-                                <a href="{{ route('survey.show',$survey->id) }}" type="button"
+                                @if($survey->status == 0)
+                                <a onclick="return confirm('¿Estás seguro de borrar este formulario?') || event.stopImmediatePropagation()"
+                                    wire:click="delete('{{$survey->id}}')" type="button"
                                     class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
-                                    data-placement="top" title="Visualizar">
-                                    <i class="fas fa-search"></i>
-                                </a>
-                                <a href="{{ route('survey.entry.list',$survey->id) }}" type="button"
-                                    class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
-                                    data-placement="top" title="Visualizar entradas">
-                                    <i class="fas fa-users"></i>
-                                </a>
-                                @endif --}}
+                                    data-placement="top" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                    @endif
+                                    {{-- @else
+                                    <a href="{{ route('survey.show',$survey->id) }}" type="button"
+                                        class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
+                                        data-placement="top" title="Visualizar">
+                                        <i class="fas fa-search"></i>
+                                    </a>
+                                    <a href="{{ route('survey.entry.list',$survey->id) }}" type="button"
+                                        class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
+                                        data-placement="top" title="Visualizar entradas">
+                                        <i class="fas fa-users"></i>
+                                    </a>
+                                    @endif --}}
                             </td>
                             <td>
                                 {{ $survey->survey_number }}
@@ -232,7 +247,7 @@
                 </table>
             </div>
             <div class="dataTables_info">
-                {{-- {{ $surveys->links() }} --}}
+                {{ $surveys->links() }}
             </div>
         </div>
     </div>

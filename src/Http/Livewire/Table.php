@@ -113,9 +113,10 @@ class Table extends Component
 
     public function delete($id)
     {
-        // $survey = Survey::find($id);
-        // $survey->delete();
-        // $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Formulario eliminado correctamente']);
+        $survey = Survey::find($id);
+        ProjectSurvey::where('survey_id', $id)->delete();
+        $survey->delete();
+        session()->flash('success', 'Formulario eliminado correctamente.');
     }
 
     public function render()
@@ -135,7 +136,7 @@ class Table extends Component
         // }
         $surveys->tableSearch($this->search);
         return view('survey::livewire.table', [
-            'surveys' => $surveys->get()
+            'surveys' => $surveys->orderBy($this->sortBy, $this->sortDirection)->paginate($this->entries),
         ]);
     }
 
