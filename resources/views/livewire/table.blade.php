@@ -99,25 +99,25 @@
                 <div class="row mb-3">
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="vatNumber" class="font-weight-bold">Nº Formulario:</label>
-                        <input wire:model.debounce.300ms="search.survey_number" type="search"
+                        <input wire:model.live="search.survey_number" type="search"
                             class="form-control form-control-sm" name="survey_number" id="survey_number"
                             placeholder="Nº Formulario">
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="provider" class="font-weight-bold">Nombre:</label>
-                        <input wire:model.debounce.300ms="search.name" type="search"
+                        <input wire:model.live="search.name" type="search"
                             class="form-control form-control-sm" name="name-survey" id="name-survey"
                             placeholder="Nombre">
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="provider" class="font-weight-bold">Autor:</label>
-                        <input wire:model.debounce.300ms="search.author" type="search"
+                        <input wire:model.live="search.author" type="search"
                             class="form-control form-control-sm" name="survey-author" id="survey-author"
                             placeholder="Autor">
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="statusCompany" class="font-weight-bold">Estado:</label>
-                        <select wire:model.debounce.300ms="search.status" name="status" id="status"
+                        <select wire:model.live="search.status" name="status" id="status"
                             class="form-control form-control-sm">
                             <option value=""> ---- </option>
                             @foreach(MattDaneshvar\Survey\Helpers\Helpers::buildSurveyStatusArray() as $status
@@ -128,7 +128,7 @@
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="statusCompany" class="font-weight-bold">Tipo:</label>
-                        <select wire:model.debounce.300ms="search.types" name="status" id="status"
+                        <select wire:model.live="search.types" name="status" id="status"
                             class="form-control form-control-sm">
                             <option value=""> ---- </option>
                             @foreach($types as $type)
