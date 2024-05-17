@@ -128,7 +128,7 @@
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="statusCompany" class="font-weight-bold">Tipo:</label>
-                        <select wire:model.live="search.types" name="status" id="status"
+                        <select wire:model.live="search.type" name="status" id="status"
                             class="form-control form-control-sm">
                             <option value=""> ---- </option>
                             @foreach($types as $type)
