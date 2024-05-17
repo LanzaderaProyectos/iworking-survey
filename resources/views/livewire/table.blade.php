@@ -126,6 +126,16 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-6 col-lg-3 col-xl-2 mt-2">
+                        <label for="statusCompany" class="font-weight-bold">Tipo:</label>
+                        <select wire:model.debounce.300ms="search.types" name="status" id="status"
+                            class="form-control form-control-sm">
+                            <option value=""> ---- </option>
+                            @foreach($types as $type)
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     @if(auth()->user()->hasRole('admin'))
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label class="font-weight-bold">Mostrar sin proyecto vinculados</label><br>

@@ -290,5 +290,8 @@ class Survey extends Model implements SurveyContract
             $value = $search['status'];
             $query->where('status', $value);
         }
+        if (isset($search['type']) && $search['type'] !== '') {
+            $query->where('type', $search['type']);
+        }
     }
 }

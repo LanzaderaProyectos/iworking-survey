@@ -10,6 +10,7 @@ use Iworking\IworkingBoilerplate\Library\Constants;
 use MattDaneshvar\Survey\Models\Survey;
 use App\Models\ProjectSurvey;
 use App\Models\Project;
+use MattDaneshvar\Survey\Models\SurveyType;
 
 class Table extends Component
 {
@@ -27,6 +28,7 @@ class Table extends Component
     public $onlyOriginal = false;
     public $projectSelected = null;
     public $projects = [];
+    public $types;
 
     public $surveyTypes = [
         'pharmaciesSale' => "Venta Farmacias",
@@ -52,6 +54,7 @@ class Table extends Component
             }
         }
         $this->projects = Project::select('id', 'code')->get()->toArray();
+        $this->types = SurveyType::all();
 
     }
 
