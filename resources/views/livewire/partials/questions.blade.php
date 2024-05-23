@@ -259,10 +259,13 @@
                         <th>Acción</th>
                         <th>Etapa</th>
                         <td>Orden</td>
-                        <th class="col-1">Codigo</th>
+                        <th>Codigo</th>
                         <th class="col-5">Pregunta</th>
                         {{-- <th class="col-5">EN</th> --}}
-                        <th class="col-1">Tipo</th>
+                        <th>Tipo</th>
+                        <th>Obligatoria</th>
+                        <th>Indicador</th>
+                        <th>Objetivo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -331,6 +334,16 @@
                         <td>
                             {{ $typeAnwers[$item->question->type] ?? $item->question->type }}
                         </td>
+                        <td>
+                            {{ $item->mandatory ? 'Si':'No' }}
+                        </td>
+                        <td>
+                            {{ $item->indicated ? 'Si':'No' }}
+                        </td>
+                        <td>
+                            {{ $item->target ? 'Si':'No' }}
+                        </td>
+                        
                     </tr>
                     @endforeach
                     @endif

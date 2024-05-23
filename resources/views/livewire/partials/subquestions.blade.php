@@ -242,9 +242,12 @@ $this->selectedParentQuestion->type != 'radio')
                     <th>Pregunta superior</th>
                     <th>Condición</th>
                     <td>Orden</td>
-                    <th class="col-5">Sub Pregunta</th>
+                    <th class="col-5">Pregunta</th>
                     {{-- <th class="col-5">EN</th> --}}
-                    <th class="col-1">Tipo</th>
+                    <th>Tipo</th>
+                    <th>Obligatoria</th>
+                    <th>Indicador</th>
+                    <th>Objetivo</th>
                 </tr>
             </thead>
             <tbody>
@@ -315,6 +318,15 @@ $this->selectedParentQuestion->type != 'radio')
                     </td> --}}
                     <td>
                         {{ $typeAnwers[$item->question->type] ?? $item->question->type }}
+                    </td>
+                    <td>
+                        {{ $item->mandatory ? 'Si':'No' }}
+                    </td>
+                    <td>
+                        {{ $item->indicated ? 'Si':'No' }}
+                    </td>
+                    <td>
+                        {{ $item->target ? 'Si':'No' }}
                     </td>
                 </tr>
                 @endforeach

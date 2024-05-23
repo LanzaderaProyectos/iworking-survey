@@ -654,6 +654,8 @@ class CreateSurvey extends Component
             $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
             $this->subSurveyQuestion->indicated = $this->indicatedSubQuestion;
             $this->subSurveyQuestion->target = $this->targetSubQuestion;
+            $this->subSurveyQuestion->save();
+            $this->subSurveyQuestion = new SurveyQuestion();
         }
         $this->reset('questionName');
         $this->resetValues();
