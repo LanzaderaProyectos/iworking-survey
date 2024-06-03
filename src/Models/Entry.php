@@ -10,6 +10,8 @@ use MattDaneshvar\Survey\Contracts\Survey;
 use MattDaneshvar\Survey\Exceptions\GuestEntriesNotAllowedException;
 use MattDaneshvar\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
 use MattDaneshvar\Survey\Models\Answer as ModelsAnswer;
+use App\Models\EntryOrder;
+use App\Models\EntryPromotionalMaterial;
 
 class Entry extends Model implements EntryContract
 {
@@ -18,7 +20,7 @@ class Entry extends Model implements EntryContract
      *
      * @var array
      */
-    protected $fillable = ['survey_id', 'participant', 'lang', 'status'];
+    protected $fillable = ['survey_id', 'participant', 'participant_type', 'lang', 'status'];
 
     protected $appends = ['sum_score'];
 
@@ -36,6 +38,15 @@ class Entry extends Model implements EntryContract
             $entry->validateParticipant();
             $entry->validateMaxEntryPerUserRequirement();
         });
+    }
+
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function element(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    {
+        return $this->morphTo(__FUNCTION__, 'participant_type', 'participant');
     }
 
     /**
@@ -72,19 +83,29 @@ class Entry extends Model implements EntryContract
         return $this->belongsTo(get_class(app()->make(Survey::class)));
     }
 
-    /**
-     * The participant that the entry belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function participant()
-    {
-        return $this->belongsTo(User::class, 'participant');
-    }
+    // /**
+    //  * The participant that the entry belongs to.
+    //  *
+    //  * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+    //  */
+    // public function participant()
+    // {
+    //     return $this->belongsTo(User::class, 'participant');
+    // }
 
     public function surveyed()
     {
         return $this->belongsTo(Surveyed::class, 'participant', 'email');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(EntryOrder::class, 'entry_id', 'id');
+    }
+
+    public function promotionalMaterials()
+    {
+        return $this->hasMany(EntryPromotionalMaterial::class, 'entry_id', 'id');
     }
 
     /**

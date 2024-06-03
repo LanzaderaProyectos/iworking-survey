@@ -161,8 +161,29 @@
                     </div>
                 </div>
             </div>
+            @if($targetQuestion)
+            <div class="col-12 mb-3 mt-n2">
+                <div class="form-group">
+                    <label class="form-control-label" for="input-target">Objetivo de la pregunta*</label>
+                    <select class="form-control " wire:model.defer="targetSelected" id="input-target">
+                        <option value="">Selecciona un objetivo</option>
+                        @foreach ($targets as $target)
+                        <option value="{{ $target['id'] }}">
+                            {{ $target['name'] }}
+                        </option>
+                        @endforeach
+                    </select>
+                    @error('targetSelected.*')
+                    <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+            @endif
             @if($customOptions)
             <div class="col-md-12 mt-n2">
+                <lable class="h5">Opciones de la pregunta</lable>
+            </div>
+            <div class="col-md-12 mt-3">
                 <label class="form-control-label" for="input-first_name">Opción</label>
                 <div class="row">
                     <div class="col-10">

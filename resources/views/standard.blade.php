@@ -25,13 +25,23 @@
         @php($numberQuestion += $section->questions->count())
         @endforeach
         @if($survey->has_order ?? false)
+        {{-- //TODO: change !== 0 to == 0 --}}
+        @if(empty($entry))
         @include('survey::sections.pharmaciesSale')
+        @else
+        @livewire('projects.partials.entry-order',['entry' => $entry])
+        @endif
         @endif
         @if($survey->has_promotional_material ?? false)
+        {{-- //TODO: change !== 0 to == 0 --}}
+        @if(empty($entry))
         @include('survey::sections.promotionalMaterial')
+        @else
+        @livewire('projects.partials.entry-promotional-materials',['entry' => $entry])
+        @endif
         @endif
     </div>
-    @if ($survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm)
+    @if ($survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS && $sendForm || true)
     @if (session()->has('answersAlert'))
     <div id="answersAlert" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
         <span> {{ session('answersAlert') }}</span>
@@ -41,7 +51,7 @@
     </div>
     @endif
     <div class="d-flex flex-row-reverse">
-        @if ($this->entry->lang == 'en')
+        @if (!empty($this->entry) && $this->entry->lang == 'en')
         <button id="send-en" class="btn btn-success my-3 mr-2"
             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
             wire:click="sendAnswers">
@@ -51,11 +61,11 @@
             Save
         </button>
         @else
-        <button id="send-es" class="btn btn-success my-3"
+        {{-- <button id="send-es" class="btn btn-success my-3"
             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
             wire:click="sendAnswers">
             Enviar
-        </button>
+        </button> --}}
         <button class="btn btn-primary my-3 mr-2" wire:click="saveAnswers">
             Guardar
         </button>

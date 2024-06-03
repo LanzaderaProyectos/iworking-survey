@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Mail\SurveyCompleted;
 use MattDaneshvar\Survey\Facades\AnswerService;
+use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Services\DecryptionService;
 
 class Answers extends Component
@@ -46,10 +47,9 @@ class Answers extends Component
     ];
 
 
-    public function mount()
+    public function mount(Entry $entry)
     {
-        $crypted    = Route::current()->parameter('user');
-        $this->entry = (new DecryptionService())->decryptUser($crypted);
+        $this->entry = $entry;
 
         if ($this->entry->lang == 'en') {
             App::setlocale('en');
@@ -86,6 +86,7 @@ class Answers extends Component
         foreach ($this->survey->surveyQuestions as $surveyQuestion) {
             if ($surveyQuestion->question->type == 'multiselect' && !isset($this->answers[$surveyQuestion->id]['value'])) {
                 $this->answers[$surveyQuestion->id]['value'] = [];
+                $this->answers[$surveyQuestion->id]['type'] = 'multiselect';
             }
         }
     }
@@ -103,6 +104,7 @@ class Answers extends Component
 
         $this->answersToDelete  = [];
         $this->errorsBag        = [];
+        $this->dispatch('saveAnswers');
     }
 
     function deleteSubQuestionAnswers($question)

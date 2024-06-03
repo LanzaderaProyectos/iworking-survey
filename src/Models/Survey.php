@@ -2,9 +2,9 @@
 
 namespace MattDaneshvar\Survey\Models;
 
+use MattDaneshvar\Survey\Models\Entry;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
-use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
@@ -173,7 +173,7 @@ class Survey extends Model implements SurveyContract
      */
     public function entries()
     {
-        return $this->hasMany(get_class(app()->make(Entry::class)));
+        return $this->hasMany(Entry::class);
     }
 
     public function user()
