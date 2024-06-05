@@ -8,6 +8,7 @@ use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
+use App\Models\ProjectSurvey;
 
 class Survey extends Model implements SurveyContract
 {
@@ -194,6 +195,12 @@ class Survey extends Model implements SurveyContract
     public function acceptsGuestEntries()
     {
         return $this->settings['accept-guest-entries'] ?? false;
+    }
+
+    
+    public function projectSurvey()
+    {
+        return $this->HasOne(ProjectSurvey::class,'survey_id');
     }
 
     /**
