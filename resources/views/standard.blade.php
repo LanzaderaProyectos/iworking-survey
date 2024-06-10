@@ -50,7 +50,7 @@
         </button>
     </div>
     @endif
-    <div class="d-flex flex-row-reverse">
+    {{-- <div class="d-flex flex-row-reverse">
         @if (!empty($this->entry) && $this->entry->lang == 'en')
         <button id="send-en" class="btn btn-success my-3 mr-2"
             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
@@ -61,16 +61,11 @@
             Save
         </button>
         @else
-        {{-- <button id="send-es" class="btn btn-success my-3"
-            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
-            wire:click="sendAnswers">
-            Enviar
-        </button> --}}
         <button class="btn btn-primary my-3 mr-2" wire:click="saveAnswers">
             Guardar
         </button>
         @endif
-    </div>
+    </div> --}}
     @endif
     <style>
         .collapsed .tab-arrow {

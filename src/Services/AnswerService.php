@@ -168,7 +168,7 @@ class AnswerService
     public function validateMandatoryQuestion($surveyQuestion, array $answers, $errorsBag,$comments) {
         if ($surveyQuestion->mandatory) {
             if (empty($answers[$surveyQuestion->id]['value'])) {
-                if (empty(trim($comments[$surveyQuestion->id]))) {
+                if (empty($comments[$surveyQuestion->id])) {
                     $errorsBag[$surveyQuestion->id] = $surveyQuestion->id . "";
                 }
             } else {
@@ -176,7 +176,14 @@ class AnswerService
             }
         }
         foreach($surveyQuestion->children as $child) {
-            $errorsBag = $this->validateMandatoryQuestion($child, $answers, $errorsBag, $comments);
+            if($surveyQuestion->question->type == "radio"){
+                if($answers[$surveyQuestion->id]['value'] == $child->condition){
+                    $errorsBag = $this->validateMandatoryQuestion($child, $answers, $errorsBag, $comments);
+                }
+            }
+            else{
+                $errorsBag = $this->validateMandatoryQuestion($child, $answers, $errorsBag, $comments);
+            }
         }
         return $errorsBag;
     }

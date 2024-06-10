@@ -36,7 +36,7 @@
     @if ($this->selectedParentQuestion)
     <div class="col-md-6 col-12 mt-3">
         <div class="form-group mb-3">
-            <label for="numbers_format">¿Cuándo debe de mostrar la pregunta?*:</label>
+            <label for="numbers_format">¿Cuándo debe de mostrar la sub pregunta?*:</label>
             <select {{ $this->formEdit ? '' : 'disabled' }} @if($selectedParentQuestion->type == "multiselect" ||
                 $selectedParentQuestion->type == "uniqueselect") disabled @endif wire:model.live="parentQuestionRadio"
                 class="form-control " id="numbers_format_input">
@@ -46,7 +46,7 @@
                 <option value="">Selecciona una opción</option>
                 <option value="SI">Cuando pulsa SI</option>
                 <option value="NO">Cuando pulsa NO</option>
-                <option value="NA">Cuando pulsa NA</option>
+                <option value="NA">Cuando pulsa NP</option>
                 <option value="00">En cualquier caso</option>
                 @endif
             </select>
@@ -81,7 +81,7 @@ $this->selectedParentQuestion->type != 'radio')
 <div class="row">
     <div class="col-md-12">
         <div class="form-group">
-            <label class="form-control-label" for="input-first_name">Pregunta*</label>
+            <label class="form-control-label" for="input-first_name">Sub Pregunta*</label>
             {{-- <nav id="create-questions">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-subquestion-tab" data-toggle="tab"
@@ -242,7 +242,7 @@ $this->selectedParentQuestion->type != 'radio')
                     <th>Pregunta superior</th>
                     <th>Condición</th>
                     <td>Orden</td>
-                    <th class="col-5">Pregunta</th>
+                    <th class="col-5">Sub Pregunta</th>
                     {{-- <th class="col-5">EN</th> --}}
                     <th>Tipo</th>
                     <th>Obligatoria</th>

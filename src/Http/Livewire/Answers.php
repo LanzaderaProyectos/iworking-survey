@@ -12,6 +12,7 @@ use MattDaneshvar\Survey\Mail\SurveyCompleted;
 use MattDaneshvar\Survey\Facades\AnswerService;
 use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Services\DecryptionService;
+use Livewire\Attributes\On;
 
 class Answers extends Component
 {
@@ -22,6 +23,8 @@ class Answers extends Component
     public $errorsBag           = [];
     public $respondedQuestions  = [];
     public $answersToDelete     = [];
+
+    public $disabled = false;
 
 
     public $selectedProfessional;
@@ -50,6 +53,10 @@ class Answers extends Component
     public function mount(Entry $entry)
     {
         $this->entry = $entry;
+        if($this->entry->status == Constants::ENTRY_STATUS_COMPLETED)
+        {
+            $this->disabled = true;
+        }
 
         if ($this->entry->lang == 'en') {
             App::setlocale('en');
@@ -91,6 +98,7 @@ class Answers extends Component
         }
     }
 
+    #[On('saveAnswers')]
     public function saveAnswers()
     {
         $saveAnswers = AnswerService::saveAnswers($this->answers, $this->entry, $this->comments);
@@ -104,7 +112,6 @@ class Answers extends Component
 
         $this->answersToDelete  = [];
         $this->errorsBag        = [];
-        $this->dispatch('saveAnswers');
     }
 
     function deleteSubQuestionAnswers($question)
@@ -131,6 +138,17 @@ class Answers extends Component
                 Log::error($th);
             }
             return redirect('/');
+        }
+    }
+
+    
+    #[On('completeEntry')]
+    public function completeEntry()
+    {
+        if($this->customValidation())
+        {
+            $this->saveAnswers();
+            $this->dispatch('completedEntry');
         }
     }
 
