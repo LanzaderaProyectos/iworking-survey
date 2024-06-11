@@ -20,7 +20,7 @@ class Entry extends Model implements EntryContract
      *
      * @var array
      */
-    protected $fillable = ['survey_id', 'participant', 'participant_type', 'lang', 'status'];
+    protected $fillable = ['survey_id', 'participant', 'participant_type', 'lang', 'status','assigned_user_id'];
 
     protected $appends = ['sum_score'];
 
@@ -81,6 +81,11 @@ class Entry extends Model implements EntryContract
     public function survey()
     {
         return $this->belongsTo(get_class(app()->make(Survey::class)));
+    }
+
+    public function assignedUser()
+    {
+        return $this->belongsTo(User::class, 'assigned_user_id');
     }
 
     // /**
