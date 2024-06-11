@@ -4,7 +4,7 @@ namespace MattDaneshvar\Survey\Http\Livewire;
 
 use Exception;
 use Livewire\Component;
-use Barryvdh\DomPDF\PDF;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
