@@ -199,8 +199,8 @@ class Answers extends Component
                 $name .= "Formación";
             }
 
-            $data = ['survey' => $this->survey, 'onlyOrder' => false];
-            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true, "isPhpEnabled" => true])->loadView('survey::exports.pdf-survey', $data);
+            $data = ['entry' => $this->entry, 'onlyOrder' => false, 'answers' => $this->answers];
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true, "isPhpEnabled" => true])->loadView('exports.survey.pdf-survey', $data);
             $pdf = $pdf->output();
             return response()->streamDownload(
                 fn () => print($pdf),
