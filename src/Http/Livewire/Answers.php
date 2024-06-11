@@ -2,17 +2,19 @@
 
 namespace MattDaneshvar\Survey\Http\Livewire;
 
+use Exception;
 use Livewire\Component;
+use Barryvdh\DomPDF\PDF;
+use Livewire\Attributes\On;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Library\Constants;
 use MattDaneshvar\Survey\Mail\SurveyCompleted;
 use MattDaneshvar\Survey\Facades\AnswerService;
-use MattDaneshvar\Survey\Models\Entry;
 use MattDaneshvar\Survey\Services\DecryptionService;
-use Livewire\Attributes\On;
 
 class Answers extends Component
 {
@@ -182,4 +184,31 @@ class Answers extends Component
         }
         
     }
+
+    public function exportSurveyToPDF()
+    {
+        try {
+            $name = "Formulario_" . $this->survey->survey_number . "_";;
+            if ($this->survey->type == "pharmaciesSale") {
+                $name .= "Venta_Farmacia";
+            } elseif ($this->survey->type == "medicalPrescription") {
+                $name .= "Prescripción_Médica";
+            } elseif ($this->survey->type == "general") {
+                $name .= "General";
+            } else {
+                $name .= "Formación";
+            }
+
+            $data = ['survey' => $this->survey, 'onlyOrder' => false];
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true, "isPhpEnabled" => true])->loadView('survey::exports.pdf-survey', $data);
+            $pdf = $pdf->output();
+            return response()->streamDownload(
+                fn () => print($pdf),
+                $name . '.pdf'
+            );
+        } catch (Exception $e) {
+            dd($data, $e->getMessage());
+        }
+    }
+
 }
