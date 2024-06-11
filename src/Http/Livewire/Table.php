@@ -241,7 +241,7 @@ class Table extends Component
     {
         $projectSurvey = ProjectSurvey::where('survey_id', $id)->first();
         if ($projectSurvey) {
-            return $projectSurvey->project->code;
+            return $projectSurvey->project->code ?? '';
         } else {
             return '';
         }
