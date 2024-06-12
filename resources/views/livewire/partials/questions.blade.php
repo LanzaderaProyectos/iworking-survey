@@ -291,7 +291,7 @@
                 </thead>
                 <tbody>
                     @if (!empty($sectionQuestionSelected))
-                    @foreach ($survey->sections()->find($sectionQuestionSelected)->surveyQuestionsMain()->get()->sortBy('position') as $key => $item)
+                    @foreach ($survey->sections()->find($sectionQuestionSelected)->surveyQuestionsMainIgnoreDisabled()->get()->sortBy('position') as $key => $item)
                     <tr>
                         <td nowrap>
                             <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ?

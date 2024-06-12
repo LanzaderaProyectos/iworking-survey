@@ -70,12 +70,22 @@ class Section extends Model implements SectionContract
         return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->whereNull('parent_id')->orderBy('position','asc');
     }
 
+    public function surveyQuestionsMainIgnoreDisabled()
+    {
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->whereNull('parent_id')->orderBy('position','asc');
+    }
+
     /**
      * The survey sub questions.
      */
     public function surveyQuestionsSub()
     {
         return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->whereNotNull('parent_id')->orderBy('position','asc');
+    }
+
+    public function surveyQuestionsSubIgnoreDisabled()
+    {
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->whereNotNull('parent_id')->orderBy('position','asc');
     }
 
     /**

@@ -251,7 +251,7 @@ $this->selectedParentQuestion->type != 'radio')
                 </tr>
             </thead>
             <tbody>
-                @foreach ($this->survey->sections()->find($sectionQuestionSelected)->surveyQuestionsSub->sortBy('position') as $item)
+                @foreach ($this->survey->sections()->find($sectionQuestionSelected)->surveyQuestionsSubIgnoreDisabled->sortBy('position') as $item)
                 <tr>
                     <td nowrap>
                         <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ? '' :
