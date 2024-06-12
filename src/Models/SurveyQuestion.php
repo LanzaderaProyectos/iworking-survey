@@ -34,13 +34,23 @@ class SurveyQuestion extends Model
         'position',
         'parent_id',
         'original_id',
+        +
         'section_id',
         'condition',
         'mandatory',
+        'target',
+        'indicated',
         'order',
         'disabled',
         'disabled_by',
         'disabled_at'
+    ];
+
+    protected $casts = [
+        'mandatory' => 'boolean',
+        'indicated' => 'boolean',
+        'target'    => 'boolean',
+
     ];
 
     /**
