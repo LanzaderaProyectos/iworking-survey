@@ -71,6 +71,14 @@ class Section extends Model implements SectionContract
     }
 
     /**
+     * The survey sub questions.
+     */
+    public function surveyQuestionsSub()
+    {
+        return $this->hasMany(get_class(app()->make(SurveyQuestion::class)))->where('disabled','!=',true)->whereNotNull('parent_id')->orderBy('position','asc');
+    }
+
+    /**
      * The questions of the section.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
