@@ -34,7 +34,6 @@ class SurveyQuestion extends Model
         'position',
         'parent_id',
         'original_id',
-        +
         'section_id',
         'condition',
         'mandatory',
