@@ -86,19 +86,20 @@
     <div class="col-6 col-md-3 col-xl-2">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Tiene Pedido</label><br>
-            <input type="checkbox" wire:model.live="survey.has_order" name="has_order" id="has_order"
+            <input type="checkbox" {{ $this->formEdit ? '' : 'disabled'}} wire:model.live="survey.has_order" name="has_order" id="has_order"
                 class="">
         </div>
     </div>
     <div class="col-6 col-md-3 col-xl-2">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Tiene Material Promocional</label><br>
-            <input type="checkbox" wire:model.live="survey.has_promotional_material" name="has_order" id="has_order"
+            <input type="checkbox" {{ $this->formEdit ? '' : 'disabled'}} wire:model.live="survey.has_promotional_material" name="has_order" id="has_order"
                 class="">
         </div>
     </div>
 </div>
 <div class="row my-5">
+    @if($this->formEdit)
     <div class="col-12 col-md-6">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Nombre de la etapa</label>
@@ -138,17 +139,20 @@
                     </div>
                 </div>
                 <div class="input-group-append">
-                    <button wire:click="addSection" class="btn btn-dark" type="button" title="Añadir">+</button>
+                    <button wire:click="addSection"  class="btn btn-dark" type="button" title="Añadir">+</button>
                 </div>
             </div>
         </div>
     </div>
+    @endif
     <div class="col-12 col-md-6">
         @if(count($this->survey->sections))
         <table class="table table-striped table-bordered table-hover table-checkable mt-5">
             <thead>
                 <tr>
+                    @if($this->formEdit)
                     <th class="col-1">Acción</th>
+                    @endif
                     <th class="col-1">Orden</th>
                     <td>Nombre Etapa</td>
                 </tr>
@@ -156,6 +160,7 @@
             <tbody>
                 @foreach ($this->survey->sections as $section)
                 <tr>
+                    @if($this->formEdit)
                     <td nowrap>
                         <button wire:loading.attr="disabled" wire:click="editSection('{{ $section->id }}')"
                             type="button" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
@@ -183,6 +188,7 @@
                             <i class="fas fa-arrow-down"></i>
                         </button>
                     </td>
+                    @endif
                     <td>
                         {{ $section->order ?? '' }}
                     </td>

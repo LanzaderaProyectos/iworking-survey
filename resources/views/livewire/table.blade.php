@@ -99,21 +99,18 @@
                 <div class="row mb-3">
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="vatNumber" class="font-weight-bold">Nº Formulario:</label>
-                        <input wire:model.live="search.survey_number" type="search"
-                            class="form-control form-control-sm" name="survey_number" id="survey_number"
-                            placeholder="Nº Formulario">
+                        <input wire:model.live="search.survey_number" type="search" class="form-control form-control-sm"
+                            name="survey_number" id="survey_number" placeholder="Nº Formulario">
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="provider" class="font-weight-bold">Nombre:</label>
-                        <input wire:model.live="search.name" type="search"
-                            class="form-control form-control-sm" name="name-survey" id="name-survey"
-                            placeholder="Nombre">
+                        <input wire:model.live="search.name" type="search" class="form-control form-control-sm"
+                            name="name-survey" id="name-survey" placeholder="Nombre">
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="provider" class="font-weight-bold">Autor:</label>
-                        <input wire:model.live="search.author" type="search"
-                            class="form-control form-control-sm" name="survey-author" id="survey-author"
-                            placeholder="Autor">
+                        <input wire:model.live="search.author" type="search" class="form-control form-control-sm"
+                            name="survey-author" id="survey-author" placeholder="Autor">
                     </div>
                     <div class="col-6 col-lg-3 col-xl-2 mt-2">
                         <label for="statusCompany" class="font-weight-bold">Estado:</label>
@@ -200,17 +197,23 @@
                         <tr>
                             <td class="text-center">
                                 {{-- @if($draft) --}}
+
+                                @if($survey->status == 0)
                                 <a href="{{ route('survey.edit',$survey->id) }}" type="button"
                                     class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
                                     data-placement="top" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                @if($survey->status == 0)
                                 <a onclick="return confirm('¿Estás seguro de borrar este formulario?') || event.stopImmediatePropagation()"
                                     wire:click="delete('{{$survey->id}}')" type="button"
                                     class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
-                                    data-placement="top" title="Delete">
-                                    <i class="fas fa-trash"></i>
+                                    data-placement="top" title="Delete"> <i class="fas fa-trash"></i>
+                                    @else
+                                    <a href="{{ route('survey.show',$survey->id) }}" type="button"
+                                        class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
+                                        data-placement="top" title="Edit">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                     @endif
                                     {{-- @else
                                     <a href="{{ route('survey.show',$survey->id) }}" type="button"

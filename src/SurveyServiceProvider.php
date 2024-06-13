@@ -16,6 +16,7 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use MattDaneshvar\Survey\Http\Livewire\EntryList;
 use MattDaneshvar\Survey\Http\Livewire\Questions\QuestionEdit;
 use MattDaneshvar\Survey\Http\Livewire\Questions\QuestionList;
+use MattDaneshvar\Survey\Http\Livewire\TaskSurvey;
 use MattDaneshvar\Survey\Http\View\Composers\SurveyComposer;
 
 class SurveyServiceProvider extends ServiceProvider
@@ -38,11 +39,16 @@ class SurveyServiceProvider extends ServiceProvider
             __DIR__ . '/../resources/views/' => base_path('resources/views/vendor/survey'),
         ], 'views');
 
-         // Publishing is only necessary when using the CLI.
-         if ($this->app->runningInConsole()) {
+        // Publishing controllers.
+        $this->publishes([
+            __DIR__ . '/Http/Controllers'                               => app_path('Http/Controllers'),
+        ], 'survey-vendor-controllers');
+
+        // Publishing is only necessary when using the CLI.
+        if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
-        
+
         $this->mergeConfigFrom(__DIR__ . '/../config/survey.php', 'survey');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'survey');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'survey');
@@ -95,7 +101,7 @@ class SurveyServiceProvider extends ServiceProvider
         }
     }
 
-     /**
+    /**
      * Console-specific booting.
      *
      * @return void
@@ -122,6 +128,7 @@ class SurveyServiceProvider extends ServiceProvider
     {
         Livewire::component('iworking-survery::survey-list',        Table::class);
         Livewire::component('iworking-survery::create-survey',      CreateSurvey::class);
+        Livewire::component('iworking-survery::task-survey',        TaskSurvey::class);
         Livewire::component('iworking-survery::survey-answers',     Answers::class);
         Livewire::component('iworking-survery::show-entry',         ShowEntry::class);
         Livewire::component('iworking-survery::addresses',          Addresses::class);

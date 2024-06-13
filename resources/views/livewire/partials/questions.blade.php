@@ -25,7 +25,7 @@
             <div class="col-md-6 col-12">
                 <div class="form-group ">
                     <label for="numbers_format">Etapa*:</label>
-                    <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="sectionQuestionSelected"
+                    <select wire:model.live="sectionQuestionSelected"
                         class="form-control "
                         id="numbers_format_input" size="3">
                         @foreach ($this->survey->sections as $section)
@@ -51,6 +51,8 @@
             </div> --}}
         </div>
     </div>
+    
+    @if($this->formEdit)
     <div class="col-12">
         <div class="card-header mb-5">
             <h5 class="mb-0">
@@ -259,6 +261,7 @@
             @endif
         </div>
     </div>
+    @endif
 </div>
 <div class="row">
     <div class="col-12">
@@ -294,9 +297,8 @@
                     @foreach ($survey->sections()->find($sectionQuestionSelected)->surveyQuestionsMainIgnoreDisabled()->get()->sortBy('position') as $key => $item)
                     <tr>
                         <td nowrap>
-                            <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ?
-                                '' :
-                                'disabled' }}
+                            @if($this->formEdit)
+                            <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" 
                                 wire:click="editQuestion('{{ $item->id }}')" type="button"
                                 class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip"
                                 data-placement="top" title="Edit">
@@ -320,15 +322,16 @@
                                 data-toggle="tooltip" data-placement="top" title="Bajar Orden">
                                 <i class="fas fa-arrow-down"></i>
                             </button>
+                            @endif
                             @if($this->isActive($item->id))
-                            <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
+                            <button type="button"
                                 wire:click="activeQuestion('{{ $item->id }}')"
                                 class="btn btn-sm btn-clean btn-icon btn-icon-md"
                                 title="Pulsa para Desactivar">
                                 <i class="fas fa-toggle-on fa-xl" aria-hidden="true"></i>
                             </button>
                             @else
-                            <button type="button" {{ $this->formEdit ? '' : 'disabled' }}
+                            <button type="button"
                                 wire:click="activeQuestion('{{ $item->id }}')"
                                 class="btn btn-sm btn-clean btn-icon btn-icon-md"
                                 title="Pulsa para Activar">

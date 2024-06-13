@@ -17,7 +17,8 @@
     <div>
         <div class="row mt-2">
             <div class="col-12 col-md-6 py-2">
-                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de {{ $this->survey->surveyType->name ?? ''}} @if($projectCode != "") del proyecto {{$projectCode}}  @endif</h4>
+                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de {{ $this->survey->surveyType->name ?? ''}}
+                    @if($projectCode != "") del proyecto {{$projectCode}} @endif</h4>
             </div>
         </div>
         <div class="row">
@@ -140,12 +141,13 @@
             </button>
         </div>
         @endif
-        @if($this->formEdit)
         <div class="row">
             <div class="col-12 col-md-6">
-
+                @include('processes::livewire.process.traits.taskable-actions')
             </div>
             <div class="col-12 col-md-6">
+
+                @if($this->formEdit)
                 <div class="text-right">
                     <div class="btn-group my-1" role="group" aria-label="">
                         {{-- @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_DRAFT &&
@@ -166,7 +168,8 @@
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
                             Guardar borrador
                         </button>
-                        @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT && !empty($this->survey->projectSurvey))
+                        @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT &&
+                        !empty($this->survey->projectSurvey))
                         <button class="btn btn-warning" {{ $this->survey->surveyQuestionsMain->count() ?
                             '' : 'disabled'}}
                             onclick="confirm('¿Está seguro de iniciar Validación? Esta acción no puede deshacerse.') ||
@@ -178,27 +181,9 @@
                         @endif
                     </div>
                 </div>
+                @endif
             </div>
         </div>
-        @endif
-        @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
-        auth()->user()->hasAnyRole(['gestor-encuestas']))
-        <div class="row">
-            <div class="col-12 col-md-6">
-            </div>
-            <div class="col-12 col-md-6">
-                <div class="text-right">
-                    <div class="btn-group my-1" role="group" aria-label="">
-                        <button type="button" wire:click="closeSurvey"
-                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
-                            class="btn btn-dark d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
-                            Cerrar formulario
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
     </div>
     @endif
 </div>
