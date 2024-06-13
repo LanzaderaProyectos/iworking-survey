@@ -811,6 +811,11 @@ class CreateSurvey extends Component
                 $this->customSubOptions = true;
                 $this->subOptionEs = $this->question->getTranslation('options', 'es');
                 $this->subOptionEn = $this->question->getTranslation('options', 'en');
+                if($this->subOptionEs == "")
+                {
+                    $this->subOptionEs = [];
+                    $this->subOptionEn = [];
+                }
             }
             $this->defaultQuestionsSub = (new SurveyService())->getQuestions($this->survey, $this->subSurveyQuestion->parent->section);
         }
