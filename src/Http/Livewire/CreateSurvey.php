@@ -208,7 +208,7 @@ class CreateSurvey extends Component
             $projectSurvey = ProjectSurvey::where('survey_id', $this->survey->id)->first();
             if ($projectSurvey) {
                 $this->projectCode = $projectSurvey->project->code;
-                $this->targets = $projectSurvey->project->targets->toArray() ?? [];
+                $this->targets = $projectSurvey->project->targets()->where(function($q) use ($projectSurvey){$q->where('cycle_id',$projectSurvey->cycle_id)->orWhereNull('cycle_id');})->get()->toArray() ?? [];
             } 
         }
 
