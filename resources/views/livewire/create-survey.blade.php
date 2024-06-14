@@ -41,7 +41,6 @@
                         <a class="nav-link  active" id="survey-header-tab" data-toggle="tab" href="#survey-header"
                             role="tab" aria-controls="survey-header" aria-selected="true">Cabecera</a>
                     </li>
-                    @if($projectCode != "")
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-questions-tab" data-toggle="tab" href="#survey-questions" role="tab"
@@ -52,7 +51,6 @@
                             : ''}}" id="survey-preview-tab" data-toggle="tab" href="#survey-preview" role="tab"
                             aria-controls="survey-preview" aria-selected="true">Previsualizar</a>
                     </li>
-                    @endif
                     {{-- <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-users-tab" data-toggle="tab" href="#survey-users" role="tab"
@@ -79,7 +77,6 @@
                         aria-labelledby="survey-header-tab" wire:ignore.self>
                         @include('survey::livewire.partials.header')
                     </div>
-                    @if($projectCode != "")
                     @if($this->survey->id)
                     <div class="tab-pane fade" id="survey-questions" role="tabpanel" aria-labelledby="survey-questions"
                         wire:ignore.self>
@@ -91,7 +88,6 @@
                         'sendForm' => false,
                         'disabled' => true])
                     </div>
-                    @endif
                     {{-- <div class="tab-pane fade" id="survey-users" role="tabpanel" aria-labelledby="survey-users"
                         wire:ignore.self>
                         @livewire('iworking-survery::addresses',[

@@ -163,6 +163,7 @@
                     </div>
                 </div>
             </div>
+            @if($projectCode != "")
             @if($targetQuestion)
             <div class="col-12 mb-3 mt-n2">
                 <div class="form-group">
@@ -180,6 +181,7 @@
                     @enderror
                 </div>
             </div>
+            @endif
             @endif
             @if($customOptions)
             <div class="col-md-12 mt-n2">

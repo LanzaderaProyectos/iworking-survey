@@ -125,7 +125,7 @@ class CreateSurvey extends Component
     public $professionalsSurvey;
     public $professionalSelectOptions = [];
 
-    public $targets;
+    public $targets = [];
     public $targetSelected;
     public $subTargetSelected;
 
