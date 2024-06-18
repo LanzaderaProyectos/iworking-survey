@@ -250,7 +250,7 @@
         <button class="btn btn-link collapsed d-flex align-items-center"
             style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
             data-target="#collapseSubQuestions" aria-expanded="true" aria-controls="collapseSubQuestions">
-            <span class="h3">Sub Pregunta:</span>
+            <span class="h3">Listado de Subpreguntas:</span>
             <i class="fas fa-chevron-up tab-arrow"></i>
         </button>
     </h5>

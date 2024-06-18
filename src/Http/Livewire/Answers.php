@@ -52,9 +52,10 @@ class Answers extends Component
     ];
 
 
-    public function mount(Entry $entry)
+    public function mount(Entry $entry, $show = false)
     {
         $this->entry = $entry;
+        $this->disabled = $show;
         if($this->entry->status == Constants::ENTRY_STATUS_COMPLETED)
         {
             $this->disabled = true;

@@ -29,7 +29,7 @@
         @if(empty($entry))
         @include('survey::sections.pharmaciesSale')
         @else
-        @livewire('projects.partials.entry-order',['entry' => $entry])
+        @livewire('projects.partials.entry-order',['entry' => $entry,'show'=>$disabled])
         @endif
         @endif
         @if($survey->has_promotional_material ?? false)
@@ -37,7 +37,7 @@
         @if(empty($entry))
         @include('survey::sections.promotionalMaterial')
         @else
-        @livewire('projects.partials.entry-promotional-materials',['entry' => $entry])
+        @livewire('projects.partials.entry-promotional-materials',['entry' => $entry,'show'=>$disabled])
         @endif
         @endif
     </div>

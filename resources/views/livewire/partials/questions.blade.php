@@ -27,7 +27,7 @@
                     <label for="numbers_format">Etapa*:</label>
                     <select wire:model.live="sectionQuestionSelected"
                         class="form-control "
-                        id="numbers_format_input" size="3">
+                        id="numbers_format_input" size="5">
                         @foreach ($this->survey->sections as $section)
                         <option value="{{ $section->id }}">
                             {{ $section->order }} - {{ $section->name }}
@@ -117,72 +117,76 @@
                     @enderror
                 </div>
             </div>
-            <div class="col-md-5 col-12">
-                <div class="form-group mb-2">
-                    <label for="numbers_format">Tipo*:</label>
-                    <select wire:model.live="typeSelected" class="form-control " id="numbers_format_input" size="3">
-                        @foreach ($typeAnwers as $key => $value)
-                        <option value="{{ $key }}">
-                            {{ $value }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-                {{-- <div class="form-group">
-                    <input {{ $this->typeSelected != 'radio' ? 'disabled' : '' }} type="checkbox"
-                    wire:model.defer="question.comments">
-                    <label for="numbers_format">Comentarios</label>
-                </div> --}}
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <label for="numbers_format">Orden:</label>
-                    <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="orderQuestion" type="number"
-                    step="1" min="0" name="section-order" id="survey-order"
-                    class="form-control form-control-alternative" placeholder="Orden">
-                    @error('orderQuestion')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="row">
-                    <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
-                        <input type="checkbox" @if($indicatedQuestion || $targetQuestion) disabled checked @endif
-                            wire:model.live="requiredQuestion">
-                        <label for="numbers_format">Obligatoria</label>
+            <div class="row">
+                <div class="col-12 col-md-5">
+                    <div class="form-group mb-2">
+                        <label for="numbers_format">Tipo*:</label>
+                        <select wire:model.live="typeSelected" class="form-control " id="numbers_format_input" size="3">
+                            @foreach ($typeAnwers as $key => $value)
+                            <option value="{{ $key }}">
+                                {{ $value }}
+                            </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
-                        <input type="checkbox" @if($indicatedQuestion) checked @endif
-                            wire:model.live="indicatedQuestion">
-                        <label for="numbers_format">Indicador</label>
-                    </div>
-                    <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">
-                        <input type="checkbox" @if($targetQuestion) checked @endif wire:model.live="targetQuestion">
-                        <label for="numbers_format">Objetivo</label>
+                    {{-- <div class="form-group">
+                        <input {{ $this->typeSelected != 'radio' ? 'disabled' : '' }} type="checkbox"
+                        wire:model.defer="question.comments">
+                        <label for="numbers_format">Comentarios</label>
+                    </div> --}}
+                </div>
+                <div class="col-12 col-md-2">
+                    <div class="form-group">
+                        <label for="numbers_format">Orden:</label>
+                        <input {{ $this->formEdit ? '' : 'disabled' }} wire:model.defer="orderQuestion" type="number"
+                        step="1" min="0" name="section-order" id="survey-order"
+                        class="form-control form-control-alternative" placeholder="Orden">
+                        @error('orderQuestion')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
-            </div>
-            @if($projectCode != "")
-            @if($targetQuestion)
-            <div class="col-12 mb-3 mt-n2">
-                <div class="form-group">
-                    <label class="form-control-label" for="input-target">Objetivo de la pregunta*</label>
-                    <select class="form-control " wire:model.defer="targetSelected" id="input-target">
-                        <option value="">Selecciona un objetivo</option>
-                        @foreach ($targets as $target)
-                        <option value="{{ $target['id'] }}">
-                            {{ $target['name'] }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('targetSelected.*')
-                    <span class="text-danger">{{ $message }}</span>
-                    @enderror
+                <div class="col-12 col-md-1">
+                    <div class="row">
+                        <div class="form-group col-12 mt-md-3">
+                            <input type="checkbox" @if($indicatedQuestion || $targetQuestion) disabled checked @endif
+                                wire:model.live="requiredQuestion">
+                            <label for="numbers_format">Obligatoria</label>
+                        </div>
+                        <div class="form-group col-12 mt-md-n3">
+                            <input type="checkbox" @if($indicatedQuestion) checked @endif
+                                wire:model.live="indicatedQuestion">
+                            <label for="numbers_format">Indicador</label>
+                        </div>
+                        <div class="form-group col-12 mt-md-n3">
+                            <input type="checkbox" @if($targetQuestion) checked @endif wire:model.live="targetQuestion">
+                            <label for="numbers_format">Objetivo</label>
+                        </div>
+                    </div>
                 </div>
+                @if($projectCode != "")
+                @if($targetQuestion)
+                <div class="col-12 col-md-4">
+                    <div class="form-group">
+                        <label class="form-control-label" for="input-target">Objetivo de la pregunta*</label>
+                        <select class="form-control " wire:model.defer="targetSelected" id="input-target">
+                            <option value="">Selecciona un objetivo</option>
+                            @foreach ($targets as $target)
+                            <option value="{{ $target['id'] }}">
+                                {{ $target['name'] }}
+                            </option>
+                            @endforeach
+                        </select>
+                        @error('targetSelected.*')
+                        <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                @endif
+                @endif
             </div>
-            @endif
-            @endif
+            
+           
             @if($customOptions)
             <div class="col-md-12 mt-n2">
                 <lable class="h5">Opciones de la pregunta</lable>
@@ -272,7 +276,7 @@
                 <button class="btn btn-link collapsed d-flex align-items-center"
                     style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseQuestions" aria-expanded="true" aria-controls="collapseQuestions">
-                    <span class="h3">Preguntas:</span>
+                    <span class="h3">Listado de Preguntas:</span>
                     <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>
