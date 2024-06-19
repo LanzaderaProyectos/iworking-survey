@@ -203,15 +203,15 @@ class CreateSurvey extends Component
         }
         $this->surveyTypes = SurveyType::all();
 
-        if(!empty($this->survey->id))
-        {
+        if (!empty($this->survey->id)) {
             $projectSurvey = ProjectSurvey::where('survey_id', $this->survey->id)->first();
             if ($projectSurvey) {
                 $this->projectCode = $projectSurvey->project->code;
-                $this->targets = $projectSurvey->project->targets()->where(function($q) use ($projectSurvey){$q->where('cycle_id',$projectSurvey->cycle_id)->orWhereNull('cycle_id');})->get()->toArray() ?? [];
-            } 
+                $this->targets = $projectSurvey->project->targets()->where(function ($q) use ($projectSurvey) {
+                    $q->where('cycle_id', $projectSurvey->cycle_id)->orWhereNull('cycle_id');
+                })->get()->toArray() ?? [];
+            }
         }
-
     }
 
     public function initComponent()
@@ -387,8 +387,7 @@ class CreateSurvey extends Component
     {
         $this->validate();
         $surveyService          = new SurveyService();
-        if(empty($this->survey->id))
-        {
+        if (empty($this->survey->id)) {
             $this->survey->has_order                = $this->survey->surveyType->has_order;
             $this->survey->has_promotional_material = $this->survey->surveyType->has_promotional_material;
         }
@@ -534,9 +533,9 @@ class CreateSurvey extends Component
         $this->validate([
             'orderQuestion'               => 'required',
             'sectionQuestionSelected'     => 'required',
+            'typeSelected'                => 'required',
         ]);
-        if($this->targetQuestion)
-        {
+        if ($this->targetQuestion) {
             $this->validate([
                 'targetSelected' => 'required',
             ]);
@@ -579,8 +578,7 @@ class CreateSurvey extends Component
             $this->surveyQuestion->update(['original_id' => $this->surveyQuestion->id]);
             $this->surveyQuestion = new SurveyQuestion();
         } else {
-            if($this->targetQuestion)
-            {
+            if ($this->targetQuestion) {
                 $this->validate([
                     'targetSelected' => 'required',
                 ]);
@@ -588,6 +586,18 @@ class CreateSurvey extends Component
             $this->question->setTranslation('content', 'es', $this->questionName['es']);
             $this->question->setTranslation('content', 'en', $this->questionName['en']);
             $this->question->type = $this->typeSelected;
+            if ($this->typeSelected == "radio") {
+                $this->optionES = [
+                    'SI',
+                    'NO',
+                    'NP'
+                ];
+                $this->optionEN = [
+                    'YES',
+                    'NO',
+                    'NA'
+                ];
+            }
             $this->question->options = json_encode([
                 'es' => $this->optionES,
                 'en' => $this->optionEN
@@ -614,7 +624,6 @@ class CreateSurvey extends Component
         $this->indicatedQuestion = false;
         $this->targetQuestion = false;
         $this->orderQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('section_id', $this->sectionQuestionSelected)->count() + 1;
-
     }
 
     public function saveSubQuestion()
@@ -625,8 +634,7 @@ class CreateSurvey extends Component
             'subQuestionName.en'       => 'nullable',
             'orderSubQuestion'        => 'required|numeric',
         ]);
-        if($this->targetSubQuestion)
-        {
+        if ($this->targetSubQuestion) {
             $this->validate([
                 'subTargetSelected' => 'required',
             ]);
@@ -671,8 +679,7 @@ class CreateSurvey extends Component
             $this->subSurveyQuestion->save();
             $this->subSurveyQuestion = new SurveyQuestion();
         } else {
-            if($this->targetSubQuestion)
-            {
+            if ($this->targetSubQuestion) {
                 $this->validate([
                     'subTargetSelected' => 'required',
                 ]);
@@ -788,8 +795,8 @@ class CreateSurvey extends Component
             $this->editModeQuestion         = true;
             if ($this->typeSelected == "multiselect" || $this->typeSelected == "uniqueselect") {
                 $this->customOptions = true;
-                $this->optionES = json_decode($this->question->options,true)['es'];
-                $this->optionEN = json_decode($this->question->options,true)['en'];
+                $this->optionES = json_decode($this->question->options, true)['es'];
+                $this->optionEN = json_decode($this->question->options, true)['en'];
             }
         } else {
             $this->subSurveyQuestion           = SurveyQuestion::find($id);
@@ -811,8 +818,7 @@ class CreateSurvey extends Component
                 $this->customSubOptions = true;
                 $this->subOptionEs = $this->question->getTranslation('options', 'es');
                 $this->subOptionEn = $this->question->getTranslation('options', 'en');
-                if($this->subOptionEs == "")
-                {
+                if ($this->subOptionEs == "") {
                     $this->subOptionEs = [];
                     $this->subOptionEn = [];
                 }
@@ -1244,7 +1250,7 @@ class CreateSurvey extends Component
     public function startValidation()
     {
         $this->saveSurvey();
-        try{
+        try {
             $tenant = config('iworking.process-tenant');
             $processKey = 'survey_validate';
             $processId = (string) $this->survey->id;
@@ -1252,13 +1258,11 @@ class CreateSurvey extends Component
             $modelName = 'Project';
             $roleEmitter = 'teck';
             $cord = Role::where('key_value', 'coordinator')->first();
-            if($this->survey->projectSurvey->project->projectTeams()->where('role_id', $cord->id)->where('user_id',auth()->user()->id)->exists())
-            {
+            if ($this->survey->projectSurvey->project->projectTeams()->where('role_id', $cord->id)->where('user_id', auth()->user()->id)->exists()) {
                 $roleEmitter = 'coordinator';
             }
             $role = Role::where('key_value', 'leader')->first();
-            if($this->survey->projectSurvey->project->projectTeams()->where('role_id', $role->id)->where('user_id',auth()->user()->id)->exists())
-            {
+            if ($this->survey->projectSurvey->project->projectTeams()->where('role_id', $role->id)->where('user_id', auth()->user()->id)->exists()) {
                 $roleEmitter = 'leader';
             }
             $optionalVariables = [
@@ -1268,8 +1272,7 @@ class CreateSurvey extends Component
             ];
             $instance = $this->survey;
             $submitProcess = \Iworking\IworkingProcesses\Facades\ProcessService::startProcessInstance($processKey, $processCode, $instance, $optionalVariables);
-            return redirect()->route('survey.show',['survey'=>$this->survey->id]);
-
+            return redirect()->route('survey.show', ['survey' => $this->survey->id]);
         } catch (\Exception $e) {
             session()->flash('alert', $e->getMessage());
         }

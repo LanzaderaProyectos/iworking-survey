@@ -299,7 +299,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (!empty($sectionQuestionSelected))
+                    @if (!empty($sectionQuestionSelected) && !empty($survey->sections()->find($sectionQuestionSelected)))
                     @foreach ($survey->sections()->find($sectionQuestionSelected)->surveyQuestionsMainIgnoreDisabled()->get()->sortBy('position') as $key => $item)
                     <tr>
                         <td nowrap>
