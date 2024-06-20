@@ -23,6 +23,16 @@
 </div>
 @endif
 <div class="row">
+    <div class="col-12">
+        <div class="form-group">
+            <label class="form-control-label" for="input-project-type">Tipo de Formulario*</label>
+            <select {{ $this->formEdit ? '' : 'disabled'}} @if(!empty($this->survey->projectSurvey->project)) disabled @endif  class="form-control form-control-alternative" wire:model.defer="survey.type">
+                @foreach($surveyTypes as $type)
+                <option value="{{$type->id}}">{{$type->name}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
     <div class="col-12 col-md-6">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Nombre*</label>
@@ -86,15 +96,17 @@
     <div class="col-6 col-md-3 col-xl-2">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Tiene Pedido</label><br>
-            <input type="checkbox" {{ $this->formEdit ? '' : 'disabled'}} wire:model.live="survey.has_order" name="has_order" id="has_order"
-                class="">
+            <input type="checkbox" {{ $this->formEdit ? '' : 'disabled'}} wire:model.live="survey.has_order"
+            name="has_order" id="has_order"
+            class="">
         </div>
     </div>
     <div class="col-6 col-md-3 col-xl-2">
         <div class="form-group">
             <label class="form-control-label" for="input-first_name">Tiene Material Promocional</label><br>
-            <input type="checkbox" {{ $this->formEdit ? '' : 'disabled'}} wire:model.live="survey.has_promotional_material" name="has_order" id="has_order"
-                class="">
+            <input type="checkbox" {{ $this->formEdit ? '' : 'disabled'}}
+            wire:model.live="survey.has_promotional_material" name="has_order" id="has_order"
+            class="">
         </div>
     </div>
 </div>
@@ -139,7 +151,7 @@
                     </div>
                 </div>
                 <div class="input-group-append">
-                    <button wire:click="addSection"  class="btn btn-dark" type="button" title="Añadir">+</button>
+                    <button wire:click="addSection" class="btn btn-dark" type="button" title="Añadir">+</button>
                 </div>
             </div>
         </div>
@@ -164,8 +176,7 @@
                     <td nowrap>
                         <button wire:loading.attr="disabled" wire:click="editSection('{{ $section->id }}')"
                             type="button" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
-                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
-                            title="Editar">
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top" title="Editar">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button type="button" {{ $this->formEdit ? '' : 'disabled'}}
@@ -177,14 +188,12 @@
                         </button>
                         <button wire:loading.attr="disabled" wire:click="upSection('{{ $section->id }}')" type="button"
                             class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
-                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
-                            title="Subir orden">
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top" title="Subir orden">
                             <i class="fas fa-arrow-up"></i>
                         </button>
-                        <button wire:loading.attr="disabled" wire:click="downSection('{{ $section->id }}')" type="button"
-                            class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
-                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top"
-                            title="Bajar Orden">
+                        <button wire:loading.attr="disabled" wire:click="downSection('{{ $section->id }}')"
+                            type="button" class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="modal"
+                            data-target="#delete_modal" data-toggle="tooltip" data-placement="top" title="Bajar Orden">
                             <i class="fas fa-arrow-down"></i>
                         </button>
                     </td>

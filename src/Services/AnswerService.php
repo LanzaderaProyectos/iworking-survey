@@ -167,7 +167,17 @@ class AnswerService
      */
     public function validateMandatoryQuestion($surveyQuestion, array $answers, $errorsBag,$comments) {
         if ($surveyQuestion->mandatory) {
-            if (empty($answers[$surveyQuestion->id]['value'])) {
+            if($surveyQuestion->question->type == "number")
+            {
+                if (empty($answers[$surveyQuestion->id]['value']) && $answers[$surveyQuestion->id]['value'] !== 0) {
+                    if (empty($comments[$surveyQuestion->id])) {
+                        $errorsBag[$surveyQuestion->id] = $surveyQuestion->id . "";
+                    }
+                } else {
+                    unset($errorsBag[$surveyQuestion->id]);
+                }
+            }
+            elseif (empty($answers[$surveyQuestion->id]['value'])) {
                 if (empty($comments[$surveyQuestion->id])) {
                     $errorsBag[$surveyQuestion->id] = $surveyQuestion->id . "";
                 }

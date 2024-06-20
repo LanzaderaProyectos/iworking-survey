@@ -169,7 +169,7 @@
                 <div class="col-12 col-md-4">
                     <div class="form-group">
                         <label class="form-control-label" for="input-target">Objetivo de la pregunta*</label>
-                        <select class="form-control " wire:model.defer="targetSelected" id="input-target">
+                        <select class="form-control" @if(empty($targets)) disabled @endif wire:model.defer="targetSelected" id="input-target">
                             <option value="">Selecciona un objetivo</option>
                             @foreach ($targets as $target)
                             <option value="{{ $target['id'] }}">
@@ -177,6 +177,7 @@
                             </option>
                             @endforeach
                         </select>
+                        @if(empty($targets)) <lable> No hay objetivos en este ciclo.</lable> @endif
                         @error('targetSelected.*')
                         <span class="text-danger">{{ $message }}</span>
                         @enderror

@@ -537,7 +537,7 @@ class CreateSurvey extends Component
         ]);
         if ($this->targetQuestion) {
             $this->validate([
-                'targetSelected' => 'required',
+                'targetSelected' => 'nullable',
             ]);
         }
         // $this->question->update(['original_id' => $this->question->id]);
@@ -580,7 +580,7 @@ class CreateSurvey extends Component
         } else {
             if ($this->targetQuestion) {
                 $this->validate([
-                    'targetSelected' => 'required',
+                    'targetSelected' => 'nullable',
                 ]);
             }
             $this->question->setTranslation('content', 'es', $this->questionName['es']);

@@ -166,7 +166,8 @@ class Table extends Component
                 return [
                     'Nº Formulario' => $survey->survey_number ?? '',
                     'Nombre' => $survey->name ?? '',
-                    'Autor' => $survey->author ?? '',
+                    'Autor' => ($survey->user->first_name ?? '') . ' ' . ($survey->user->last_name ?? ''),
+                    'Tipo' => $survey->surveyType->name ?? '',
                     'Estado' => __('survey::status.survey.' . $survey->status) ?? '',
                     'Fecha creación' =>  auth()->user()->applyDateFormat($survey->created_at) ?? '',
                     'Vencimiento' =>  auth()->user()->applyDateFormat($survey->expiration) ?? ''
@@ -175,12 +176,13 @@ class Table extends Component
             else{
                 return [
                     'Nº Formulario' => $survey->survey_number ?? '',
+                    'Proyecto' =>  $this->getProjectSurvey($survey->id) ?? '',
                     'Nombre' => $survey->name ?? '',
-                    'Autor' => $survey->author ?? '',
+                    'Autor' => ($survey->user->first_name ?? '') . ' ' . ($survey->user->last_name ?? ''),
+                    'Tipo' => $survey->surveyType->name ?? '',
                     'Estado' => __('survey::status.survey.' . $survey->status) ?? '',
                     'Fecha creación' =>  auth()->user()->applyDateFormat($survey->created_at) ?? '',
                     'Vencimiento' =>  auth()->user()->applyDateFormat($survey->expiration) ?? '',
-                    'Proyecto' =>  $this->getProjectSurvey($survey->id) ?? '',
                 ];
             }
         });
