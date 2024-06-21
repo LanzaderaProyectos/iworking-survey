@@ -169,7 +169,7 @@ class AnswerService
         if ($surveyQuestion->mandatory) {
             if($surveyQuestion->question->type == "number")
             {
-                if (empty($answers[$surveyQuestion->id]['value']) && $answers[$surveyQuestion->id]['value'] !== 0) {
+                if (empty($answers[$surveyQuestion->id]['value']) && $answers[$surveyQuestion->id]['value'] !== 0  && $answers[$surveyQuestion->id]['value'] !== "0") {
                     if (empty($comments[$surveyQuestion->id])) {
                         $errorsBag[$surveyQuestion->id] = $surveyQuestion->id . "";
                     }
