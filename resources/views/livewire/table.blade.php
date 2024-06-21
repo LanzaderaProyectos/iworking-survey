@@ -69,10 +69,6 @@
                         data-toggle="tooltip" data-placement="top" title="Exportar tabla a Excel">
                         <i class="fas fa-file-excel m-0"></i>
                     </button>
-                    <button wire:click="exportToPDF" class="btn btn-danger rounded-right pl-3 pr-2" type="button"
-                        data-toggle="tooltip" data-placement="top" title="Exportar tabla a PDF">
-                        <i class="fas fa-file-pdf"></i>
-                    </button>
                     <div wire:loading.delay wire:target="exportToPDF, downloadExcel" class="spinner-border ml-2 mt-1"
                         role="status">
                         <span class="sr-only">Loading...</span>
