@@ -80,7 +80,7 @@ class AnswerService
     public function updatedAnswers(array $answers, $updatedQuestionId, $value, $entry, $answersToDelete): array
     {
         $surveyQuestion                                                 = SurveyQuestion::find($updatedQuestionId);
-        if (!is_array($answers[$updatedQuestionId]['value'])) {
+        if (!empty($answers[$updatedQuestionId]['value']) && !is_array($answers[$updatedQuestionId]['value'])) {
             $answers[$updatedQuestionId]['value']                     = $value['value'] ?? $value;
         }
         $answers[$updatedQuestionId]['comments']                  = $surveyQuestion->comments ?? '';
