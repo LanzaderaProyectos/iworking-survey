@@ -6,13 +6,24 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Question;
 use MattDaneshvar\Survey\Contracts\Section as SectionContract;
+use App\Traits\AutoGenerateUuid;
 
 class Section extends Model implements SectionContract
 {
-    use HasTranslations;
+    use HasTranslations, AutoGenerateUuid;
+
+    /**
+     * @var bool $incrementing
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string $keyType
+     */
+    protected $keyType = 'string';
 
     public $translatable = ['name'];
-    
+
     /**
      * Section constructor.
      *

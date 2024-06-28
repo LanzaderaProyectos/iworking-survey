@@ -14,7 +14,7 @@ class CreateSurveysTable extends Migration
     public function up()
     {
         Schema::create(config('survey.database.tables.surveys'), function (Blueprint $table) {
-            $table->increments('id');
+            $table->uuid('id');
             $table->string('survey_number');
             $table->string('name');
             $table->text('comments')->nullable();
