@@ -3,11 +3,12 @@
 namespace MattDaneshvar\Survey\Http\Middleware;
 
 use Closure;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
 use MattDaneshvar\Survey\Models\Entry;
-use Illuminate\Contracts\Encryption\DecryptException;
 use MattDaneshvar\Survey\Library\Constants;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class UserSurvey
 {
@@ -28,11 +29,14 @@ class UserSurvey
             $entry = Entry::where('participant', $decrypted[0])
                 ->where('survey_id', $decrypted[1])
                 ->where('status', Constants::ENTRY_STATUS_PENDING)
+                ->whereHas('survey', function ($q) {
+                    $q->whereDate('expiration', '>=', Carbon::now());
+                })
                 ->first();
             if ($entry) {
                 return $next($request);
             } else {
-                return redirect('/');
+                return redirect()->route('survey.not-available');
             }
         } catch (DecryptException $e) {
             Log::error($e);

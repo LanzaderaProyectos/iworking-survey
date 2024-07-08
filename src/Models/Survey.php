@@ -8,10 +8,22 @@ use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Question;
 use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
+use App\Traits\AutoGenerateUuid;
 
 class Survey extends Model implements SurveyContract
 {
-    use HasTranslations;
+    use HasTranslations, AutoGenerateUuid;
+
+    /**
+     * @var bool $incrementing
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string $keyType
+     */
+    protected $keyType = 'string';
+
 
     public $translatable = ['name'];
 
@@ -169,5 +181,32 @@ class Survey extends Model implements SurveyContract
         return $this->questions->mapWithKeys(function ($question) {
             return [$question->key => $question->rules];
         })->all();
+    }
+
+    /**
+     * @param $query
+     * @param $search
+     * @return void
+     */
+    public function scopeTableSearch($query, $search): void
+    {
+        if (!empty($search['survey_number'])) {
+            $value = $search['survey_number'];
+            $query->where('survey_number', 'like', '%' . $value . '%');
+        }
+
+        if (!empty($search['name'])) {
+            $value = $search['name'];
+            $query->where('name', 'like', '%' . $value . '%');
+        }
+
+        if (!empty($search['author'])) {
+            $value = $search['author'];
+            $query->where('author', 'like', '%' . $value . '%');
+        }
+        if (isset($search['status']) && $search['status'] !== '') {
+            $value = $search['status'];
+            $query->where('status', $value);
+        }
     }
 }

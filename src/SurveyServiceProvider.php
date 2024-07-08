@@ -8,9 +8,12 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use MattDaneshvar\Survey\Http\Livewire\Table;
 use MattDaneshvar\Survey\Http\Livewire\Answers;
+use MattDaneshvar\Survey\Http\Livewire\Addresses;
+use MattDaneshvar\Survey\Http\Livewire\ShowEntry;
 use MattDaneshvar\Survey\Http\Livewire\CreateSurvey;
 use MattDaneshvar\Survey\Http\Middleware\UserSurvey;
 use Illuminate\Contracts\View\Factory as ViewFactory;
+use MattDaneshvar\Survey\Http\Livewire\EntryList;
 use MattDaneshvar\Survey\Http\View\Composers\SurveyComposer;
 
 class SurveyServiceProvider extends ServiceProvider
@@ -34,6 +37,7 @@ class SurveyServiceProvider extends ServiceProvider
         ], 'views');
         $this->mergeConfigFrom(__DIR__ . '/../config/survey.php', 'survey');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'survey');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'survey');
 
         $viewFactory->composer('survey::standard', SurveyComposer::class);
 
@@ -43,6 +47,7 @@ class SurveyServiceProvider extends ServiceProvider
             'create_entries_table',
             'create_answers_table',
             'create_sections_table',
+            'create_surveyeds_table'
         ]);
 
         $this->bootLivewireComponents();
@@ -100,5 +105,8 @@ class SurveyServiceProvider extends ServiceProvider
         Livewire::component('iworking-survery::survey-list',    Table::class);
         Livewire::component('iworking-survery::create-survey',  CreateSurvey::class);
         Livewire::component('iworking-survery::survey-answers', Answers::class);
+        Livewire::component('iworking-survery::show-entry',     ShowEntry::class);
+        Livewire::component('iworking-survery::addresses',     Addresses::class);
+        Livewire::component('iworking-survery::entry-list',     EntryList::class);
     }
 }

@@ -39,7 +39,7 @@
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-users-tab" data-toggle="tab" href="#survey-users" role="tab"
-                            aria-controls="survey-users" aria-selected="true" wire:click="uploadUsers">Destinatarios</a>
+                            aria-controls="survey-users" aria-selected="true">Destinatarios</a>
                     </li>
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
@@ -70,11 +70,14 @@
                     <div class="tab-pane fade" id="survey-preview" role="tabpanel" aria-labelledby="survey-preview"
                         wire:ignore.self>
                         @include('survey::standard', ['survey' => $survey,
-                        'sendForm' => false])
+                        'sendForm' => false,
+                        'disabled' => true])
                     </div>
                     <div class="tab-pane fade" id="survey-users" role="tabpanel" aria-labelledby="survey-users"
                         wire:ignore.self>
-                        @include('survey::livewire.partials.addressee')
+                        @livewire('iworking-survery::addresses',[
+                        'survey' => $this->survey->id
+                        ])
                     </div>
                     <div class="tab-pane fade" id="survey-chat" role="tabpanel" aria-labelledby="survey-chat"
                         wire:ignore.self>
@@ -93,7 +96,7 @@
                         '/' . now()->format('Y/m/d') . '/' . (string)$survey->id,
                         'modelId' => (string)$survey->id,
                         'model' => 'Models\Survey::class',
-                        'type' => 'order-attachment',
+                        'type' => 'surveys-attachment',
                         'enableUpload' => true,
                         'enableDelete' => true,
                         ], key(time() . 'file-uploader'))
@@ -110,6 +113,14 @@
             </div>
         </div>
         <hr>
+        @if (session()->has('userListEmpty'))
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <span> {{ session('userListEmpty') }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
         @if($this->formEdit)
         <div class="row">
             <div class="col-12 col-md-6">
@@ -118,7 +129,8 @@
             <div class="col-12 col-md-6">
                 <div class="text-right">
                     <div class="btn-group my-1" role="group" aria-label="">
-                        @if($this->survey->status == 0 && $this->survey->author == auth()->user()->id)
+                        @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_DRAFT &&
+                        $this->survey->author == auth()->user()->id)
                         <button type="button" wire:click="deleteSurvey"
                             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
                             class="btn btn-sm btn-danger d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
@@ -135,13 +147,32 @@
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
                             Guardar borrador
                         </button>
-                        <button class="btn btn-warning" {{ $this->survey->questions->count() ? '' : 'disabled'}}
+                        <button class="btn btn-warning" {{ $this->survey->questions->count() ?
+                            '' : 'disabled'}}
                             onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
                             event.stopImmediatePropagation();"
                             wire:click="sendSurvey">
                             Enviar
                         </button>
                         @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+        @if($this->survey->status == MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
+        auth()->user()->hasAnyRole(['gestor-encuestas']))
+        <div class="row">
+            <div class="col-12 col-md-6">
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="text-right">
+                    <div class="btn-group my-1" role="group" aria-label="">
+                        <button type="button" wire:click="closeSurvey"
+                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+                            class="btn btn-dark d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
+                            Cerrar encuesta
+                        </button>
                     </div>
                 </div>
             </div>

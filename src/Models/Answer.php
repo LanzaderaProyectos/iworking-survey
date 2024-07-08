@@ -6,9 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 use MattDaneshvar\Survey\Contracts\Answer as AnswerContract;
 use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Contracts\Question;
+use App\Traits\AutoGenerateUuid;
 
 class Answer extends Model implements AnswerContract
 {
+    use AutoGenerateUuid;
+
+    /**
+     * @var bool $incrementing
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string $keyType
+     */
+    protected $keyType = 'string';
+
     /**
      * Answer constructor.
      *
@@ -16,7 +29,7 @@ class Answer extends Model implements AnswerContract
      */
     public function __construct(array $attributes = [])
     {
-        if (! isset($this->table)) {
+        if (!isset($this->table)) {
             $this->setTable(config('survey.database.tables.answers'));
         }
 
@@ -28,7 +41,13 @@ class Answer extends Model implements AnswerContract
      *
      * @var array
      */
-    protected $fillable = ['value', 'question_id', 'entry_id'];
+    protected $fillable = [
+        'value',
+        'question_id',
+        'entry_id',
+        'comments',
+        'score'
+    ];
 
     /**
      * The entry the answer belongs to.

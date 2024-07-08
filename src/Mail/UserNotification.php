@@ -7,6 +7,8 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Queue\SerializesModels;
 use MattDaneshvar\Survey\Models\Survey;
+use Barryvdh\DomPDF\Facade as PDF;
+
 
 class UserNotification extends Mailable
 {
@@ -42,20 +44,19 @@ class UserNotification extends Mailable
      */
     public function build(): static
     {
-        if ($this->user->idioma == 'en') {
-            $subject = 'SURVEY ' . $this->survey->getTranslation('name', 'en');
+        if ($this->user->lang == 'en') {
+            $subject = 'Important: Supplier Best Practices.';
             $viewNotification = 'survey::emails.survey-notification-en';
         } else {
-            $subject = 'ENCUESTA ' . $this->survey->getTranslation('name', 'es');
+            $subject = 'Importante: Buenas prácticas de proveedores.';
             $viewNotification = 'survey::emails.survey-notification-es';
         }
+        // $pdf = PDF::loadView('survey::exports.pdf-entry');
         $mailCrypted =  Crypt::encryptString($this->user->email . ';' . $this->survey->id);
         $url = config('iworking-survey.url') . '/survey/answers/' . $mailCrypted;
         return $this->subject($subject)
-            ->from(config('iworking-survey.mail-from.address'), config('iworking-survey.mail-from.address'))
+            ->from('mejorespracticas@labrubio.com', 'Lab Rubio')
             ->view($viewNotification, [
-                'user'      => $this->user,
-                'survey'    => $this->survey,
                 'url'       => $url
             ]);
     }

@@ -50,10 +50,10 @@
         </div>
     </div>
     <div class="col-md-5 col-12">
-        <div class="form-group ">
+        <div class="form-group mb-3">
             <label for="numbers_format">Tipo*:</label>
             <select {{ $this->formEdit ? '' : 'disabled'}}
-                wire:model.defer="typeSelected" class="form-control " id="numbers_format_input" size="2">
+                wire:model="typeSelected" class="form-control " id="numbers_format_input" size="2">
                 @foreach ($typeAnwers as $key => $value)
                 <option value="{{$key}}">
                     {{ $value }}
@@ -61,9 +61,14 @@
                 @endforeach
             </select>
         </div>
+        <div class="form-group">
+            <input {{ $this->typeSelected != 'radio' ? 'disabled' : ''}} type="checkbox"
+            wire:model.defer="question.comments">
+            <label for="numbers_format">Comentarios</label>
+        </div>
     </div>
     <div class="col-md-2">
-        <div class="form-group ">
+        <div class="form-group">
             <label for="numbers_format">Orden:</label>
             <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="question.order" type="number" step="1"
             min="0" name="section-order"
@@ -105,14 +110,16 @@
                 @foreach ($this->survey->questions as $item)
                 <tr>
                     <td nowrap>
-                        <button wire:loading.delay.attr="disabled" wire:target="downloadExcel"
+                        <button wire:loading.delay.attr="disabled" wire:target="downloadExcel" {{ $this->formEdit ? '' :
+                            'disabled'}}
                             wire:click="editQuestion('{{ $item->id }}')" type="button"
                             class="btn btn-sm btn-clean btn-icon btn-icon-md" data-toggle="tooltip" data-placement="top"
                             title="Edit">
                             <i class="fas fa-edit" aria-hidden="true"></i>
                         </button>
-                        <button type="button"
-                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') || event.stopImmediatePropagation();"
+                        <button type="button" {{ $this->formEdit ? '' : 'disabled'}}
+                            onclick="confirm('¿Está seguro? Esta acción no puede deshacerse.') ||
+                            event.stopImmediatePropagation();"
                             wire:click="deleteQuestion('{{ $item->id }}')"
                             class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Delete">
                             <i class="fas fa-trash" aria-hidden="true"></i>

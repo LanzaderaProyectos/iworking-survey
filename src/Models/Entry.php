@@ -9,15 +9,31 @@ use MattDaneshvar\Survey\Contracts\Entry as EntryContract;
 use MattDaneshvar\Survey\Contracts\Survey;
 use MattDaneshvar\Survey\Exceptions\GuestEntriesNotAllowedException;
 use MattDaneshvar\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
+use MattDaneshvar\Survey\Models\Answer as ModelsAnswer;
+use App\Traits\AutoGenerateUuid;
 
 class Entry extends Model implements EntryContract
 {
+    use AutoGenerateUuid;
+
+    /**
+     * @var bool $incrementing
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string $keyType
+     */
+    protected $keyType = 'string';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['survey_id', 'participant', 'lang','status'];
+    protected $fillable = ['survey_id', 'participant', 'lang', 'status'];
+
+    protected $appends = ['sum_score'];
 
     /**
      * Boot the entry.
@@ -77,6 +93,11 @@ class Entry extends Model implements EntryContract
     public function participant()
     {
         return $this->belongsTo(User::class, 'participant');
+    }
+
+    public function surveyed()
+    {
+        return $this->belongsTo(Surveyed::class, 'participant', 'email');
     }
 
     /**
@@ -202,6 +223,50 @@ class Entry extends Model implements EntryContract
 
         if ($count >= $limit) {
             throw new MaxEntriesPerUserLimitExceeded();
+        }
+    }
+
+    public function getSumScoreAttribute()
+    {
+        return $this->answers->sum('score');
+    }
+
+    public function scopeTableSearch($query, $search): void
+    {
+        if (!empty($search['surveyed'])) {
+            $value = $search['surveyed'];
+            $query->whereHas('surveyed', function ($q) use ($value) {
+                $q->where('name', 'like', '%' . $value . '%');
+            });
+        }
+
+        if (!empty($search['manager'])) {
+            $value = $search['manager'];
+            $query->whereHas('surveyed', function ($q) use ($value) {
+                $q->where('manager', 'like', '%' . $value . '%');
+            });
+        }
+
+        if (!empty($search['status'])) {
+            $value = $search['status'];
+            $query->where('status', $value);
+        }
+
+        if (!empty($search['min'])) {
+            $value = $search['min'];
+            // $query->where('status', $value);
+            $query->whereHas('answers', function ($q) use ($value) {
+                $q->select(\DB::raw('SUM(score) as totalScore'))
+                    ->havingRaw('totalScore >= ?', [$value]);
+            });
+        }
+
+        if (!empty($search['max'])) {
+            $value = $search['max'];
+            $query->whereHas('answers', function ($q) use ($value) {
+                $q->select(\DB::raw('SUM(score) as totalScore'))
+                    ->havingRaw('totalScore <= ?', [$value]);
+            });
         }
     }
 }
