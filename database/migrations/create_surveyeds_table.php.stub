@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('surveyeds', function (Blueprint $table) {
-            $table->uuid();
+            $table->id();
             $table->unsignedInteger('survey_id');
             $table->string('name');
             $table->string('vat_number')->nullable();

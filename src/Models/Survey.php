@@ -8,22 +8,10 @@ use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Question;
 use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
-use App\Traits\AutoGenerateUuid;
 
 class Survey extends Model implements SurveyContract
 {
-    use HasTranslations, AutoGenerateUuid;
-
-    /**
-     * @var bool $incrementing
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string $keyType
-     */
-    protected $keyType = 'string';
-
+    use HasTranslations;
 
     public $translatable = ['name'];
 
