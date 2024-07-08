@@ -14,9 +14,9 @@ class CreateAnswersTable extends Migration
     public function up()
     {
         Schema::create(config('survey.database.tables.answers'), function (Blueprint $table) {
-            $table->uuid('id');
-            $table->uuid('question_id');
-            $table->uuid('entry_id')->nullable();
+            $table->increments('id');
+            $table->unsignedInteger('question_id');
+            $table->unsignedInteger('entry_id')->nullable();
             $table->string('value');
             $table->string('comments')->nullable();
             $table->integer('score')->nullable();

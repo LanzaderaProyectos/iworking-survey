@@ -10,22 +10,9 @@ use MattDaneshvar\Survey\Contracts\Survey;
 use MattDaneshvar\Survey\Exceptions\GuestEntriesNotAllowedException;
 use MattDaneshvar\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
 use MattDaneshvar\Survey\Models\Answer as ModelsAnswer;
-use App\Traits\AutoGenerateUuid;
 
 class Entry extends Model implements EntryContract
 {
-    use AutoGenerateUuid;
-
-    /**
-     * @var bool $incrementing
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string $keyType
-     */
-    protected $keyType = 'string';
-
     /**
      * The attributes that are mass assignable.
      *
