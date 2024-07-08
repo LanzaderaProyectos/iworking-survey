@@ -3,16 +3,27 @@
 namespace MattDaneshvar\Survey\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Ramsey\Uuid\Uuid;
 use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Answer;
 use MattDaneshvar\Survey\Contracts\Survey;
 use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Question as QuestionContract;
+use App\Traits\AutoGenerateUuid;
 
 class Question extends Model implements QuestionContract
 {
+    use HasTranslations, AutoGenerateUuid;
 
-    use HasTranslations;
+    /**
+     * @var bool $incrementing
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string $keyType
+     */
+    protected $keyType = 'string';
 
     public $translatable = ['content', 'options'];
 
@@ -21,7 +32,8 @@ class Question extends Model implements QuestionContract
      *
      * @var array
      */
-    protected $fillable = ['type', 'options', 'content', 'rules', 'survey_id'];
+//    protected $fillable = ['type', 'options', 'content', 'rules', 'survey_id'];
+//    protected $guarded = ['id'];
 
     protected $casts = [
         'rules' => 'array',
@@ -44,6 +56,8 @@ class Question extends Model implements QuestionContract
             if ($question->section) {
                 $question->survey_id = $question->section->survey_id;
             }
+
+            $question->{$question->getKeyName()} = Uuid::uuid4();
         });
     }
 

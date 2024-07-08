@@ -6,9 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 use MattDaneshvar\Survey\Contracts\Answer as AnswerContract;
 use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Contracts\Question;
+use App\Traits\AutoGenerateUuid;
 
 class Answer extends Model implements AnswerContract
 {
+    use AutoGenerateUuid;
+
+    /**
+     * @var bool $incrementing
+     */
+    public $incrementing = false;
+
+    /**
+     * @var string $keyType
+     */
+    protected $keyType = 'string';
+
     /**
      * Answer constructor.
      *
