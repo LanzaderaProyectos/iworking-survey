@@ -1257,14 +1257,14 @@ class CreateSurvey extends Component
             $processCode = (string) $this->survey->survey_number;
             $modelName = 'Project';
             $roleEmitter = 'teck';
-            $cord = Role::where('key_value', 'coordinator')->first();
-            if ($this->survey->projectSurvey->project->projectTeams()->where('role_id', $cord->id)->where('user_id', auth()->user()->id)->exists()) {
+            if(auth()->user()->hasRole('coordinator')){
                 $roleEmitter = 'coordinator';
             }
-            $role = Role::where('key_value', 'leader')->first();
-            if ($this->survey->projectSurvey->project->projectTeams()->where('role_id', $role->id)->where('user_id', auth()->user()->id)->exists()) {
+
+            if(auth()->user()->hasRole('leader')){
                 $roleEmitter = 'leader';
             }
+            
             $optionalVariables = [
                 'varTenant' => (string) $tenant,
                 'varRoleEmitter' => $roleEmitter,
@@ -1272,7 +1272,7 @@ class CreateSurvey extends Component
             ];
             $instance = $this->survey;
             $submitProcess = \Iworking\IworkingProcesses\Facades\ProcessService::startProcessInstance($processKey, $processCode, $instance, $optionalVariables);
-            return redirect()->route('survey.show', ['survey' => $this->survey->id]);
+            return redirect()->route('survey.show', ['surveyId' => $this->survey->id]);
         } catch (\Exception $e) {
             session()->flash('alert', $e->getMessage());
         }

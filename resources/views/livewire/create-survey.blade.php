@@ -162,10 +162,8 @@
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
                             Guardar borrador
                         </button>
-                        @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT && !empty($this->survey->projectSurvey))
-                        <button class="btn btn-warning" {{ $this->survey->surveyQuestionsMain->count() ?
-                            '' : 'disabled'}}
-                            onclick="confirm('¿Está seguro de iniciar Validación? Esta acción no puede deshacerse.') ||
+                        @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT && empty($this->survey->projectSurvey))
+                        <button class="btn btn-warning" onclick="confirm('¿Está seguro de iniciar Validación? Esta acción no puede deshacerse.') ||
                             event.stopImmediatePropagation();"
                             wire:click="startValidation">
                             Validar
