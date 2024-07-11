@@ -55,7 +55,6 @@ class Table extends Component
         }
         $this->projects = Project::select('id', 'code')->get()->toArray();
         $this->types = SurveyType::all();
-
     }
 
     public function sortByTable($field)
@@ -125,6 +124,19 @@ class Table extends Component
     public function render()
     {
         $surveys = Survey::orderBy($this->sortBy, $this->sortDirection);
+        if (!auth()->user()->hasRole('admin')) {
+            $surveys->where(function ($subQuery) {
+                $subQuery->whereHas('projectSurvey', function ($query) {
+                    $query->whereHas('project', function ($q) {
+                        $q->whereHas('projectTeams', function ($team) {
+                            $team->where('user_id', auth()->user()->id);
+                        });
+                    });
+                })->where(function ($query) {
+                    $query->whereDoesntHave('projectSurvey');
+                });
+            });
+        }
         if ($this->onlyOriginal) {
             $surveys->whereNull('parent_id');
         } else {
@@ -161,8 +173,7 @@ class Table extends Component
         $surveys->tableSearch($this->search);
 
         return (new FastExcel($surveys->get()))->export($path, function ($survey) {
-            if($this->onlyOriginal)
-            {
+            if ($this->onlyOriginal) {
                 return [
                     'Nº Formulario' => $survey->survey_number ?? '',
                     'Nombre' => $survey->name ?? '',
@@ -172,8 +183,7 @@ class Table extends Component
                     'Fecha creación' =>  auth()->user()->applyDateFormat($survey->created_at) ?? '',
                     'Vencimiento' =>  auth()->user()->applyDateFormat($survey->expiration) ?? ''
                 ];
-            }
-            else{
+            } else {
                 return [
                     'Nº Formulario' => $survey->survey_number ?? '',
                     'Proyecto' =>  $this->getProjectSurvey($survey->id) ?? '',
