@@ -195,11 +195,9 @@ class TaskSurvey extends Component
         $this->formEdit         = !Route::is('survey.show');
         $this->initComponent();
         $this->initializeTaskable();
-        if($this->processActivity == "modify")
-        {
+        if ($this->processActivity == "modify") {
             $this->formEdit = true;
-        }
-        else{
+        } else {
             $this->formEdit = false;
         }
 
@@ -1266,5 +1264,18 @@ class TaskSurvey extends Component
         } catch (\Exception $e) {
             session()->flash('alert', $e->getMessage());
         }
+    }
+
+    public function validateProcessTask($action, $activity)
+    {
+        $this->validate();
+        // Validate instance logic
+        return true;
+    }
+
+    public function saveProcessTask($action, $activity)
+    {
+        // Save instance logic
+        return true;
     }
 }
