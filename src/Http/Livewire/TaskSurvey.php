@@ -194,6 +194,7 @@ class TaskSurvey extends Component
         $this->draft            = false;
         $this->formEdit         = !Route::is('survey.show');
         $this->initComponent();
+        $this->initializeTaskable();
         if($this->processActivity == "modify")
         {
             $this->formEdit = true;
