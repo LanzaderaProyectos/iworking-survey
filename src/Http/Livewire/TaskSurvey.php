@@ -25,6 +25,8 @@ use MattDaneshvar\Survey\Mail\ReminderNotification;
 use MattDaneshvar\Survey\Models\SurveyType;
 use App\Models\ProjectSurvey;
 use Iworking\IworkingProcesses\Livewire\Traits\ProcessTaskable;
+use Iworking\IworkingBoilerplate\Models\Comment;
+use Iworking\IworkingBoilerplate\Models\ChatThread;
 
 class TaskSurvey extends Component
 {
@@ -133,6 +135,8 @@ class TaskSurvey extends Component
     public $targets;
     public $targetSelected;
     public $subTargetSelected;
+    public $rejectReason = "";
+    public $showRejectedReason =false;
 
 
     protected $rules = [
@@ -194,13 +198,13 @@ class TaskSurvey extends Component
         $this->draft            = false;
         $this->formEdit         = !Route::is('survey.show');
         $this->initComponent();
+        $this->requireConfirmation = true;
         $this->initializeTaskable();
         if ($this->processActivity == "modify") {
             $this->formEdit = true;
         } else {
             $this->formEdit = false;
         }
-
         $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name', 'asc')->get();
         $userTypes = config('iworking.user-type')::select('*')->where('type', 'like', '%-people')->orderBy('type', 'asc')->pluck('id')->toArray();
         $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name', 'asc')->whereIn('type', $userTypes)->get();
@@ -1276,6 +1280,55 @@ class TaskSurvey extends Component
     public function saveProcessTask($action, $activity)
     {
         // Save instance logic
-        return true;
+        switch ($action) {
+            case 'reject':
+                $this->dispatch('close-modal', id: $this->taskId . '-confirmation');
+                $this->dispatch('openRejectMessageModal');
+                break;
+            default:
+                $this->survey->reject_reason = null;
+                $this->saveSurvey();
+                return true;
+                break;
+        }
+    }
+
+    public function saveRejectMessage()
+    {
+        if (empty($this->rejectReason)) {
+            session()->flash('errorResponse', 'Debe ingresar un motivo de la modificación.');
+            return;
+        }
+        $comments = Comment::where('commentable_type', 'MattDaneshvar\Survey\Models\Survey')
+            ->where('commentable_id', (string)$this->survey->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $threat = false;
+        if ($comments->isNotEmpty()) {
+            $firstChat = $comments->first();
+            $firstChat->load('thread');
+            $threat = $firstChat->thread;
+        }
+        $newThread = ChatThread::updateOrCreate(
+            ['id' => ($threat->id ?? false)],
+            ['users_id' => ($threat->users_id ?? [])]
+        );
+        $threadId = $newThread->id;
+        $data = [
+            'comment'           => 'Motivo de modificación del formulario : ' . $this->rejectReason ?? '',
+            'commentable_id'    => (string)$this->survey->id,
+            'commentable_type'  => 'MattDaneshvar\Survey\Models\Survey',
+            'user_id'           => auth()->user()->id,
+            'thread_id'         => $threadId
+        ];
+        try {
+            Comment::create($data);
+            $this->survey->reject_reason = $this->rejectReason;
+            $this->saveSurvey();
+        } catch (\PDOException $e) {
+            Log::error($e->getMessage());
+        }
+        $this->dispatch('closeRejectMessageModal');
+        $this->taskSubmit();
     }
 }

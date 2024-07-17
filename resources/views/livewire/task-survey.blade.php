@@ -33,6 +33,11 @@
                     {{ session('success') }}
                 </div>
                 @endif
+                @if($this->processActivity == "modify" && !empty($this->survey->reject_reason))
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    Motivo de Modificación : {{ $this->survey->reject_reason }}
+                </div>
+                @endif
             </div>
         </div>
         <div class="row">
@@ -42,7 +47,6 @@
                         <a class="nav-link  active" id="survey-header-tab" data-toggle="tab" href="#survey-header"
                             role="tab" aria-controls="survey-header" aria-selected="true">Cabecera</a>
                     </li>
-                    @if($projectCode != "")
                     <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-questions-tab" data-toggle="tab" href="#survey-questions" role="tab"
@@ -53,34 +57,32 @@
                             : ''}}" id="survey-preview-tab" data-toggle="tab" href="#survey-preview" role="tab"
                             aria-controls="survey-preview" aria-selected="true">Previsualizar</a>
                     </li>
-                    @endif
                     {{-- <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-users-tab" data-toggle="tab" href="#survey-users" role="tab"
                             aria-controls="survey-users" aria-selected="true">Destinatarios</a>
                     </li> --}}
-                    {{-- <li class="nav-item" role="presentation" wire:ignore>
+                    <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-chat-tab" data-toggle="tab" href="#survey-chat" role="tab"
                             aria-controls="survey-chat" aria-selected="true">Chat</a>
                     </li>
-                    <li class="nav-item" role="presentation" wire:ignore>
+                    {{-- <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-files-tab" data-toggle="tab" href="#survey-files" role="tab"
                             aria-controls="survey-files" aria-selected="true">Archivos</a>
                     </li> --}}
-                    {{-- <li class="nav-item" role="presentation" wire:ignore>
+                    <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-audit-tab" data-toggle="tab" href="#survey-audit" role="tab"
                             aria-controls="survey-audit" aria-selected="true">Auditoría</a>
-                    </li> --}}
+                    </li>
                 </ul>
                 <div class="tab-content" id="orderContent">
                     <div class="tab-pane fade show active" id="survey-header" role="tabpanel"
                         aria-labelledby="survey-header-tab" wire:ignore.self>
                         @include('survey::livewire.partials.header')
                     </div>
-                    @if($projectCode != "")
                     @if($this->survey->id)
                     <div class="tab-pane fade" id="survey-questions" role="tabpanel" aria-labelledby="survey-questions"
                         wire:ignore.self>
@@ -92,14 +94,13 @@
                         'sendForm' => false,
                         'disabled' => true])
                     </div>
-                    @endif
                     {{-- <div class="tab-pane fade" id="survey-users" role="tabpanel" aria-labelledby="survey-users"
                         wire:ignore.self>
                         @livewire('iworking-survery::addresses',[
                         'survey' => $this->survey->id
                         ])
                     </div> --}}
-                    {{-- <div class="tab-pane fade" id="survey-chat" role="tabpanel" aria-labelledby="survey-chat"
+                    <div class="tab-pane fade" id="survey-chat" role="tabpanel" aria-labelledby="survey-chat"
                         wire:ignore.self>
                         @livewire('iworking::common-comments',[
                         'entityId' => $survey->id,
@@ -108,7 +109,7 @@
                         'editable' => true
                         ])
                     </div>
-                    <div class="tab-pane fade" id="survey-files" role="tabpanel" aria-labelledby="survey-files"
+                    {{-- <div class="tab-pane fade" id="survey-files" role="tabpanel" aria-labelledby="survey-files"
                         wire:ignore.self>
                         @livewire('common.file-upload', [
                         's3' => true,
@@ -121,13 +122,14 @@
                         'enableDelete' => true,
                         ], key(time() . 'file-uploader'))
                     </div> --}}
-                    {{-- <div class="tab-pane fade" id="survey-audit" role="tabpanel" aria-labelledby="survey-audit"
+                    <div class="tab-pane fade" id="survey-audit" role="tabpanel" aria-labelledby="survey-audit"
                         wire:ignore.self>
-                        @livewire('iworking::common-audit-table',[
+                        @livewire('iworking-starter::common-audit-table',[
                         'dataValue' => $survey,
-                        'nameStatus' => 'surveys'
+                        'nameStatus' => 'survey',
+                        'locationStatus' => 'survey::'
                         ])
-                    </div> --}}
+                    </div>
                     @endif
                 </div>
             </div>
@@ -183,7 +185,19 @@
                 </div>
                 @endif
             </div>
+            @include('survey::livewire.partials.reject-modal')
         </div>
     </div>
     @endif
+
+    @push('js')
+    <script type="text/javascript">
+        window.addEventListener('openRejectMessageModal', () => {
+        $('#reject_modal').modal('show');
+    });
+    window.addEventListener('closeRejectMessageModal', () => {
+        $('#reject_modal').modal('hide');
+    });
+    </script>
+    @endpush
 </div>
