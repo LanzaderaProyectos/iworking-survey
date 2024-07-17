@@ -121,7 +121,7 @@
                         wire:ignore.self>
                         @livewire('common.audit-table',[
                         'dataValue' => $survey,
-                        'nameStatus' => 'survey',
+                        'nameStatus' => 'Survey',
                         'locationStatus' => ''
                         ])
                     </div>
