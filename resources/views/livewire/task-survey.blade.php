@@ -124,7 +124,7 @@
                     </div> --}}
                     <div class="tab-pane fade" id="survey-audit" role="tabpanel" aria-labelledby="survey-audit"
                         wire:ignore.self>
-                        @livewire('iworking-starter::common-audit-table',[
+                        @livewire('common.audit-table',[
                         'dataValue' => $survey,
                         'nameStatus' => 'survey',
                         'locationStatus' => ''
