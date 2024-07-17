@@ -17,7 +17,8 @@
     <div>
         <div class="row mt-2">
             <div class="col-12 col-md-6 py-2">
-                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de {{ $this->survey->surveyType->name ?? ''}} @if($projectCode != "") del proyecto {{$projectCode}}  @endif</h4>
+                <h4>Formulario {{ $this->survey->survey_number ?? ''}} de {{ $this->survey->surveyType->name ?? ''}}
+                    @if($projectCode != "") del proyecto {{$projectCode}} @endif</h4>
             </div>
         </div>
         <div class="row">
@@ -56,21 +57,21 @@
                             : ''}}" id="survey-users-tab" data-toggle="tab" href="#survey-users" role="tab"
                             aria-controls="survey-users" aria-selected="true">Destinatarios</a>
                     </li> --}}
-                    {{-- <li class="nav-item" role="presentation" wire:ignore>
+                    <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-chat-tab" data-toggle="tab" href="#survey-chat" role="tab"
                             aria-controls="survey-chat" aria-selected="true">Chat</a>
                     </li>
-                    <li class="nav-item" role="presentation" wire:ignore>
+                    {{-- <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-files-tab" data-toggle="tab" href="#survey-files" role="tab"
                             aria-controls="survey-files" aria-selected="true">Archivos</a>
                     </li> --}}
-                    {{-- <li class="nav-item" role="presentation" wire:ignore>
+                    <li class="nav-item" role="presentation" wire:ignore>
                         <a class="nav-link {{ is_null($this->survey->id) ? 'disabled'
                             : ''}}" id="survey-audit-tab" data-toggle="tab" href="#survey-audit" role="tab"
                             aria-controls="survey-audit" aria-selected="true">Auditoría</a>
-                    </li> --}}
+                    </li>
                 </ul>
                 <div class="tab-content" id="orderContent">
                     <div class="tab-pane fade show active" id="survey-header" role="tabpanel"
@@ -94,7 +95,7 @@
                         'survey' => $this->survey->id
                         ])
                     </div> --}}
-                    {{-- <div class="tab-pane fade" id="survey-chat" role="tabpanel" aria-labelledby="survey-chat"
+                    <div class="tab-pane fade" id="survey-chat" role="tabpanel" aria-labelledby="survey-chat"
                         wire:ignore.self>
                         @livewire('iworking::common-comments',[
                         'entityId' => $survey->id,
@@ -103,7 +104,7 @@
                         'editable' => true
                         ])
                     </div>
-                    <div class="tab-pane fade" id="survey-files" role="tabpanel" aria-labelledby="survey-files"
+                    {{-- <div class="tab-pane fade" id="survey-files" role="tabpanel" aria-labelledby="survey-files"
                         wire:ignore.self>
                         @livewire('common.file-upload', [
                         's3' => true,
@@ -116,13 +117,13 @@
                         'enableDelete' => true,
                         ], key(time() . 'file-uploader'))
                     </div> --}}
-                    {{-- <div class="tab-pane fade" id="survey-audit" role="tabpanel" aria-labelledby="survey-audit"
+                    <div class="tab-pane fade" id="survey-audit" role="tabpanel" aria-labelledby="survey-audit"
                         wire:ignore.self>
                         @livewire('iworking::common-audit-table',[
                         'dataValue' => $survey,
                         'nameStatus' => 'surveys'
                         ])
-                    </div> --}}
+                    </div>
                     @endif
                 </div>
             </div>
@@ -162,10 +163,10 @@
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
                             Guardar borrador
                         </button>
-                        @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT && empty($this->survey->projectSurvey))
+                        @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT &&
+                        empty($this->survey->projectSurvey))
                         <button class="btn btn-warning" onclick="confirm('¿Está seguro de iniciar Validación? Esta acción no puede deshacerse.') ||
-                            event.stopImmediatePropagation();"
-                            wire:click="startValidation">
+                            event.stopImmediatePropagation();" wire:click="startValidation">
                             Validar
                         </button>
                         @endif
