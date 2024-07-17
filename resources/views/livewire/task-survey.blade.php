@@ -127,7 +127,7 @@
                         @livewire('iworking-starter::common-audit-table',[
                         'dataValue' => $survey,
                         'nameStatus' => 'survey',
-                        'locationStatus' => 'survey::'
+                        'locationStatus' => ''
                         ])
                     </div>
                     @endif
@@ -160,26 +160,10 @@
                             Eliminar
                         </button>
                         @endif --}}
-                        @if(is_null($this->survey->id))
                         <button type="button" wire:click="saveSurvey"
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
-                            Crear formulario
+                            Guardar
                         </button>
-                        @else
-                        <button type="button" wire:click="saveSurvey"
-                            class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
-                            Guardar borrador
-                        </button>
-                        @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT &&
-                        !empty($this->survey->projectSurvey))
-                        <button class="btn btn-warning" {{ $this->survey->surveyQuestionsMain->count() ?
-                            '' : 'disabled'}}
-                            onclick="confirm('¿Está seguro de iniciar Validación? Esta acción no puede deshacerse.') ||
-                            event.stopImmediatePropagation();"
-                            wire:click="startValidation">
-                            Validar
-                        </button>
-                        @endif
                         @endif
                     </div>
                 </div>
