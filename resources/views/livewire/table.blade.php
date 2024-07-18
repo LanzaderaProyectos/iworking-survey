@@ -242,7 +242,7 @@
                                 {{$survey->surveyType->name ?? ''}}
                             </td>
                             <td>
-                                @lang('survey::status.survey.'.$survey->status ?? '')
+                                @lang('status.Survey.'.$survey->status ?? '')
                             </td>
                             <td>
                                 {{ auth()->user()->applyDateFormat($survey->created_at) }}
