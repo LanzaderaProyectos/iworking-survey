@@ -132,7 +132,7 @@ class Table extends Component
                             $team->where('user_id', auth()->user()->id);
                         });
                     });
-                })->where(function ($query) {
+                })->orWhere(function ($query) {
                     $query->whereDoesntHave('projectSurvey');
                 });
             });
