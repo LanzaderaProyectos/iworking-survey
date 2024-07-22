@@ -184,7 +184,7 @@ class Survey extends Model implements SurveyContract
 
     public function audit()
     {
-        return $this->morphMany('App\Models\Audit', 'auditable')->orderBy('created_at');
+        return $this->morphMany('App\Models\Audit', 'auditable')->orderBy('created_at','desc');
     }
 
     /**
