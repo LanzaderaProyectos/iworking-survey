@@ -19,7 +19,7 @@
         <div class="row">
             <div class="col-md-6 col-12">
                 <div class="form-group ">
-                    <h5 for="numbers_format">Etapa*:</h5>
+                    <h3 for="numbers_format">Etapa*:</h3>
                     <select wire:model.live="sectionQuestionSelected"
                         class="form-control "
                         id="numbers_format_input" size="5">
