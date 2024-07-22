@@ -16,15 +16,10 @@
 @endif
 <div class="row">
     <div class="col-12">
-        <h5>
-            Preguntas
-        </h5>
-    </div>
-    <div class="col-12">
         <div class="row">
             <div class="col-md-6 col-12">
                 <div class="form-group ">
-                    <label for="numbers_format">Etapa*:</label>
+                    <label for="numbers_format h5">Etapa*:</label>
                     <select wire:model.live="sectionQuestionSelected"
                         class="form-control "
                         id="numbers_format_input" size="5">
