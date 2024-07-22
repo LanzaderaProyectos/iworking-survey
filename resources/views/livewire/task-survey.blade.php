@@ -125,10 +125,10 @@
                     <div class="tab-pane fade" id="survey-audit" role="tabpanel" aria-labelledby="survey-audit"
                         wire:ignore.self>
                         @livewire('common.audit-table',[
-                        'dataValue' => $survey,
-                        'nameStatus' => 'Survey',
-                        'locationStatus' => ''
-                        ])
+                            'dataValue' => $survey,
+                            'nameStatus' => 'Survey',
+                            'locationStatus' => ''
+                            ])
                     </div>
                     @endif
                 </div>
