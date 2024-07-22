@@ -164,7 +164,6 @@
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
                             Guardar
                         </button>
-                        @endif
                     </div>
                 </div>
                 @endif
