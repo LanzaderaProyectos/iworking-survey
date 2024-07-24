@@ -33,7 +33,7 @@
         <div id="users_list_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
             <div class="dt-buttons btn-group d-flex justify-content-start mb-2">
                 <div class="btn-group">
-                    <select wire:model="entries" class="custom-select" tabindex="0" aria-controls="users_list_table"
+                    <select wire:model.live="entries" class="custom-select" tabindex="0" aria-controls="users_list_table"
                         type="button" aria-haspopup="true" aria-expanded="false">
                         <option value="10">@lang('iworking::backend.forms.selects.10')</option>
                         <option value="25">@lang('iworking::backend.forms.selects.25')</option>

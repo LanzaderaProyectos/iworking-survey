@@ -12,7 +12,7 @@
     <div class="container">
         @livewire('iworking-survery::survey-answers')
     </div>
-    @livewireScripts
+    @livewireScriptConfig
 
 </body>
 

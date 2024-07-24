@@ -9,7 +9,7 @@
     @endif
     <div class="dt-buttons btn-group">
         <div class="btn-group">
-            <select wire:model="entries" class="custom-select" tabindex="0" aria-controls="users_list_table"
+            <select wire:model.live="entries" class="custom-select" tabindex="0" aria-controls="users_list_table"
                 type="button" aria-haspopup="true" aria-expanded="false">
                 <option value="10">Mostrar 10 filas</option>
                 <option value="25">Mostrar 25 filas</option>
@@ -112,7 +112,7 @@
         <div class="col-md-4 col-12">
             <div class="has-search">
                 <span class="fa fa-search form-control-feedback pt-1" aria-hidden="true"></span>
-                <input wire:loading.attr="disabled" wire:target="downloadExcel" wire:model="search" type="search"
+                <input wire:loading.attr="disabled" wire:target="downloadExcel" wire:model.live="search" type="search"
                     class="form-control" placeholder="Buscar..." title="Buscar por palabra clave">
             </div>
         </div>

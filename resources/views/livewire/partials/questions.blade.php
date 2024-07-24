@@ -21,12 +21,12 @@
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-question-es" role="tabpanel"
                     aria-labelledby="nav-home-tab">
-                    <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="questionName.es" type="text"
+                    <input {{ $this->formEdit ? '' : 'disabled'}} wire:model="questionName.es" type="text"
                     name="section-name" id="question-name-es"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
                 </div>
                 <div class="tab-pane fade" id="nav-question-en" role="tabpanel" aria-labelledby="nav-profile-tab">
-                    <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="questionName.en" type="text"
+                    <input {{ $this->formEdit ? '' : 'disabled'}} wire:model="questionName.en" type="text"
                     name="section-name" id="question-name-en"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
                 </div>
@@ -39,7 +39,7 @@
     <div class="col-md-5 col-12">
         <div class="form-group ">
             <label for="numbers_format">Sección*:</label>
-            <select {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="question.section_id" class="form-control "
+            <select {{ $this->formEdit ? '' : 'disabled'}} wire:model="question.section_id" class="form-control "
                 id="numbers_format_input" size="3">
                 @foreach ($this->survey->sections as $section)
                 <option value="{{$section->id}}">
@@ -53,7 +53,7 @@
         <div class="form-group mb-3">
             <label for="numbers_format">Tipo*:</label>
             <select {{ $this->formEdit ? '' : 'disabled'}}
-                wire:model="typeSelected" class="form-control " id="numbers_format_input" size="2">
+                wire:model.live="typeSelected" class="form-control " id="numbers_format_input" size="2">
                 @foreach ($typeAnwers as $key => $value)
                 <option value="{{$key}}">
                     {{ $value }}
@@ -63,14 +63,14 @@
         </div>
         <div class="form-group">
             <input {{ $this->typeSelected != 'radio' ? 'disabled' : ''}} type="checkbox"
-            wire:model.defer="question.comments">
+            wire:model="question.comments">
             <label for="numbers_format">Comentarios</label>
         </div>
     </div>
     <div class="col-md-2">
         <div class="form-group">
             <label for="numbers_format">Orden:</label>
-            <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="question.order" type="number" step="1"
+            <input {{ $this->formEdit ? '' : 'disabled'}} wire:model="question.order" type="number" step="1"
             min="0" name="section-order"
             id="survey-order" class="form-control form-control-alternative" placeholder="Orden">
         </div>

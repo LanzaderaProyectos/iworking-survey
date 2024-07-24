@@ -37,12 +37,12 @@
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-survey-es" role="tabpanel"
                     aria-labelledby="nav-survey-es-tab">
-                    <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="surveyName.es" type="text"
+                    <input {{ $this->formEdit ? '' : 'disabled'}} wire:model="surveyName.es" type="text"
                     name="section-name-es"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
                 </div>
                 <div class="tab-pane fade" id="nav-survey-en" role="tabpanel" aria-labelledby="nav-survey-es-tab">
-                    <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="surveyName.en" type="text"
+                    <input {{ $this->formEdit ? '' : 'disabled'}} wire:model="surveyName.en" type="text"
                     name="section-name-en"
                     class="form-control form-control-alternative" placeholder="Introduzca nombre">
                 </div>
@@ -55,7 +55,7 @@
         <input {{ $this->formEdit || ($this->survey->status ==
         MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
         auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date"
-        wire:model.lazy="survey.expiration"
+        wire:model.blur="survey.expiration"
         class="form-control" min="{{date("Y-m-d")}}">
         @error('survey.expiration') <span class="text-danger">{{ $message }}</span> @enderror
         @if (session()->has('survey-expiration-update'))
@@ -72,7 +72,7 @@
         <div class="form-group">
             <label for="exampleFormControlTextarea1">Comentarios</label>
             <textarea {{
-                $this->formEdit ? '' : 'disabled'}} class="form-control" id="survey-comments" rows="3" wire:model.defer="survey.comments"></textarea>
+                $this->formEdit ? '' : 'disabled'}} class="form-control" id="survey-comments" rows="3" wire:model="survey.comments"></textarea>
         </div>
     </div>
 </div>
@@ -95,14 +95,14 @@
                         <div class="tab-content" id="nav-tabContent">
                             <div class="tab-pane fade show active" id="nav-section-es" role="tabpanel"
                                 aria-labelledby="nav-home-tab">
-                                <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="sectionName.es"
+                                <input {{ $this->formEdit ? '' : 'disabled'}} wire:model="sectionName.es"
                                 type="text" name="section-name"
                                 id="survey-name-es" class="form-control form-control-alternative"
                                 placeholder="Introduzca nombre">
                             </div>
                             <div class="tab-pane fade" id="nav-section-en" role="tabpanel"
                                 aria-labelledby="nav-profile-tab">
-                                <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="sectionName.en"
+                                <input {{ $this->formEdit ? '' : 'disabled'}} wire:model="sectionName.en"
                                 type="text" name="section-name"
                                 id="survey-name-en" class="form-control form-control-alternative"
                                 placeholder="Introduzca nombre">
@@ -111,7 +111,7 @@
                         @error('sectionName.*') <span class="text-danger">{{ $message }}</span> @enderror
                     </div>
                     <div class="col-4 p-0">
-                        <input {{ $this->formEdit ? '' : 'disabled'}} wire:model.defer="section.order" type="number"
+                        <input {{ $this->formEdit ? '' : 'disabled'}} wire:model="section.order" type="number"
                         step="1" min="0" name="section-name"
                         id="survey-name" class="form-control form-control-alternative" placeholder="Orden">
                     </div>
