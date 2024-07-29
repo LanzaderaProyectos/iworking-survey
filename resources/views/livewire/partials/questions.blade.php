@@ -19,7 +19,7 @@
         <div class="row">
             <div class="col-md-6 col-12">
                 <div class="form-group ">
-                    <h3 for="numbers_format">Etapa*:</h3>
+                    <h3 for="numbers_format" style="color: #5867dd;">Etapa*:</h3>
                     <select wire:model.live="sectionQuestionSelected"
                         class="form-control "
                         id="numbers_format_input" size="5">
@@ -54,7 +54,7 @@
                 <button class="btn btn-link collapsed d-flex align-items-center"
                     style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseQuestionsAdd" aria-expanded="true" aria-controls="collapseQuestionsAdd">
-                    <span class="h3">Crear pregunta a etapa:</span>
+                    <span class="h3">Etapa crear pregunta:</span>
                     <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>
@@ -81,7 +81,7 @@
                     </div>
                 </div>
             </div> --}}
-            <div class="col-md-12 mt-3">
+            <div class="col-md-12">
                 <div class="form-group">
                     <label class="form-control-label" for="input-first_name">Pregunta*</label>
                     {{-- <nav id="create-questions">
@@ -116,7 +116,7 @@
                 <div class="col-12 col-md-5">
                     <div class="form-group mb-2">
                         <label for="numbers_format">Tipo*:</label>
-                        <select wire:model.live="typeSelected" class="form-control " id="numbers_format_input" size="3">
+                        <select wire:model.live="typeSelected" class="form-control " id="numbers_format_input" size="6">
                             @foreach ($typeAnwers as $key => $value)
                             <option value="{{ $key }}">
                                 {{ $value }}
@@ -272,7 +272,7 @@
                 <button class="btn btn-link collapsed d-flex align-items-center"
                     style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseQuestions" aria-expanded="true" aria-controls="collapseQuestions">
-                    <span class="h3">Listado de Preguntas:</span>
+                    <span class="h3">Etapa listado de preguntas:</span>
                     <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>

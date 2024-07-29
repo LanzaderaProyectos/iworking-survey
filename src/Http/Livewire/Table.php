@@ -95,6 +95,11 @@ class Table extends Component
         }
     }
 
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     /**
      * Deletes all the previous saved filters on the user session
      * and reset the filters array $search

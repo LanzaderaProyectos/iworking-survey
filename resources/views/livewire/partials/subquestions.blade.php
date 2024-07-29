@@ -4,7 +4,7 @@
         <button class="btn btn-link collapsed d-flex align-items-center"
             style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
             data-target="#collapseSubQuestionsCreate" aria-expanded="true" aria-controls="collapseSubQuestionsCreate">
-            <span class="h3">Crear Sub Pregunta:</span>
+            <span class="h3">Crear Subpregunta:</span>
             <i class="fas fa-chevron-up tab-arrow"></i>
         </button>
     </h5>
