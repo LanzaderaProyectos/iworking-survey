@@ -224,7 +224,9 @@ class Entry extends Model implements EntryContract
      */
     public function validateMaxEntryPerUserRequirement()
     {
-        $limit = $this->survey->limitPerParticipant();
+        // $limit = $this->survey->limitPerParticipant();
+
+        $limit = 99999;
 
         if ($limit === null) {
             return;
