@@ -9,7 +9,7 @@
 @php($listQuestions = json_decode($listQuestions,true))
 @endif
 @foreach($listQuestions['es'] as $option)
-<div class="custom-control custom-radio" wire:key="{{str()->random(5)}}">
+<div class="custom-control custom-radio"  wire:key="{{ $surveyQuestion->id }}">
     <input type="radio" wire:model.live="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}"
         id="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}" value="{{ $option }}" class="custom-control-input" {{
         ($disabled ?? false) ? 'disabled' : '' }}>

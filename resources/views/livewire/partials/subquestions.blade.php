@@ -28,35 +28,34 @@
                     <option value="">Seleccione una pregunta</option>
 
                     @foreach($survey->sections()->find($sectionQuestionSelected)->surveyQuestionsMain as $element)
-                    @if (in_array($element->question->type, ['radio','multiselect','uniqueselect']))
                     <option value="{{ $element->id }}">
                         {{ $element->section->name }} - {{ $element->position }} - {{
                         $element->question->getTranslation('content', 'es') }} -
                         {{$typeAnwers[$element->question->type]}}
                     </option>
-                    @endif
                     @endforeach
                 </select>
             </div>
         </div>
 
         @if ($this->selectedParentQuestion)
-        <div class="col-md-6 col-12 mt-3">
-            <div class="form-group mb-3">
+        <div class="col-md-6 col-12">
+            <div class="form-group">
                 <label for="numbers_format">¿Cuándo debe de mostrar la sub pregunta?*:</label>
-                <select {{ $this->formEdit ? '' : 'disabled' }} @if($selectedParentQuestion->type == "multiselect" ||
-                    $selectedParentQuestion->type == "uniqueselect") disabled @endif
+                <select {{ $this->formEdit ? '' : 'disabled' }} @if($selectedParentQuestion->type != "radio") disabled @endif
                     wire:model.live="parentQuestionRadio"
                     class="form-control " id="numbers_format_input">
                     @if($selectedParentQuestion->type == "multiselect" || $selectedParentQuestion->type ==
                     "uniqueselect")
                     <option value="00">En cualquier caso</option>
-                    @else
+                    @elseif($selectedParentQuestion->type == "radio")
                     <option value="">Selecciona una opción</option>
                     <option value="SI">Cuando pulsa SI</option>
                     <option value="NO">Cuando pulsa NO</option>
                     <option value="NA">Cuando pulsa NP</option>
                     <option value="00">En cualquier caso</option>
+                    @else
+                    <option value="00">Al rellenar</option>
                     @endif
                 </select>
             </div>
@@ -126,7 +125,7 @@
             <div class="form-group mb-3">
                 <label for="numbers_format">Tipo*:</label>
                 <select {{ $this->formEdit ? '' : 'disabled' }} wire:model.live="subTypeSelected"
-                    class="form-control " id="numbers_format_input" size="3">
+                    class="form-control " id="numbers_format_input" size="6">
                     @foreach($subTypeAnwers as $key => $value)
                     <option value="{{ $key }}">
                         {{ $value }}

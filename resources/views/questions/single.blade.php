@@ -20,7 +20,6 @@
     'numberQuestion' => $parentKey.'.'.($key+1),
     ]
     )
-
     @if (!$sendForm)
     @include('survey::questions.single', ['surveyQuestion' => $subSurveyQuestion, 'filter' => false,'parentKey' => $parentKey.'.'.($key+1)])
     @else

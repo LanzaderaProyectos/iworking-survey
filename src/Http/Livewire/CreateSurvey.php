@@ -644,6 +644,18 @@ class CreateSurvey extends Component
             $this->subQuestion->setTranslation('content', 'es', $this->subQuestionName['es']);
             $this->subQuestion->setTranslation('content', 'en', $this->subQuestionName['en']);
             $this->subQuestion->type = $this->subTypeSelected;
+            if($this->subTypeSelected == "radio"){
+                $this->subOptionEs = [
+                    'SI',
+                    'NO',
+                    'NP'
+                ];
+                $this->subOptionEn = [
+                    'YES',
+                    'NO',
+                    'NA'
+                ];
+            }
             $this->subQuestion->options = json_encode([
                 'es' => $this->subOptionEs,
                 'en' => $this->subOptionEn
@@ -659,6 +671,9 @@ class CreateSurvey extends Component
                 }
             } else {
                 $nextCode = "P-0001";
+            }
+            if(empty($this->parentQuestionRadio)){
+                $this->parentQuestionRadio = '000';
             }
             $this->subQuestion->code = $nextCode;
             $this->subQuestion->save();
@@ -687,16 +702,32 @@ class CreateSurvey extends Component
             $this->subQuestion->setTranslation('content', 'es', $this->subQuestionName['es']);
             $this->subQuestion->setTranslation('content', 'en', $this->subQuestionName['en']);
             $this->subQuestion->type = $this->subTypeSelected;
+            if($this->subTypeSelected == "radio"){
+                $this->subOptionEs = [
+                    'SI',
+                    'NO',
+                    'NP'
+                ];
+                $this->subOptionEn = [
+                    'YES',
+                    'NO',
+                    'NA'
+                ];
+            }
             $this->subQuestion->options = json_encode([
                 'es' => $this->subOptionEs,
                 'en' => $this->subOptionEn
             ]);
+            if(empty($this->parentQuestionRadio)){
+                $this->parentQuestionRadio = '000';
+            }
             $this->subQuestion->save();
             $this->subSurveyQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('question_id', $this->subQuestion->id)->where('parent_id', $this->selectedParentQuestionId)->first();
             $this->subSurveyQuestion->position = $this->orderSubQuestion;
             $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
             $this->subSurveyQuestion->indicated = $this->indicatedSubQuestion;
             $this->subSurveyQuestion->target = $this->targetSubQuestion;
+            $this->subSurveyQuestion->condition = $this->parentQuestionRadio;
             $this->subSurveyQuestion->target_id = $this->subTargetSelected ?? null;
             $this->subSurveyQuestion->save();
             $this->subSurveyQuestion = new SurveyQuestion();
@@ -915,7 +946,7 @@ class CreateSurvey extends Component
     {
         $surveyQuestion = SurveyQuestion::find($this->selectedParentQuestionId);
         $this->selectedParentQuestion = $surveyQuestion->question;
-        if ($this->selectedParentQuestion->type == "multiselect" || $this->selectedParentQuestion->type == "uniqueselect") {
+        if ($this->selectedParentQuestion->type != "radio") {
             $this->parentQuestionRadio = "000";
         }
         $this->defaultQuestionsSub = (new SurveyService())->getQuestions($this->survey, Section::find($surveyQuestion->section_id));

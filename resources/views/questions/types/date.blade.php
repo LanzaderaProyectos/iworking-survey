@@ -2,7 +2,7 @@
 'surveyQuestion' => $surveyQuestion,
 'numberQuestion' => $numberQuestion
 ])
-<input type="datetime-local" wire:model="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key }}"
+<input type="datetime-local" wire:key="{{ $surveyQuestion->id }}" wire:model.live="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key }}"
     class="form-control" value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}>
 
 @slot('report')

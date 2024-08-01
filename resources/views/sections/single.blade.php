@@ -15,7 +15,6 @@
             data-parent="#accordion" wire:ignore.self>
             <div class="card-body">
                 @foreach ($section->surveyQuestionsMain as $key => $surveyQuestionMain)
-                {{-- @dd($section->surveyQuestionsMain) --}}
                     <div class="p-4 border-bottom">
                         @include(view()->exists("survey::questions.types.{$surveyQuestionMain->question->type}")
                                 ? "survey::questions.types.{$surveyQuestionMain->question->type}"
