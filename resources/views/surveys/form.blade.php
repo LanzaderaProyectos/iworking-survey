@@ -1,5 +1,5 @@
 @extends(config('iworking.iworking-layout') . 'layouts.app', [
-'pageTitle' => (isset($order->id)) ? 'Editar: ' . $order->order_number : 'Crear formulario',
+'pageTitle' => (isset($order->id)) ? 'Editar: ' . $order->order_number : 'Formulario',
 'pageBreadcrumbs' => [
 'Formularios',
 ]
@@ -13,7 +13,7 @@
                 <i class="kt-font-brand fas fa-shopping-cart fa-lg"></i>
             </span>
             <h3 class="kt-portlet__head-title text-uppercase">
-                {{ (isset($order->id)) ? 'Editar formulario ' . $order->order_number : 'Crear formulario' }}
+                {{ (isset($order->id)) ? 'Editar formulario ' . $order->order_number : 'Formulario' }}
             </h3>
         </div>
         <div class="kt-portlet__head-toolbar">
@@ -22,6 +22,9 @@
                     @if(str_contains(url()->previous(),'project'))
                     <a href="{{ url()->previous() }}" class="btn btn-brand btn-elevate btn-sm">Volver al proyecto</a>
                     @else
+                    @if(str_contains(url()->current(),'survey/show') && !empty($surveyId) && MattDaneshvar\Survey\Models\Survey::find($surveyId)->status == 5 && !(MattDaneshvar\Survey\Models\Survey::find($surveyId)->projectSurvey))
+                    <a href="{{ route('survey.edit', ['surveyId' => $surveyId]) }}" class="btn btn-success btn-elevate btn-sm">Editar proyecto</a>
+                    @endif
                     <a href="{{ route('survey.list') }}" class="btn btn-brand btn-elevate btn-sm">Volver al listado</a>
                     @endif
                 </div>

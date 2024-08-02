@@ -10,6 +10,9 @@ return [
         Constants::SURVEY_STATUS_MODIFY => 'Modificar',
         Constants::SURVEY_STATUS_LIDER_APPROVE => 'Aprobación Lider',
         Constants::SURVEY_STATUS_COMPLETED => 'Terminada',
+        Constants::SURVEY_STATUS_APPROVED => 'Aprobada',
+        Constants::SURVEY_STATUS_REJECTED => 'Rechazada',
+        Constants::SURVEY_STATUS_MODIFIED => 'Actualizada',
         Constants::SURVEY_STATUS_SEND_ERROR => 'Error',
     ],
     'entry' => [

@@ -391,6 +391,15 @@ class CreateSurvey extends Component
             $this->survey->has_order                = $this->survey->surveyType->has_order;
             $this->survey->has_promotional_material = $this->survey->surveyType->has_promotional_material;
         }
+        if($this->survey->status == Constants::SURVEY_STATUS_APPROVED)
+        {
+            $this->survey->status = Constants::SURVEY_STATUS_MODIFIED;
+            $this->survey->audit()->create([
+                'user_id'   => auth()->id(),
+                'status'    => Constants::SURVEY_STATUS_MODIFIED,
+                'text'      => 'Formulario Actualizado.'
+            ]);
+        }
         $result                 = $surveyService->saveSurvey(
             survey: $this->survey,
             authorId: auth()->user()->id,

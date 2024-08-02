@@ -162,9 +162,13 @@
                         @else
                         <button type="button" wire:click="saveSurvey"
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
+                            @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_APPROVED || $this->survey->status == App\Library\Constants::SURVEY_STATUS_MODIFY)
+                            Guardar cambios
+                            @else
                             Guardar borrador
+                            @endif
                         </button>
-                        @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT &&
+                        @if(($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT || $this->survey->status == App\Library\Constants::SURVEY_STATUS_APPROVED || $this->survey->status == App\Library\Constants::SURVEY_STATUS_MODIFY) &&
                         empty($this->survey->projectSurvey))
                         <button class="btn btn-warning" onclick="confirm('¿Está seguro de iniciar Validación? Esta acción no puede deshacerse.') ||
                             event.stopImmediatePropagation();" wire:click="startValidation">
