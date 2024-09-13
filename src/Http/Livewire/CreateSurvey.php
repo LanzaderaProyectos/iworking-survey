@@ -1301,7 +1301,7 @@ class CreateSurvey extends Component
                 $roleEmitter = 'coordinator';
             }
 
-            if(auth()->user()->hasRole('leader')){
+            if(auth()->user()->hasRole('leader') || auth()->user()->hasRole('admin')){
                 $roleEmitter = 'leader';
             }
             
