@@ -203,6 +203,11 @@ class Survey extends Model implements SurveyContract
         return $this->HasOne(ProjectSurvey::class,'survey_id');
     }
 
+    public function projects()
+    {
+        return $this->hasOneThrough('App\Models\Project', 'App\Models\ProjectSurvey', 'survey_id', 'id', 'id', 'project_id');
+    }
+
     /**
      * The maximum number of entries a participant may submit.
      *
