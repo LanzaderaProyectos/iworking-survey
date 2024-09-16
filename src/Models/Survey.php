@@ -205,7 +205,7 @@ class Survey extends Model implements SurveyContract
 
     public function projects()
     {
-        return $this->hasOneThrough('App\Models\Project', 'App\Models\ProjectSurvey', 'survey_id', 'id', 'id', 'project_id');
+        return $this->hasManyThrough('App\Models\Project', 'App\Models\ProjectSurvey', 'survey_id', 'id', 'id', 'project_id');
     }
 
     /**
