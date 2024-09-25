@@ -344,8 +344,8 @@ class CreateSurvey extends Component
 
     public function editSubOption($id)
     {
-        $this->newSubOptionES = $this->optionES[$id];
-        $this->newSubOptionEN = $this->optionEN[$id];
+        $this->newSubOptionES = $this->optionES[$id] ?? "";
+        $this->newSubOptionEN = $this->optionEN[$id] ?? "";
         $this->updatedSubOption = $id;
     }
 
@@ -1300,11 +1300,9 @@ class CreateSurvey extends Component
             if(auth()->user()->hasRole('coordinator')){
                 $roleEmitter = 'coordinator';
             }
-
             if(auth()->user()->hasRole('leader') || auth()->user()->hasRole('admin')){
                 $roleEmitter = 'leader';
             }
-            
             $optionalVariables = [
                 'varTenant' => (string) $tenant,
                 'varRoleEmitter' => $roleEmitter,
