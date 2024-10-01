@@ -12,7 +12,7 @@
     @foreach($optionsForeach['es'] as $option)
     <div class="custom-control custom-checkbox">
         <input type="checkbox" class="custom-control-input">
-        <label class="custom-control-label">{{ $option }}/label>
+        <label class="custom-control-label">{{ $option }}</label>
     </div>
     @endforeach
     @else
