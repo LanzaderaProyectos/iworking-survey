@@ -21,6 +21,11 @@
     @endif
     @if(count($surveyQuestion->children) > 0)
     @foreach($surveyQuestion->children as $key => $surveyQuestionChild)
+    @if($surveyQuestionChild->condition == "00")
+    <label style="margin-left: 20px; margin-top: 20px;"">Si se ha respuesto</label>
+    @else
+    <label style="margin-left: 20px; margin-top: 20px;"">Si la respuesta es {{$surveyQuestionChild->condition}}</label>
+    @endif
     <div style="
     margin-left: 20px;
     page-break-after:auto;
