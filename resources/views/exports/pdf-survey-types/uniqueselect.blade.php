@@ -22,7 +22,6 @@
     <label>Pendiente de definir opciones</label>
     @endif
     @if(count($surveyQuestion->children) > 0) 
-    <label style="margin-left: 20px; margin-top: 20px;"">En caso que la pregunta {{ $numberQuestion }} sea respondida</label>
     @foreach($surveyQuestion->children as $key => $surveyQuestionChild)
     <div class="col-12" style="
     margin-left: 20px;
