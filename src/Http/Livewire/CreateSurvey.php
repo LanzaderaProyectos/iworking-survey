@@ -637,7 +637,6 @@ class CreateSurvey extends Component
 
     public function saveSubQuestion()
     {
-
         $this->validate([
             'subQuestionName.es'       => 'required',
             'subQuestionName.en'       => 'nullable',
@@ -682,7 +681,7 @@ class CreateSurvey extends Component
                 $nextCode = "P-0001";
             }
             if(empty($this->parentQuestionRadio)){
-                $this->parentQuestionRadio = '000';
+                $this->parentQuestionRadio = '00';
             }
             $this->subQuestion->code = $nextCode;
             $this->subQuestion->save();
@@ -956,7 +955,7 @@ class CreateSurvey extends Component
         $surveyQuestion = SurveyQuestion::find($this->selectedParentQuestionId);
         $this->selectedParentQuestion = $surveyQuestion->question;
         if ($this->selectedParentQuestion->type != "radio") {
-            $this->parentQuestionRadio = "000";
+            $this->parentQuestionRadio = "00";
         }
         $this->defaultQuestionsSub = (new SurveyService())->getQuestions($this->survey, Section::find($surveyQuestion->section_id));
     }

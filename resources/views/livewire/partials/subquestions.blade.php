@@ -41,13 +41,17 @@
         @if ($this->selectedParentQuestion)
         <div class="col-md-6 col-12">
             <div class="form-group">
-                <label for="numbers_format">¿Cuándo debe de mostrar la sub pregunta?*:</label>
-                <select {{ $this->formEdit ? '' : 'disabled' }} @if($selectedParentQuestion->type != "radio") disabled @endif
+                <label for="numbers_format">¿Cuándo debe de mostrar la sub pregunta?*:</label>"
+                <select {{ $this->formEdit ? '' : 'disabled' }} @if(!in_array($selectedParentQuestion->type,["radio","multiselect","uniqueselect"])) disabled @endif
                     wire:model.live="parentQuestionRadio"
                     class="form-control " id="numbers_format_input">
                     @if($selectedParentQuestion->type == "multiselect" || $selectedParentQuestion->type ==
                     "uniqueselect")
                     <option value="00">En cualquier caso</option>
+                    @php($obtions = json_decode($selectedParentQuestion->options,true)['es'] ?? [])
+                    @foreach($obtions as $key => $option)
+                    <option value="{{ $option }}">{{ $option }}</option>
+                    @endforeach
                     @elseif($selectedParentQuestion->type == "radio")
                     <option value="">Selecciona una opción</option>
                     <option value="SI">Cuando pulsa SI</option>
@@ -335,7 +339,7 @@
                             {{ $item->parent ? $item->parent->question->code : '' }}
                         </td>
                         <td>
-                            {{ $item->condition }}
+                            {{ $item->condition == '00' ? 'Rellenar' : $item->condition }}
                         </td>
                         <td>
                             {{ $item->order }}

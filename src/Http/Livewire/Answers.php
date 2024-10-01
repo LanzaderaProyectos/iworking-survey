@@ -155,11 +155,20 @@ class Answers extends Component
         }
     }
 
-    public function getSubQuestionsAfterAnswer($question)
+    public function getSubQuestionsAfterAnswer($surveyQuestion)
     {
-        $questionId     = $question->id;
+        $questionId     = $surveyQuestion->id;
         $questionAnswer = $this->answers[$questionId]['value'];
-        $subQuestions   = $question->children->whereIn('condition', [$questionAnswer, '00']);
+        if($surveyQuestion->question->type == 'multiselect')
+        {
+            $questionAnswer[] = '00';
+            $subQuestions   = $surveyQuestion->children->whereIn('condition', $questionAnswer);
+        }
+        else{
+            $subQuestions   = $surveyQuestion->children->whereIn('condition', [$questionAnswer, '00']);
+        }
+        
+        
         return $subQuestions;
     }
 
