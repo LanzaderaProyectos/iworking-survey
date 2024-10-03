@@ -391,8 +391,7 @@ class CreateSurvey extends Component
             $this->survey->has_order                = $this->survey->surveyType->has_order;
             $this->survey->has_promotional_material = $this->survey->surveyType->has_promotional_material;
         }
-        if($this->survey->status == Constants::SURVEY_STATUS_APPROVED)
-        {
+        if ($this->survey->status == Constants::SURVEY_STATUS_APPROVED) {
             $this->survey->status = Constants::SURVEY_STATUS_MODIFIED;
             $this->survey->audit()->create([
                 'user_id'   => auth()->id(),
@@ -648,59 +647,122 @@ class CreateSurvey extends Component
             ]);
         }
         if (empty($this->subSurveyQuestion->id)) {
-            $this->subQuestion = new Question();
-            $this->subQuestion->setTranslation('content', 'es', $this->subQuestionName['es']);
-            $this->subQuestion->setTranslation('content', 'en', $this->subQuestionName['en']);
-            $this->subQuestion->type = $this->subTypeSelected;
-            if($this->subTypeSelected == "radio"){
-                $this->subOptionEs = [
-                    'SI',
-                    'NO',
-                    'NP'
-                ];
-                $this->subOptionEn = [
-                    'YES',
-                    'NO',
-                    'NA'
-                ];
-            }
-            $this->subQuestion->options = json_encode([
-                'es' => $this->subOptionEs,
-                'en' => $this->subOptionEn
-            ]);
-            $lastCode = Question::orderBy('code', 'desc')->first();
-            if ($lastCode) {
-                $lastCodeNumber = (int) substr($lastCode->code, 2);
-                $nextNumber = $lastCodeNumber + 1;
-                if ($nextNumber < 1000) {
-                    $nextCode = "P-" . str_pad($nextNumber, 4, "0", STR_PAD_LEFT);
-                } else {
-                    $nextCode = "P-" . $nextNumber;
+            if ($this->selectedParentQuestion->type == "multiselect" && $this->parentQuestionRadio == "repeat") {
+                $options = json_decode($this->selectedParentQuestion->options, true)['es'];
+                $position = (int)$this->orderSubQuestion ?? 0;
+                foreach ($options as $option) {
+                    $this->subQuestion = new Question();
+                    $nameEs = str_replace('{opcion}',$option,$this->subQuestionName['es']);
+                    $nameEn = str_replace('{opcion}',$option,$this->subQuestionName['en']);
+                    $this->subQuestion->setTranslation('content', 'es', $nameEs);
+                    $this->subQuestion->setTranslation('content', 'en', $nameEn);
+                    $this->subQuestion->type = $this->subTypeSelected;
+                    if ($this->subTypeSelected == "radio") {
+                        $this->subOptionEs = [
+                            'SI',
+                            'NO',
+                            'NP'
+                        ];
+                        $this->subOptionEn = [
+                            'YES',
+                            'NO',
+                            'NA'
+                        ];
+                    }
+                    $this->subQuestion->options = json_encode([
+                        'es' => $this->subOptionEs,
+                        'en' => $this->subOptionEn
+                    ]);
+                    $lastCode = Question::orderBy('code', 'desc')->first();
+                    if ($lastCode) {
+                        $lastCodeNumber = (int) substr($lastCode->code, 2);
+                        $nextNumber = $lastCodeNumber + 1;
+                        if ($nextNumber < 1000) {
+                            $nextCode = "P-" . str_pad($nextNumber, 4, "0", STR_PAD_LEFT);
+                        } else {
+                            $nextCode = "P-" . $nextNumber;
+                        }
+                    } else {
+                        $nextCode = "P-0001";
+                    }
+                    if (empty($this->parentQuestionRadio)) {
+                        $this->parentQuestionRadio = '00';
+                    }
+                    $this->subQuestion->code = $nextCode;
+                    $this->subQuestion->save();
+                    $surveyQuestionParent = SurveyQuestion::find($this->selectedParentQuestionId);
+                    $this->subSurveyQuestion->survey_id = $this->survey->id;
+                    $this->subSurveyQuestion->question_id = $this->subQuestion->id;
+                    $this->subSurveyQuestion->order = $position;
+                    $this->subSurveyQuestion->position = (int)$this->orderSubQuestion ?? 0;
+                    $this->subSurveyQuestion->section_id = $surveyQuestionParent->section_id;
+                    $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
+                    $this->surveyQuestion->indicated = $this->indicatedSubQuestion;
+                    $this->surveyQuestion->target = $this->targetSubQuestion;
+                    $this->surveyQuestion->target_id = $this->subTargetSelected ?? null;
+                    $this->subSurveyQuestion->disabled = false;
+                    $this->subSurveyQuestion->parent_id = $surveyQuestionParent->id;
+                    $this->subSurveyQuestion->condition = $option;
+                    $this->subSurveyQuestion->original_id = $surveyQuestionParent->original_id;
+                    $this->subSurveyQuestion->save();
+                    $this->subSurveyQuestion = new SurveyQuestion();
+                    $position++;
                 }
             } else {
-                $nextCode = "P-0001";
+                $this->subQuestion = new Question();
+                $this->subQuestion->setTranslation('content', 'es', $this->subQuestionName['es']);
+                $this->subQuestion->setTranslation('content', 'en', $this->subQuestionName['en']);
+                $this->subQuestion->type = $this->subTypeSelected;
+                if ($this->subTypeSelected == "radio") {
+                    $this->subOptionEs = [
+                        'SI',
+                        'NO',
+                        'NP'
+                    ];
+                    $this->subOptionEn = [
+                        'YES',
+                        'NO',
+                        'NA'
+                    ];
+                }
+                $this->subQuestion->options = json_encode([
+                    'es' => $this->subOptionEs,
+                    'en' => $this->subOptionEn
+                ]);
+                $lastCode = Question::orderBy('code', 'desc')->first();
+                if ($lastCode) {
+                    $lastCodeNumber = (int) substr($lastCode->code, 2);
+                    $nextNumber = $lastCodeNumber + 1;
+                    if ($nextNumber < 1000) {
+                        $nextCode = "P-" . str_pad($nextNumber, 4, "0", STR_PAD_LEFT);
+                    } else {
+                        $nextCode = "P-" . $nextNumber;
+                    }
+                } else {
+                    $nextCode = "P-0001";
+                }
+                if (empty($this->parentQuestionRadio)) {
+                    $this->parentQuestionRadio = '00';
+                }
+                $this->subQuestion->code = $nextCode;
+                $this->subQuestion->save();
+                $surveyQuestionParent = SurveyQuestion::find($this->selectedParentQuestionId);
+                $this->subSurveyQuestion->survey_id = $this->survey->id;
+                $this->subSurveyQuestion->question_id = $this->subQuestion->id;
+                $this->subSurveyQuestion->order = (int)$this->orderSubQuestion ?? 0;
+                $this->subSurveyQuestion->position = (int)$this->orderSubQuestion ?? 0;
+                $this->subSurveyQuestion->section_id = $surveyQuestionParent->section_id;
+                $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
+                $this->surveyQuestion->indicated = $this->indicatedSubQuestion;
+                $this->surveyQuestion->target = $this->targetSubQuestion;
+                $this->surveyQuestion->target_id = $this->subTargetSelected ?? null;
+                $this->subSurveyQuestion->disabled = false;
+                $this->subSurveyQuestion->parent_id = $surveyQuestionParent->id;
+                $this->subSurveyQuestion->condition = $this->parentQuestionRadio;
+                $this->subSurveyQuestion->original_id = $surveyQuestionParent->original_id;
+                $this->subSurveyQuestion->save();
+                $this->subSurveyQuestion = new SurveyQuestion();
             }
-            if(empty($this->parentQuestionRadio)){
-                $this->parentQuestionRadio = '00';
-            }
-            $this->subQuestion->code = $nextCode;
-            $this->subQuestion->save();
-            $surveyQuestionParent = SurveyQuestion::find($this->selectedParentQuestionId);
-            $this->subSurveyQuestion->survey_id = $this->survey->id;
-            $this->subSurveyQuestion->question_id = $this->subQuestion->id;
-            $this->subSurveyQuestion->order = (int)$this->orderSubQuestion ?? 0;
-            $this->subSurveyQuestion->position = (int)$this->orderSubQuestion ?? 0;
-            $this->subSurveyQuestion->section_id = $surveyQuestionParent->section_id;
-            $this->subSurveyQuestion->mandatory = $this->requiredSubQuestion;
-            $this->surveyQuestion->indicated = $this->indicatedSubQuestion;
-            $this->surveyQuestion->target = $this->targetSubQuestion;
-            $this->surveyQuestion->target_id = $this->subTargetSelected ?? null;
-            $this->subSurveyQuestion->disabled = false;
-            $this->subSurveyQuestion->parent_id = $surveyQuestionParent->id;
-            $this->subSurveyQuestion->condition = $this->parentQuestionRadio;
-            $this->subSurveyQuestion->original_id = $surveyQuestionParent->original_id;
-            $this->subSurveyQuestion->save();
-            $this->subSurveyQuestion = new SurveyQuestion();
         } else {
             if ($this->targetSubQuestion) {
                 $this->validate([
@@ -710,7 +772,7 @@ class CreateSurvey extends Component
             $this->subQuestion->setTranslation('content', 'es', $this->subQuestionName['es']);
             $this->subQuestion->setTranslation('content', 'en', $this->subQuestionName['en']);
             $this->subQuestion->type = $this->subTypeSelected;
-            if($this->subTypeSelected == "radio"){
+            if ($this->subTypeSelected == "radio") {
                 $this->subOptionEs = [
                     'SI',
                     'NO',
@@ -726,7 +788,7 @@ class CreateSurvey extends Component
                 'es' => $this->subOptionEs,
                 'en' => $this->subOptionEn
             ]);
-            if(empty($this->parentQuestionRadio)){
+            if (empty($this->parentQuestionRadio)) {
                 $this->parentQuestionRadio = '000';
             }
             $this->subQuestion->save();
@@ -1054,7 +1116,7 @@ class CreateSurvey extends Component
             $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true, "isPhpEnabled" => true])->loadView('survey::exports.pdf-survey', $data);
             $pdf = $pdf->output();
             return response()->streamDownload(
-                fn () => print($pdf),
+                fn() => print($pdf),
                 $name . '.pdf'
             );
         } catch (Exception $e) {
@@ -1079,7 +1141,7 @@ class CreateSurvey extends Component
             $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true, "isPhpEnabled" => true])->loadView('survey::exports.pdf-survey', $data);
             $pdf = $pdf->output();
             return response()->streamDownload(
-                fn () => print($pdf),
+                fn() => print($pdf),
                 $name . '.pdf'
             );
         } catch (Exception $e) {
@@ -1296,10 +1358,10 @@ class CreateSurvey extends Component
             $processCode = (string) $this->survey->survey_number;
             $modelName = 'Project';
             $roleEmitter = 'teck';
-            if(auth()->user()->hasRole('coordinator')){
+            if (auth()->user()->hasRole('coordinator')) {
                 $roleEmitter = 'coordinator';
             }
-            if(auth()->user()->hasRole('leader') || auth()->user()->hasRole('admin')){
+            if (auth()->user()->hasRole('leader') || auth()->user()->hasRole('admin')) {
                 $roleEmitter = 'leader';
             }
             $optionalVariables = [

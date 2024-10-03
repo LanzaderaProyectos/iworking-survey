@@ -52,6 +52,9 @@
                     @foreach($obtions as $key => $option)
                     <option value="{{ $option }}">{{ $option }}</option>
                     @endforeach
+                    @if($selectedParentQuestion->type == "multiselect" && empty($subSurveyQuestion->id))
+                    <option value="repeat">Duplicar para cada opción</option>
+                    @endif
                     @elseif($selectedParentQuestion->type == "radio")
                     <option value="">Selecciona una opción</option>
                     <option value="SI">Cuando pulsa SI</option>
@@ -93,7 +96,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="form-group">
-                <label class="form-control-label" for="input-first_name">Sub Pregunta*</label>
+                <label class="form-control-label" for="input-first_name">Sub Pregunta*:      @if($parentQuestionRadio == "repeat") <em> introduce <strong>{{'{opcion}'}}</strong> que se cambiara por cada opcion </em>  @endif</label>
                 {{-- <nav id="create-questions">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-subquestion-tab" data-toggle="tab"
@@ -236,10 +239,17 @@
                     wire:loading.attr="disabled">
                     Cancelar
                 </button>
+                @if($parentQuestionRadio == "repeat")
+                <button type="button" onclick="return confirm('Tienes seleccionada la obción de Duplicar para cada opción.\n Una vez creada se podran modificar individualmente.\n ¿Estas seguro que quieres crear esta pregunta?') || event.stopImmediatePropagation()" wire:click="saveSubQuestion" class="btn btn-sm btn-info"
+                    wire:loading.attr="disabled">
+                    Guardar Sub pregunta
+                </button>
+                @else
                 <button type="button" wire:click="saveSubQuestion" class="btn btn-sm btn-info"
                     wire:loading.attr="disabled">
                     Guardar Sub pregunta
                 </button>
+                @endif
             </div>
         </div>
     </div>

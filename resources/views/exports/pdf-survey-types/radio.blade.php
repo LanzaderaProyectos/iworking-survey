@@ -19,13 +19,13 @@
     @if(count($surveyQuestion->children) > 0)
     @foreach($surveyQuestion->children as $key => $surveyQuestionChild)
     @if($surveyQuestionChild->condition == "NO")
-    <label style="margin-left: 20px; margin-top: 20px;"">Si la respuesta es No</label>
+    <label style="margin-left: 20px; margin-top: 20px;">Si la respuesta es No</label>
     @elseif($surveyQuestionChild->condition == "SI")
-    <label style="margin-left: 20px; margin-top: 20px;"">Si la respuesta es Si</label>
+    <label style="margin-left: 20px; margin-top: 20px;">Si la respuesta es Si</label>
     @elseif($surveyQuestionChild->condition == "NA")
-    <label style="margin-left: 20px; margin-top: 20px;"">Si la respuesta es Na</label>
+    <label style="margin-left: 20px; margin-top: 20px;">Si la respuesta es Na</label>
     @else
-    <label style="margin-left: 20px; margin-top: 20px;"">Si se ha respuesto</label>
+    <label style="margin-left: 20px; margin-top: 20px;">Si se ha respuesto</label>
     @endif
     <div class="col-12" style="
     margin-left: 20px;

@@ -26,10 +26,7 @@
     @else
     <label style="margin-left: 20px; margin-top: 20px;"">Si la respuesta es {{$surveyQuestionChild->condition}}</label>
     @endif
-    <div style="
-    margin-left: 20px;
-    page-break-after:auto;
-    page-break-before:auto;">
+    <div style=" margin-left: 20px; page-break-after:auto; page-break-before:auto;">
         @include("survey::exports.pdf-survey-types.{$surveyQuestionChild->question->type}",
         [
         'surveyQuestion' => $surveyQuestionChild,
