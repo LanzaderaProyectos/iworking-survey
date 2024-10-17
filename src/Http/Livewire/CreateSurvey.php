@@ -784,10 +784,11 @@ class CreateSurvey extends Component
                     'NA'
                 ];
             }
+           
             $this->subQuestion->options = json_encode([
                 'es' => $this->subOptionEs,
                 'en' => $this->subOptionEn
-            ]);
+            ], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
             if (empty($this->parentQuestionRadio)) {
                 $this->parentQuestionRadio = '000';
             }
@@ -917,8 +918,8 @@ class CreateSurvey extends Component
             $this->subEditModeQuestion         = true;
             if ($this->subTypeSelected == "multiselect" || $this->subTypeSelected == "uniqueselect") {
                 $this->customSubOptions = true;
-                $this->subOptionEs = $this->question->getTranslation('options', 'es');
-                $this->subOptionEn = $this->question->getTranslation('options', 'en');
+                $this->subOptionEs = json_decode($this->subQuestion->options,true)['es'] ?? [];
+                $this->subOptionEn = json_decode($this->subQuestion->options,true)['en'] ?? [];
                 if ($this->subOptionEs == "") {
                     $this->subOptionEs = [];
                     $this->subOptionEn = [];
