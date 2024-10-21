@@ -4,7 +4,7 @@
 ])
 <input wire:key="{{ $surveyQuestion->id }}" type="number" name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key }}" class="form-control"
     value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}
-    wire:model.blur="answers.{{$surveyQuestion->id}}.value">
+    wire:model.live="answers.{{$surveyQuestion->id}}.value">
 
 @slot('report')
 @if($includeResults ?? false)
