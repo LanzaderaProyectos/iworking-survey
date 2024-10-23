@@ -43,7 +43,7 @@
                 <input {{ $this->formEdit || ($this->survey->status ==
                 MattDaneshvar\Survey\Library\Constants::SURVEY_STATUS_PROCESS &&
                 auth()->user()->hasAnyRole(['gestor-encuestas'])) ? '' : 'disabled'}} type="date"
-                wire:model.lazy="survey.expiration"
+                wire:model="survey.expiration"
                 class="form-control mt-n2" min="{{date("Y-m-d")}}">
                 @error('survey.expiration') <span class="text-danger">{{ $message }}</span> @enderror
                 @if (session()->has('survey-expiration-update'))
