@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use MattDaneshvar\Survey\Contracts\Answer as AnswerContract;
 use MattDaneshvar\Survey\Contracts\Entry;
 use MattDaneshvar\Survey\Contracts\Question;
+use Iworking\IworkingBoilerplate\Traits\AutoGenerateUuid;
 
 class SurveyQuestion extends Model 
 {
+    use AutoGenerateUuid;
+    public $incrementing = false;
+    protected $keyType = 'string';
     /**
      * Answer constructor.
      *
@@ -29,6 +33,7 @@ class SurveyQuestion extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'question_id',
         'survey_id',
         'position',

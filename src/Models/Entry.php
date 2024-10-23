@@ -2,25 +2,28 @@
 
 namespace MattDaneshvar\Survey\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User;
-use MattDaneshvar\Survey\Contracts\Answer;
-use MattDaneshvar\Survey\Contracts\Entry as EntryContract;
-use MattDaneshvar\Survey\Contracts\Survey;
-use MattDaneshvar\Survey\Exceptions\GuestEntriesNotAllowedException;
-use MattDaneshvar\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
-use MattDaneshvar\Survey\Models\Answer as ModelsAnswer;
+use Ramsey\Uuid\Uuid;
 use App\Models\EntryOrder;
+use Illuminate\Foundation\Auth\User;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\EntryPromotionalMaterial;
+use MattDaneshvar\Survey\Contracts\Answer;
+use MattDaneshvar\Survey\Contracts\Survey;
+use MattDaneshvar\Survey\Models\Answer as ModelsAnswer;
+use MattDaneshvar\Survey\Contracts\Entry as EntryContract;
+use MattDaneshvar\Survey\Exceptions\MaxEntriesPerUserLimitExceeded;
+use MattDaneshvar\Survey\Exceptions\GuestEntriesNotAllowedException;
 
 class Entry extends Model implements EntryContract
-{
+{    
+    public $incrementing = false;
+    protected $keyType = 'string';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['survey_id', 'participant', 'participant_type', 'lang', 'status','assigned_user_id'];
+    protected $fillable = ['id','survey_id', 'participant', 'participant_type', 'lang', 'status','assigned_user_id'];
 
     protected $appends = ['sum_score'];
 
@@ -32,6 +35,10 @@ class Entry extends Model implements EntryContract
     protected static function boot()
     {
         parent::boot();
+
+        static::creating(function ($model) {
+            $model->{$model->getKeyName()} = Uuid::uuid4();
+        });
 
         //Prevent submission of entries that don't meet the parent survey's constraints.
         static::creating(function (self $entry) {

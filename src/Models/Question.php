@@ -3,17 +3,21 @@
 namespace MattDaneshvar\Survey\Models;
 
 use Carbon\Carbon;
+use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use MattDaneshvar\Survey\Models\Section;
 use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Answer;
 use MattDaneshvar\Survey\Contracts\Survey;
+use MattDaneshvar\Survey\Models\SurveyQuestion;
 use MattDaneshvar\Survey\Contracts\Question as QuestionContract;
 
 class Question extends Model implements QuestionContract
 {
 
     use HasTranslations;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     public $translatable = ['content', 'options'];
 
@@ -22,7 +26,7 @@ class Question extends Model implements QuestionContract
      *
      * @var array
      */
-    protected $fillable = ['type','section_type', 'options', 'content', 'rules', 'survey_id', 'section_id', 'original_id', 'parent_id', 'order', 'condition', 'code', 'disabled', 'mandatory', 'survey_type','disabled_at'];
+    protected $fillable = ['id','type','section_type', 'options', 'content', 'rules', 'survey_id', 'section_id', 'original_id', 'parent_id', 'order', 'condition', 'code', 'disabled', 'mandatory', 'survey_type','disabled_at'];
 
     protected $casts = [
         'rules' => 'array',
@@ -37,6 +41,10 @@ class Question extends Model implements QuestionContract
     protected static function boot()
     {
         parent::boot();
+
+        static::creating(function ($model) {
+            $model->{$model->getKeyName()} = Uuid::uuid4();
+        });
 
         //Ensure the question's survey is the same as the section it belongs to.
         static::creating(function (self $question) {

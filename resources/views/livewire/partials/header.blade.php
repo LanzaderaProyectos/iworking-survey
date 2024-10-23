@@ -1,27 +1,3 @@
-@if (session()->has('draftSurveyCreated'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <span> {{ session('draftSurveyCreated') }}</span>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-@endif
-@if (session()->has('surveyUpdated'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <span> {{ session('surveyUpdated') }}</span>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-@endif
-@if (session()->has('survey-expiration-updated'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    <span> {!! session('survey-expiration-updated') !!}</span>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-@endif
 <div class="row">
     <div class="col-12">
         <div class="form-group">

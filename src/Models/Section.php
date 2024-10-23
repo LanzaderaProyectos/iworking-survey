@@ -2,6 +2,7 @@
 
 namespace MattDaneshvar\Survey\Models;
 
+use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use MattDaneshvar\Survey\Contracts\Question;
@@ -10,6 +11,8 @@ use MattDaneshvar\Survey\Contracts\Section as SectionContract;
 class Section extends Model implements SectionContract
 {
     use HasTranslations;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     public $translatable = ['name'];
     
@@ -37,6 +40,10 @@ class Section extends Model implements SectionContract
     {
         parent::boot();
 
+        static::creating(function ($model) {
+            $model->{$model->getKeyName()} = Uuid::uuid4();
+        });
+
         static::deleting(function (self $section) {
             $section->questions->each->delete();
         });
@@ -47,7 +54,7 @@ class Section extends Model implements SectionContract
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['id','survey_id','name'];
 
 
      /**

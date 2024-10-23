@@ -18,7 +18,7 @@ class SectionService
 
             return true;
         } catch (\Throwable $th) {
-            Log::error($th);
+            dd($th);
             return false;
         }
     }

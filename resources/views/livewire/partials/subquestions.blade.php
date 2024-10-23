@@ -42,7 +42,8 @@
         <div class="col-md-6 col-12">
             <div class="form-group">
                 <label for="numbers_format">¿Cuándo debe de mostrar la sub pregunta?*:</label>"
-                <select {{ $this->formEdit ? '' : 'disabled' }} @if(!in_array($selectedParentQuestion->type,["radio","multiselect","uniqueselect"])) disabled @endif
+                <select {{ $this->formEdit ? '' : 'disabled' }}
+                    @if(!in_array($selectedParentQuestion->type,["radio","multiselect","uniqueselect"])) disabled @endif
                     wire:model.live="parentQuestionRadio"
                     class="form-control " id="numbers_format_input">
                     @if($selectedParentQuestion->type == "multiselect" || $selectedParentQuestion->type ==
@@ -96,7 +97,9 @@
     <div class="row">
         <div class="col-md-12">
             <div class="form-group">
-                <label class="form-control-label" for="input-first_name">Sub Pregunta*:      @if($parentQuestionRadio == "repeat") <em> introduce <strong>{{'{opcion}'}}</strong> que se cambiara por cada opcion </em>  @endif</label>
+                <label class="form-control-label" for="input-first_name">Sub Pregunta*: @if($parentQuestionRadio ==
+                    "repeat") <em> introduce <strong>{{'{opcion}'}}</strong> que se cambiara por cada opcion </em>
+                    @endif</label>
                 {{-- <nav id="create-questions">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-subquestion-tab" data-toggle="tab"
@@ -175,6 +178,15 @@
             </div>
         </div>
     </div>
+
+    @if($this->subTypeSelected == 'radio')
+    <div class="col-12">
+        <div class="form-group">
+            <input type="checkbox" id="hasSubNP" wire:model.defer="hasSubNP">
+            <label for="hasSubNP">Opción de NP</label>
+        </div>
+    </div>
+    @endif
     @if($subTypeSelected == "multiselect" || $subTypeSelected == "uniqueselect")
     <div class="col-md-12 mt-n2">
         <label class="form-control-label" for="input-first_name">Opción</label>
@@ -240,8 +252,9 @@
                     Cancelar
                 </button>
                 @if($parentQuestionRadio == "repeat")
-                <button type="button" onclick="return confirm('Tienes seleccionada la obción de Duplicar para cada opción.\n Una vez creada se podran modificar individualmente.\n ¿Estas seguro que quieres crear esta pregunta?') || event.stopImmediatePropagation()" wire:click="saveSubQuestion" class="btn btn-sm btn-info"
-                    wire:loading.attr="disabled">
+                <button type="button"
+                    onclick="return confirm('Tienes seleccionada la obción de Duplicar para cada opción.\n Una vez creada se podran modificar individualmente.\n ¿Estas seguro que quieres crear esta pregunta?') || event.stopImmediatePropagation()"
+                    wire:click="saveSubQuestion" class="btn btn-sm btn-info" wire:loading.attr="disabled">
                     Guardar Sub pregunta
                 </button>
                 @else
@@ -324,17 +337,13 @@
                             </button>
                             @endif
                             @if($this->isActive($item->id))
-                            <button type="button"
-                                wire:click="activeQuestion('{{ $item->id }}')"
-                                class="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Pulsa para Desactivar">
+                            <button type="button" wire:click="activeQuestion('{{ $item->id }}')"
+                                class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Pulsa para Desactivar">
                                 <i class="fas fa-toggle-on fa-xl" aria-hidden="true"></i>
                             </button>
                             @else
-                            <button type="button"
-                                wire:click="activeQuestion('{{ $item->id }}')"
-                                class="btn btn-sm btn-clean btn-icon btn-icon-md"
-                                title="Pulsa para Activar">
+                            <button type="button" wire:click="activeQuestion('{{ $item->id }}')"
+                                class="btn btn-sm btn-clean btn-icon btn-icon-md" title="Pulsa para Activar">
                                 <i class="fas fa-toggle-off fa-xl" aria-hidden="true"></i>
                             </button>
                             @endif

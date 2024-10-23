@@ -9,12 +9,37 @@ use MattDaneshvar\Survey\Models\Question;
 use MattDaneshvar\Survey\Contracts\Section;
 use MattDaneshvar\Survey\Contracts\Survey as SurveyContract;
 use App\Models\ProjectSurvey;
+use Ramsey\Uuid\Uuid;
 
 class Survey extends Model implements SurveyContract
 {
     use HasTranslations;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     public $translatable = ['name'];
+
+    protected $fillable = [
+        'id',
+        'survey_number',
+        'name',
+        'comments',
+        'author',
+        'status',
+        'settings',
+        'type',
+        'project_type',
+        'expiration',
+        'parent_id',
+        'has_order',
+        'has_promotional_material',
+        'original_id',
+        'reject_reason',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'disabled_at'
+    ];
 
     /**
      * Survey constructor.
@@ -59,6 +84,10 @@ class Survey extends Model implements SurveyContract
     {
         parent::boot();
 
+        static::creating(function ($model) {
+            $model->{$model->getKeyName()} = Uuid::uuid4();
+        });
+
         static::deleting(function (self $survey) {
             $survey->sections->each->delete();
         });
@@ -72,6 +101,16 @@ class Survey extends Model implements SurveyContract
     public function parent()
     {
         return $this->belongsTo(get_class(app()->make(Survey::class)), 'parent_id');
+    }
+
+    /**
+     * The survey children.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function children()
+    {
+        return $this->hasMany(get_class(app()->make(Survey::class)), 'parent_id');
     }
 
 

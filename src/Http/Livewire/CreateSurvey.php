@@ -49,6 +49,8 @@ class CreateSurvey extends Component
     ];
 
     public $projectCode = "";
+    public $hasNP = true;
+    public $hasSubNP = true;
 
     public $surveyTypes;
     public $surveyQuestion  = null;
@@ -155,6 +157,9 @@ class CreateSurvey extends Component
         'subQuestion.section_id'   => 'nullable',
         'subQuestion.order'        => 'nullable',
         'subQuestion.comments'     => 'nullable',
+
+        'hasNP'                         => 'nullable',
+        'hasSubNP'                      => 'nullable',
 
         //user Selected
         'selectedProfessional.*'                            => 'nullable',
@@ -399,7 +404,7 @@ class CreateSurvey extends Component
                 'text'      => 'Formulario Actualizado.'
             ]);
         }
-        $result                 = $surveyService->saveSurvey(
+        $result = $surveyService->saveSurvey(
             survey: $this->survey,
             authorId: auth()->user()->id,
             surveyName: $this->surveyName,
@@ -417,6 +422,7 @@ class CreateSurvey extends Component
                     'surveyId' => $this->survey->id
                 ]));
             }
+            
             session()->flash('surveyUpdated', 'Cambios guardados');
         } else {
             session()->flash('surveyUpdated', 'Error al guardar los cambios');
@@ -553,6 +559,31 @@ class CreateSurvey extends Component
             $this->question = new Question();
             $this->question->setTranslation('content', 'es', $this->questionName['es']);
             $this->question->setTranslation('content', 'en', $this->questionName['en']);
+            if($this->typeSelected == "radio"){
+                if($this->hasNP)
+                {
+                    $this->optionES = [
+                        'SI',
+                        'NO',
+                        'NP'
+                    ];
+                    $this->optionEN = [
+                        'YES',
+                        'NO',
+                        'NA'
+                    ];
+                }
+                else{
+                    $this->optionES = [
+                        'SI',
+                        'NO'
+                    ];
+                    $this->optionEN = [
+                        'YES',
+                        'NO'
+                    ];
+                }
+            }
             $this->question->type = $this->typeSelected;
             $this->question->options = json_encode([
                 'es' => $this->optionES,
@@ -594,17 +625,30 @@ class CreateSurvey extends Component
             $this->question->setTranslation('content', 'es', $this->questionName['es']);
             $this->question->setTranslation('content', 'en', $this->questionName['en']);
             $this->question->type = $this->typeSelected;
-            if ($this->typeSelected == "radio") {
-                $this->optionES = [
-                    'SI',
-                    'NO',
-                    'NP'
-                ];
-                $this->optionEN = [
-                    'YES',
-                    'NO',
-                    'NA'
-                ];
+            if($this->typeSelected == "radio"){
+                if($this->hasNP)
+                {
+                    $this->optionES = [
+                        'SI',
+                        'NO',
+                        'NP'
+                    ];
+                    $this->optionEN = [
+                        'YES',
+                        'NO',
+                        'NA'
+                    ];
+                }
+                else{
+                    $this->optionES = [
+                        'SI',
+                        'NO'
+                    ];
+                    $this->optionEN = [
+                        'YES',
+                        'NO'
+                    ];
+                }
             }
             $this->question->options = json_encode([
                 'es' => $this->optionES,
@@ -714,16 +758,30 @@ class CreateSurvey extends Component
                 $this->subQuestion->setTranslation('content', 'en', $this->subQuestionName['en']);
                 $this->subQuestion->type = $this->subTypeSelected;
                 if ($this->subTypeSelected == "radio") {
-                    $this->subOptionEs = [
-                        'SI',
-                        'NO',
-                        'NP'
-                    ];
-                    $this->subOptionEn = [
-                        'YES',
-                        'NO',
-                        'NA'
-                    ];
+                    if($this->hasSubNP)
+                    {
+                        $this->subOptionEs = [
+                            'SI',
+                            'NO',
+                            'NP'
+                        ];
+                        $this->subOptionEn = [
+                            'YES',
+                            'NO'
+                        ];
+                    }
+                    else{
+                        $this->subOptionEs = [
+                            'SI',
+                            'NO',
+                            'NP'
+                        ];
+                        $this->subOptionEn = [
+                            'YES',
+                            'NO'
+                        ];
+                    }
+                    
                 }
                 $this->subQuestion->options = json_encode([
                     'es' => $this->subOptionEs,
@@ -773,18 +831,31 @@ class CreateSurvey extends Component
             $this->subQuestion->setTranslation('content', 'en', $this->subQuestionName['en']);
             $this->subQuestion->type = $this->subTypeSelected;
             if ($this->subTypeSelected == "radio") {
-                $this->subOptionEs = [
-                    'SI',
-                    'NO',
-                    'NP'
-                ];
-                $this->subOptionEn = [
-                    'YES',
-                    'NO',
-                    'NA'
-                ];
+                if($this->hasSubNP)
+                {
+                    $this->subOptionEs = [
+                        'SI',
+                        'NO',
+                        'NP'
+                    ];
+                    $this->subOptionEn = [
+                        'YES',
+                        'NO',
+                        'NA'
+                    ];
+                }
+                else{
+                    $this->subOptionEs = [
+                        'SI',
+                        'NO',
+                    ];
+                    $this->subOptionEn = [
+                        'YES',
+                        'NO'
+                    ];
+                }
+                
             }
-           
             $this->subQuestion->options = json_encode([
                 'es' => $this->subOptionEs,
                 'en' => $this->subOptionEn
@@ -811,7 +882,7 @@ class CreateSurvey extends Component
         $this->optionES = [];
         $this->customOptions = false;
         $this->updateOption = null;
-
+        $this->hasSubNP = true;
         $this->subQuestion = new Question();
     }
 
@@ -900,6 +971,19 @@ class CreateSurvey extends Component
                 $this->optionES = json_decode($this->question->options, true)['es'];
                 $this->optionEN = json_decode($this->question->options, true)['en'];
             }
+            if($this->typeSelected == "radio")
+            {
+                $this->optionES = json_decode($this->question->options, true)['es'];
+                $this->optionEN = json_decode($this->question->options, true)['en'];
+                if(in_array('NP',$this->optionES))
+                {
+                    $this->hasNP = true;
+                }
+                else
+                {
+                    $this->hasNP = false;
+                }
+            }
         } else {
             $this->subSurveyQuestion           = SurveyQuestion::find($id);
             $this->subQuestion                 = $this->subSurveyQuestion->question;
@@ -923,6 +1007,19 @@ class CreateSurvey extends Component
                 if ($this->subOptionEs == "") {
                     $this->subOptionEs = [];
                     $this->subOptionEn = [];
+                }
+            }
+            if($this->subTypeSelected == "radio")
+            {
+                $this->subOptionEs = json_decode($this->subQuestion->options,true)['es'] ?? [];
+                $this->subOptionEn = json_decode($this->subQuestion->options,true)['en'] ?? [];
+                if(in_array('NP',$this->subOptionEs))
+                {
+                    $this->hasSubNP = true;
+                }
+                else
+                {
+                    $this->hasSubNP = false;
                 }
             }
             $this->defaultQuestionsSub = (new SurveyService())->getQuestions($this->survey, $this->subSurveyQuestion->parent->section);

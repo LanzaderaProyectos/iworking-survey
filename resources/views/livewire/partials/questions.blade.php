@@ -181,7 +181,14 @@
                 @endif
                 @endif
             </div>
-            
+            @if($this->typeSelected == 'radio')
+                <div class="col-12">
+                    <div class="form-group">
+                        <input type="checkbox" id="hasNP" wire:model.defer="hasNP">
+                        <label for="hasNP">Opción de NP</label>
+                    </div>
+                </div>
+            @endif
            
             @if($customOptions)
             <div class="col-md-12 mt-n2">

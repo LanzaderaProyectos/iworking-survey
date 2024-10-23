@@ -35,6 +35,30 @@
                 @endif
             </div>
         </div>
+        @if (session()->has('draftSurveyCreated'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span> {{ session('draftSurveyCreated') }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
+        @if (session()->has('surveyUpdated'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span> {{ session('surveyUpdated') }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
+        @if (session()->has('survey-expiration-updated'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span> {!! session('survey-expiration-updated') !!}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
         <div class="row">
             <div class="col-12">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -102,7 +126,7 @@
                         'entityType' => 'App\Models\Survey',
                         'textTitle' => 'Chat interno',
                         'editable' => true
-                        ])
+                        ], key(time() . 'comments'))
                     </div>
                     {{-- <div class="tab-pane fade" id="survey-files" role="tabpanel" aria-labelledby="survey-files"
                         wire:ignore.self>
@@ -123,7 +147,7 @@
                         'dataValue' => $survey,
                         'nameStatus' => 'Survey',
                         'locationStatus' => ''
-                        ])
+                        ], key(time() . 'audit-table'))
                     </div>
                     @endif
                 </div>
@@ -139,6 +163,30 @@
         </div>
         @endif
         @if($this->formEdit)
+        @if (session()->has('draftSurveyCreated'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span> {{ session('draftSurveyCreated') }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
+        @if (session()->has('surveyUpdated'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span> {{ session('surveyUpdated') }}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
+        @if (session()->has('survey-expiration-updated'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span> {!! session('survey-expiration-updated') !!}</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        @endif
         <div class="row">
             <div class="col-12 col-md-6">
 
@@ -162,13 +210,16 @@
                         @else
                         <button type="button" wire:click="saveSurvey"
                             class="btn btn-sm btn-success d-flex p-4 py-lg-2 mr-2" wire:loading.attr="disabled">
-                            @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_APPROVED || $this->survey->status == App\Library\Constants::SURVEY_STATUS_MODIFY)
+                            @if($this->survey->status == App\Library\Constants::SURVEY_STATUS_APPROVED ||
+                            $this->survey->status == App\Library\Constants::SURVEY_STATUS_MODIFY)
                             Guardar cambios
                             @else
                             Guardar borrador
                             @endif
                         </button>
-                        @if(($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT || $this->survey->status == App\Library\Constants::SURVEY_STATUS_APPROVED || $this->survey->status == App\Library\Constants::SURVEY_STATUS_MODIFY) &&
+                        @if(($this->survey->status == App\Library\Constants::SURVEY_STATUS_DRAFT ||
+                        $this->survey->status == App\Library\Constants::SURVEY_STATUS_APPROVED || $this->survey->status
+                        == App\Library\Constants::SURVEY_STATUS_MODIFY) &&
                         empty($this->survey->projectSurvey))
                         <button class="btn btn-warning" onclick="confirm('¿Está seguro de iniciar Validación? Esta acción no puede deshacerse.') ||
                             event.stopImmediatePropagation();" wire:click="startValidation">
@@ -201,4 +252,9 @@
         @endif
     </div>
     @endif
+    {{--
+    <x-targeted-loading
+        :targets="['save', 'addOption', 'deleteOption', 'editOption', 'upOption', 'downOption', 'addSubOption', 'deleteSubOption', 'editSubOption', 'upSubOption', 'downSubOption', 'saveSurvey', 'editSection', 'deleteSurvey', 'addSection', 'deleteSection', 'saveQuestion', 'saveSubQuestion', 'addDefaultQuestion', 'addDefaultQuestionSub', 'editQuestion', 'deleteQuestion', 'resetValues', 'closeSurvey', 'updatedTypeSelected', 'updatedSelectedParentQuestionId', 'exportSurveyToPDF', 'exportOrderToPDF', 'exportOrderToExcel', 'upQuestion', 'downQuestion', 'upSubQuestion', 'downSubQuestion', 'upSection', 'downSection', 'startValidation',]"
+        debug="false" /> --}}
+    @include('common.loading-page')
 </div>
