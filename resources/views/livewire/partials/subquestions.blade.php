@@ -160,6 +160,33 @@
                 @enderror
             </div>
         </div>
+        
+        <div class="col-5">
+            @if($indicatedSubQuestion)
+            <div class="form-group">
+                <label class="form-control-label" for="input-charts">Tipo Diagrama*</label>
+                <select
+                    @if(!in_array($this->subTypeSelected,['radio','multiselect','uniqueselect','number','currency']))
+                    disabled @endif class="form-control" wire:model.defer="subQuestionChart" id="input-charts">
+                    @if(in_array($this->subTypeSelected,['radio','multiselect','uniqueselect']))
+                    <option value="">Selecciona un tipo</option>
+                    <option value="pie">Esferico</option>
+                    <option value="column">Columnas</option>
+                    @elseif(in_array($this->subTypeSelected,['number','currency']))
+                    <option value="">Selecciona un tipo</option>
+                    <option value="column-total">Columna Total</option>
+                    <option value="column-averadge">Columna Media</option>
+                    @else
+                    <option value="column">Columna</option>
+                    @endif
+                </select>
+                @error('subQuestionChart.*')
+                <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            @endif
+        </div>
+
         <div class="col-12">
             <div class="row">
                 <div class="form-group col-12 col-md-6 col-xl-4 mt-n3">

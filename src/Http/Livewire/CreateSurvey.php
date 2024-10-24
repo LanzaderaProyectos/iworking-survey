@@ -131,6 +131,9 @@ class CreateSurvey extends Component
     public $targetSelected;
     public $subTargetSelected;
 
+    public $questionChart;
+    public $subQuestionChart;
+
 
     protected $rules = [
         //Survey
@@ -186,6 +189,9 @@ class CreateSurvey extends Component
         'survey.has_promotional_material'                   => 'nullable',
         'targetSelected'                                    => 'nullable',
         'subTargetSelected'                                 => 'nullable',
+
+        'questionChart'                                     => 'nullable',
+        'subQuestionChart'                                  => 'nullable',
     ];
 
     public function mount($draft = false)
@@ -518,6 +524,17 @@ class CreateSurvey extends Component
     {
         if ($value) {
             $this->requiredQuestion = true;
+            if($this->typeSelected){
+                if(!in_array($this->subTypeSelected, ['radio','multiselect','uniqueselect','number','currency'])){
+                    $this->questionChart = "column";
+                }
+                else {
+                    $this->questionChart = null;
+                }
+            }
+            else{
+                $this->questionChart = "column";
+            }
         }
     }
 
@@ -528,10 +545,36 @@ class CreateSurvey extends Component
         }
     }
 
+    public function updatedSubTypeSelected()
+    {
+        if($this->indicatedSubQuestion){
+            if(!in_array($this->subTypeSelected, ['radio','multiselect','uniqueselect','number','currency'])){
+                $this->subQuestionChart = "column";
+            }
+            else {
+                $this->subQuestionChart = null;
+            }
+        }
+        else{
+            $this->questionChart = "column";
+        }
+    }
+
     public function updatedIndicatedSubQuestion($value)
     {
         if ($value) {
             $this->requiredSubQuestion = true;
+            if($this->subTypeSelected){
+                if(!in_array($this->subTypeSelected, ['radio','multiselect','uniqueselect','number','currency'])){
+                    $this->subQuestionChart = "column";
+                }
+                else {
+                    $this->subQuestionChart = null;
+                }
+            }
+            else{
+                $this->questionChart = "column";
+            }
         }
     }
 
@@ -552,6 +595,12 @@ class CreateSurvey extends Component
         if ($this->targetQuestion) {
             $this->validate([
                 'targetSelected' => 'nullable',
+            ]);
+        }
+        if($this->indicatedQuestion)
+        {
+            $this->validate([
+                'questionChart' => 'required',
             ]);
         }
         // $this->question->update(['original_id' => $this->question->id]);
@@ -613,6 +662,7 @@ class CreateSurvey extends Component
             $this->surveyQuestion->target = $this->targetQuestion;
             $this->surveyQuestion->target_id = $this->targetSelected ?? null;
             $this->surveyQuestion->disabled = false;
+            $this->surveyQuestion->chart_type = $this->questionChart ?? null;
             $this->surveyQuestion->save();
             $this->surveyQuestion->update(['original_id' => $this->surveyQuestion->id]);
             $this->surveyQuestion = new SurveyQuestion();
@@ -662,6 +712,7 @@ class CreateSurvey extends Component
             $this->surveyQuestion->indicated = $this->indicatedQuestion;
             $this->surveyQuestion->target = $this->targetQuestion;
             $this->surveyQuestion->target_id = $this->targetSelected ?? null;
+            $this->surveyQuestion->chart_type = $this->questionChart ?? null;
             $this->surveyQuestion->save();
         }
         $this->reset('questionName');
@@ -675,6 +726,7 @@ class CreateSurvey extends Component
         $this->requiredQuestion = false;
         $this->indicatedQuestion = false;
         $this->targetQuestion = false;
+        $this->questionChart = null;
         $this->orderQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('section_id', $this->sectionQuestionSelected)->count() + 1;
     }
 
@@ -688,6 +740,11 @@ class CreateSurvey extends Component
         if ($this->targetSubQuestion) {
             $this->validate([
                 'subTargetSelected' => 'required',
+            ]);
+        }
+        if ($this->indicatedSubQuestion) {
+            $this->validate([
+                'subQuestionChart' => 'required',
             ]);
         }
         if (empty($this->subSurveyQuestion->id)) {
@@ -748,6 +805,7 @@ class CreateSurvey extends Component
                     $this->subSurveyQuestion->parent_id = $surveyQuestionParent->id;
                     $this->subSurveyQuestion->condition = $option;
                     $this->subSurveyQuestion->original_id = $surveyQuestionParent->original_id;
+                    $this->subSurveyQuestion->chart_type = $this->subQuestionChart ?? null;
                     $this->subSurveyQuestion->save();
                     $this->subSurveyQuestion = new SurveyQuestion();
                     $position++;
@@ -818,6 +876,7 @@ class CreateSurvey extends Component
                 $this->subSurveyQuestion->parent_id = $surveyQuestionParent->id;
                 $this->subSurveyQuestion->condition = $this->parentQuestionRadio;
                 $this->subSurveyQuestion->original_id = $surveyQuestionParent->original_id;
+                $this->subSurveyQuestion->chart_type = $this->subQuestionChart ?? null;
                 $this->subSurveyQuestion->save();
                 $this->subSurveyQuestion = new SurveyQuestion();
             }
@@ -871,6 +930,7 @@ class CreateSurvey extends Component
             $this->subSurveyQuestion->target = $this->targetSubQuestion;
             $this->subSurveyQuestion->condition = $this->parentQuestionRadio;
             $this->subSurveyQuestion->target_id = $this->subTargetSelected ?? null;
+            $this->subSurveyQuestion->chart_type = $this->subQuestionChart ?? null;
             $this->subSurveyQuestion->save();
             $this->subSurveyQuestion = new SurveyQuestion();
         }
@@ -884,6 +944,7 @@ class CreateSurvey extends Component
         $this->updateOption = null;
         $this->hasSubNP = true;
         $this->subQuestion = new Question();
+        $this->subQuestionChart = null;
     }
 
     public function addDefaultQuestion()
@@ -963,6 +1024,7 @@ class CreateSurvey extends Component
             $this->targetQuestion           = $this->surveyQuestion->target;
             $this->targetSelected           = $this->surveyQuestion->target_id;
             $this->typeSelected             = $this->question->type;
+            $this->questionChart            = $this->surveyQuestion->chart_type;
             $this->questionName['es']       = $this->question->getTranslation('content', 'es');
             $this->questionName['en']       = $this->question->getTranslation('content', 'en');
             $this->editModeQuestion         = true;
@@ -986,6 +1048,7 @@ class CreateSurvey extends Component
             }
         } else {
             $this->subSurveyQuestion           = SurveyQuestion::find($id);
+            dd($this->subSurveyQuestion);
             $this->subQuestion                 = $this->subSurveyQuestion->question;
             $this->orderSubQuestion            = $this->subSurveyQuestion->position;
             $this->requiredSubQuestion         = $this->subSurveyQuestion->mandatory;
@@ -996,6 +1059,7 @@ class CreateSurvey extends Component
             $this->indicatedSubQuestion        = $this->subSurveyQuestion->indicated;
             $this->targetSubQuestion           = $this->subSurveyQuestion->target;
             $this->subTargetSelected           = $this->subSurveyQuestion->target_id;
+            $this->subQuestionChart            = $this->subSurveyQuestion->chart_type;
 
             $this->subQuestionName['es']       = $this->subQuestion->getTranslation('content', 'es');
             $this->subQuestionName['en']       = $this->subQuestion->getTranslation('content', 'en');
@@ -1100,6 +1164,17 @@ class CreateSurvey extends Component
                 $this->optionEN = [];
                 $this->customOptions = false;
                 break;
+        }
+        if($this->indicatedQuestion){
+            if(!in_array($this->subTypeSelected, ['radio','multiselect','uniqueselect','number','currency'])){
+                $this->questionChart = "column";
+            }
+            else {
+                $this->questionChart = null;
+            }
+        }
+        else{
+            $this->questionChart = "column";
         }
     }
 
