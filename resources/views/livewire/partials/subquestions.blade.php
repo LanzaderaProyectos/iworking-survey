@@ -164,13 +164,13 @@
         <div class="col-5">
             @if($indicatedSubQuestion)
             <div class="form-group">
-                <label class="form-control-label" for="input-charts">Tipo Diagrama*</label>
+                <label class="form-control-label" for="input-charts">Tipo Gráfico*</label>
                 <select
                     @if(!in_array($this->subTypeSelected,['radio','multiselect','uniqueselect','number','currency']))
                     disabled @endif class="form-control" wire:model.defer="subQuestionChart" id="input-charts">
                     @if(in_array($this->subTypeSelected,['radio','multiselect','uniqueselect']))
                     <option value="">Selecciona un tipo</option>
-                    <option value="pie">Esferico</option>
+                    <option value="pie">Queso</option>
                     <option value="column">Columnas</option>
                     @elseif(in_array($this->subTypeSelected,['number','currency']))
                     <option value="">Selecciona un tipo</option>
