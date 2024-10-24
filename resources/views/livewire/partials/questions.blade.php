@@ -159,8 +159,8 @@
                         </div>
                     </div>
                 </div>
-                @if($projectCode != "")
                 <div class="col-12 col-md-4">
+                @if($projectCode != "")
                 @if($targetQuestion)
                     <div class="row">
                     <div class="form-group col-12">
@@ -179,6 +179,7 @@
                         @enderror
                     </div>
                     </div>
+                @endif
                 @endif
                 @if($indicatedQuestion)
                     <div class="form-group">
@@ -203,8 +204,7 @@
                         @enderror
                     </div>
                     @endif
-                </div>
-                @endif
+            </div>
             </div>
             @if($this->typeSelected == 'radio')
                 <div class="col-12">
