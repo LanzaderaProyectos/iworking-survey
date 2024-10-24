@@ -1048,7 +1048,6 @@ class CreateSurvey extends Component
             }
         } else {
             $this->subSurveyQuestion           = SurveyQuestion::find($id);
-            dd($this->subSurveyQuestion);
             $this->subQuestion                 = $this->subSurveyQuestion->question;
             $this->orderSubQuestion            = $this->subSurveyQuestion->position;
             $this->requiredSubQuestion         = $this->subSurveyQuestion->mandatory;
