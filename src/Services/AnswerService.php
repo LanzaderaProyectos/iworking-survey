@@ -65,7 +65,7 @@ class AnswerService
             $answersArray[$item->question_id]['question_question_id']      = $item->surveyQuestion->original_id ?? '';
             $answersArray[$item->question_id]['model']                     = $item;
             $commentsArray[$item->question_id]                             = $item->comments ?? '';
-            if ($item->surveyQuestion->answers && $item->surveyQuestion->answers->count() > 0) {
+            if ($item->surveyQuestion && $item->surveyQuestion->answers && $item->surveyQuestion->answers->count() > 0) {
                 $respondedQuestions[$item->surveyQuestion->id] = true;
             }
         }
