@@ -2,9 +2,12 @@
 'surveyQuestion' => $surveyQuestion,
 'numberQuestion' => $numberQuestion
 ])
-<textarea wire:key="{{ $surveyQuestion->id }}" wire:model.live="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->key }}"
-    id="{{ $surveyQuestion->question->key }}" class="form-control" {{ ($disabled ?? false) ? 'disabled' : '' }} rows="5"
-    style="resize: vertical">{{ $value ?? old($surveyQuestion->question->key) }}</textarea>
+<div wire:ignore>
+    <textarea wire:key="{{ $surveyQuestion->id }}" wire:model.live="answers.{{$surveyQuestion->id}}.value"
+        name="{{ $surveyQuestion->key }}" id="{{ $surveyQuestion->question->key }}" class="form-control" {{ ($disabled
+        ?? false) ? 'disabled' : '' }} rows="5"
+        style="resize: vertical">{{ $value ?? old($surveyQuestion->question->key) }}</textarea>
+</div>
 @if($this->errorsBag ?? false)
 @if(in_array($surveyQuestion->id, $this->errorsBag))
 <span class="text-danger">Campo requerido</span>

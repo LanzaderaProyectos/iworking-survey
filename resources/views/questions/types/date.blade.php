@@ -2,9 +2,11 @@
 'surveyQuestion' => $surveyQuestion,
 'numberQuestion' => $numberQuestion
 ])
-<input type="date" wire:key="{{ $surveyQuestion->id }}" wire:model.live="answers.{{$surveyQuestion->id}}.value" name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key }}"
-    class="form-control" value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}>
-
+<div wire:ignore class="input-group mb-3">
+    <input type="date" wire:key="{{ $surveyQuestion->id }}" wire:model.live="answers.{{$surveyQuestion->id}}.value"
+        name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key }}" class="form-control"
+        value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}>
+</div>
 @slot('report')
 @if($includeResults ?? false)
 {{ number_format((new \MattDaneshvar\Survey\Utilities\Summary($surveyQuestion))->average()) }} (Average)
