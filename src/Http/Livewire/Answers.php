@@ -72,13 +72,16 @@ class Answers extends Component
         $this->respondedQuestions   = $getAnswers['respondedQuestions'];
         $this->professionalSelectOptions["treatments"] = config('iworking.user-treatment')::select('*')->orderBy('name','asc')->get();
         $userTypes = config('iworking.user-type')::select('*')->where('type','like','%-people')->orderBy('type','asc')->pluck('id')->toArray();
-        // $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name','asc')->whereIn('type', $userTypes)->get();
+        $this->professionalsSurvey = config('iworking.user-model')::select('*')->orderBy('first_name','asc')->whereIn('type', $userTypes)->get();
         $this->initMultipleAnswers();
     }
 
     public function render()
     {
-        return view('survey::livewire.answers');
+        // return view('survey::livewire.answers');
+        return view('survey::standard', ['survey' => $this->survey,
+            'sendForm' => true,
+            'disabled' => $this->disabled,]);
     }
 
     public function updatedAnswers($value, $key)

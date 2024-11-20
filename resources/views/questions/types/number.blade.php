@@ -3,10 +3,14 @@
 'numberQuestion' => $numberQuestion
 ])
 <div>
-    <input wire:key="{{ $surveyQuestion->id }}" type="number" name="{{ $surveyQuestion->question->key }}"
-        id="{{ $surveyQuestion->question->key }}" class="form-control"
-        value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}
-        wire:model.change="answers.{{$surveyQuestion->id}}.value">
+    <input wire:key="{{ $surveyQuestion->id }}" 
+            type="number" 
+            name="{{ $surveyQuestion->question->key }}"
+            class="form-control"
+            value="{{ $value ?? old($surveyQuestion->question->key) }}" 
+            {{ ($disabled ?? false) ? 'disabled' : '' }}
+            wire:model.change="answers.{{$surveyQuestion->id}}.value"
+            wire:key="{{ $surveyQuestion->id }}">
 </div>
 @slot('report')
 @if($includeResults ?? false)

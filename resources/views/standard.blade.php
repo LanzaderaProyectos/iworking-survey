@@ -21,7 +21,7 @@
         {{-- @include('survey::sections.profesional') --}}
         @php($numberQuestion = 1)
         @foreach ($survey->sections as $index => $section)
-        <div wire:ignore.self>
+        <div wire:key="$section->id">
             @include('survey::sections.single')
         </div>
         @php($numberQuestion += $section->questions->count())

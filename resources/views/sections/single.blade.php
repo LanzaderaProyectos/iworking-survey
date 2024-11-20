@@ -1,4 +1,4 @@
-<div id="accordion" wire:key="{{str()->random(5)}}">
+<div id="accordion" wire:key="single-{{ $section->id}}">
     <div class="card">
         <div class="card-header" id="headingTwo">
             <h5 class="mb-0">

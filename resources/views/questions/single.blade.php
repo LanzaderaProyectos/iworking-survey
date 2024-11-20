@@ -7,7 +7,7 @@
 
 @foreach ($subSurveyQuestions as $key=>$subSurveyQuestion)
 @if ((isset($showEntry) && $this->answers[$subSurveyQuestion->id]['value'] != '') || !isset($showEntry))
-<div class="pl-4 py-4" wire:ignore.self wire:key="{{str()->random(5)}}">
+<div class="pl-4 py-4" wire:ignore.self wire:key="single-2-{{$subSurveyQuestion->id}}">
     @include(view()->exists("survey::questions.types.{$subSurveyQuestion->question->type}")
     ? "survey::questions.types.{$subSurveyQuestion->question->type}"
     : 'survey::questions.types.text',
