@@ -21,23 +21,33 @@
         {{-- @include('survey::sections.profesional') --}}
         @php($numberQuestion = 1)
         @foreach ($survey->sections as $index => $section)
-        @include('survey::sections.single')
+        <div wire:ignore.self>
+            @include('survey::sections.single')
+        </div>
         @php($numberQuestion += $section->questions->count())
         @endforeach
         @if($survey->has_order ?? false)
         {{-- //TODO: change !== 0 to == 0 --}}
         @if(empty($entry))
-        @include('survey::sections.pharmaciesSale')
+        <div>
+            @include('survey::sections.pharmaciesSale')
+        </div>
         @else
-        @livewire('projects.partials.entry-order',['entry' => $entry,'show'=>$disabled])
+        <div>
+            @livewire('projects.partials.entry-order',['entry' => $entry,'show'=>$disabled])
+        </div>
         @endif
         @endif
         @if($survey->has_promotional_material ?? false)
         {{-- //TODO: change !== 0 to == 0 --}}
         @if(empty($entry))
-        @include('survey::sections.promotionalMaterial')
+        <div>
+            @include('survey::sections.promotionalMaterial')
+        </div>
         @else
-        @livewire('projects.partials.entry-promotional-materials',['entry' => $entry,'show'=>$disabled])
+        <div>
+            @livewire('projects.partials.entry-promotional-materials',['entry' => $entry,'show'=>$disabled])
+        </div>
         @endif
         @endif
     </div>

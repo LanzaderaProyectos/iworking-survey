@@ -2,11 +2,10 @@
 'surveyQuestion' => $surveyQuestion,
 'numberQuestion' => $numberQuestion
 ])
-<div wire:ignore class="input-group mb-3">
-    <input type="time" wire:key="{{ $surveyQuestion->id }}" name="{{ $surveyQuestion->question->key }}"
-        id="{{ $surveyQuestion->question->key }}" class="form-control"
-        value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}
-        wire:model.live="answers.{{$surveyQuestion->id}}.value">
+<div>
+<input type="time" wire:key="{{ $surveyQuestion->id }}" name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key }}" class="form-control"
+    value="{{ $value ?? old($surveyQuestion->question->key) }}" {{ ($disabled ?? false) ? 'disabled' : '' }}
+    wire:model.change="answers.{{$surveyQuestion->id}}.value">
 </div>
 @slot('report')
 @if($includeResults ?? false)

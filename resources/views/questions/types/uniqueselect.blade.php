@@ -14,7 +14,7 @@ $surveyQuestion->question->options)
 @endif
 @foreach($optionsForeach['es'] as $option)
 <div class="custom-control custom-radio"  wire:key="{{ $surveyQuestion->id }}">
-    <input type="radio" wire:model.live="answers.{{$surveyQuestion->id}}.value"
+    <input type="radio" wire:model.change="answers.{{$surveyQuestion->id}}.value"
         name="{{ $surveyQuestion->question->key }}" id="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}"
         value="{{ $option }}" class="custom-control-input" {{ ($disabled ?? false) ? 'disabled' : '' }}>
     <label class="custom-control-label" for="{{ $surveyQuestion->question->key . '-' . Str::slug($option) }}">
