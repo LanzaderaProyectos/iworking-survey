@@ -35,6 +35,12 @@ class SurveyServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views/' => base_path('resources/views/vendor/survey'),
         ], 'views');
+
+         // Publishing is only necessary when using the CLI.
+         if ($this->app->runningInConsole()) {
+            $this->bootForConsole();
+        }
+        
         $this->mergeConfigFrom(__DIR__ . '/../config/survey.php', 'survey');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'survey');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'survey');
@@ -89,6 +95,19 @@ class SurveyServiceProvider extends ServiceProvider
                 ) . "_$migration.php"),
             ], 'migrations');
         }
+    }
+
+     /**
+     * Console-specific booting.
+     *
+     * @return void
+     */
+    protected function bootForConsole(): void
+    {
+        // Generic json publish
+        $this->publishes([
+            __DIR__ . '/../resources/json'                              => public_path('json'),
+        ], 'iworking-aside-json');
     }
 
     /**

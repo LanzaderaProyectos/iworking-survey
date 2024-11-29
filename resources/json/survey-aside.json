@@ -1,0 +1,29 @@
+{
+	"0": {
+		"name": "Encuestas",
+		"traduct": "Encuestas",
+		"key": "survey",
+		"icon": "fa-question",
+		"roles": {
+			"0": "admin",
+            "1": "gestor-encuestas"
+		},
+		"openPage": {
+			"0": "survey.*"
+		},
+		"list": {
+			"new-provider": {
+				"icon": "fa-book",
+				"route": "survey.new",
+				"lang": "Nueva encuesta",
+				"key": "survey.new"
+			},
+			"new-order": {
+				"icon": "fa-book",
+				"route": "survey.list",
+				"lang": "Lista de encuestas",
+				"key": "survey.list"
+			}
+		}
+	}
+}
