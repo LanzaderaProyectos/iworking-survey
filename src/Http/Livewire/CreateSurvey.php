@@ -266,8 +266,7 @@ class CreateSurvey extends Component
             'newOptionES' => 'required',
             'newOptionEN' => 'nullable',
         ]);
-
-        if ($this->updateOption != null) {
+        if (!is_null($this->updateOption)) {
             $this->optionES[$this->updateOption] = $this->newOptionES;
             $this->optionEN[$this->updateOption] = $this->newOptionEN ?? '';
         } else {
