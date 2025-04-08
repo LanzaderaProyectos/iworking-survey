@@ -415,3 +415,14 @@
         </div>
     </div>
 </div>
+
+@push('js')
+    <script type="text/javascript">
+        window.addEventListener('showSubQuestion', () => {
+            $('#collapseSubQuestionsCreate').collapse('show');
+        });
+        window.addEventListener('hideSubQuestion', () => {
+            $('#collapseSubQuestionsCreate').collapse('hide');
+        });
+    </script>
+@endpush

@@ -727,6 +727,7 @@ class CreateSurvey extends Component
         $this->targetQuestion = false;
         $this->questionChart = null;
         $this->orderQuestion = SurveyQuestion::where('survey_id', $this->survey->id)->where('section_id', $this->sectionQuestionSelected)->count() + 1;
+        $this->dispatch('hideQuestion');
     }
 
     public function saveSubQuestion()
@@ -944,6 +945,7 @@ class CreateSurvey extends Component
         $this->hasSubNP = true;
         $this->subQuestion = new Question();
         $this->subQuestionChart = null;
+        $this->dispatch('hideSubQuestion');
     }
 
     public function addDefaultQuestion()
@@ -1045,6 +1047,7 @@ class CreateSurvey extends Component
                     $this->hasNP = false;
                 }
             }
+            $this->dispatch('showQuestion');
         } else {
             $this->subSurveyQuestion           = SurveyQuestion::find($id);
             $this->subQuestion                 = $this->subSurveyQuestion->question;
@@ -1085,6 +1088,7 @@ class CreateSurvey extends Component
                 }
             }
             $this->defaultQuestionsSub = (new SurveyService())->getQuestions($this->survey, $this->subSurveyQuestion->parent->section);
+            $this->dispatch('showSubQuestion');
         }
     }
 

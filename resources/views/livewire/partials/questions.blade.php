@@ -411,3 +411,14 @@
     </div>
 </div>
 @include('survey::livewire.partials.subquestions')
+
+@push('js')
+    <script type="text/javascript">
+        window.addEventListener('showQuestion', () => {
+            $('#collapseQuestionsAdd').collapse('show');
+        });
+        window.addEventListener('hideQuestion', () => {
+            $('#collapseQuestionsAdd').collapse('hide');
+        });
+    </script>
+@endpush
