@@ -54,7 +54,7 @@
                 <button class="btn btn-link collapsed d-flex align-items-center"
                     style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseQuestionsAdd" aria-expanded="true" aria-controls="collapseQuestionsAdd">
-                    <span class="h3">Etapa crear pregunta:</span>
+                    <span class="h3">Crear pregunta:</span>
                     <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>
@@ -304,7 +304,7 @@
                 <button class="btn btn-link collapsed d-flex align-items-center"
                     style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseQuestions" aria-expanded="true" aria-controls="collapseQuestions">
-                    <span class="h3">Etapa listado de preguntas:</span>
+                    <span class="h3">Listado de preguntas:</span>
                     <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>

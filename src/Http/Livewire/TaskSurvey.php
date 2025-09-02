@@ -1018,7 +1018,7 @@ class TaskSurvey extends Component
     public function exportOrderToPDF()
     {
         try {
-            $name = "Comanda_" . $this->survey->survey_number . "_";;
+            $name = "Pedido_" . $this->survey->survey_number . "_";;
             if ($this->survey->type == "pharmaciesSale") {
                 $name .= "Venta_Farmacia";
             } elseif ($this->survey->type == "medicalPrescription") {
@@ -1042,7 +1042,7 @@ class TaskSurvey extends Component
 
     public function exportOrderToExcel()
     {
-        $name = "Comanda_" . $this->survey->survey_number . "_";;
+        $name = "Pedido_" . $this->survey->survey_number . "_";;
         if ($this->survey->type == "pharmaciesSale") {
             $name .= "Venta_Farmacia";
         } elseif ($this->survey->type == "medicalPrescription") {

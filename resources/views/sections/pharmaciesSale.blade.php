@@ -6,7 +6,7 @@
                     style="gap: 15px; text-decoration: none !important;" data-toggle="collapse"
                     data-target="#collapseSectionProfesional" aria-expanded="true"
                     aria-controls="collapseSectionProfesional">
-                    <span class="h3">Comanda</span>
+                    <span class="h3">Pedido</span>
                     <i class="fas fa-chevron-up tab-arrow"></i>
                 </button>
             </h5>
