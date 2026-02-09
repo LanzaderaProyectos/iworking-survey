@@ -165,10 +165,10 @@ class AnswerService
      * @param array $comments
      * @return array
      */
-    public function validateMandatoryQuestion($surveyQuestion, array $answers, $errorsBag,$comments) {
+    public function validateMandatoryQuestion($surveyQuestion, array $answers, $errorsBag, $comments)
+    {
         if ($surveyQuestion->mandatory) {
-            if($surveyQuestion->question->type == "number")
-            {
+            if ($surveyQuestion->question->type == "number") {
                 if (empty($answers[$surveyQuestion->id]['value']) && $answers[$surveyQuestion->id]['value'] !== 0  && $answers[$surveyQuestion->id]['value'] !== "0") {
                     if (empty($comments[$surveyQuestion->id])) {
                         $errorsBag[$surveyQuestion->id] = $surveyQuestion->id . "";
@@ -176,8 +176,7 @@ class AnswerService
                 } else {
                     unset($errorsBag[$surveyQuestion->id]);
                 }
-            }
-            elseif (empty($answers[$surveyQuestion->id]['value'])) {
+            } elseif (empty($answers[$surveyQuestion->id]['value'])) {
                 if (empty($comments[$surveyQuestion->id])) {
                     $errorsBag[$surveyQuestion->id] = $surveyQuestion->id . "";
                 }
@@ -185,14 +184,15 @@ class AnswerService
                 unset($errorsBag[$surveyQuestion->id]);
             }
         }
-        foreach($surveyQuestion->children as $child) {
-            if($surveyQuestion->question->type == "radio"){
-                if($answers[$surveyQuestion->id]['value'] == $child->condition){
+        if (!empty($answers[$surveyQuestion->id])) {
+            foreach ($surveyQuestion->children as $child) {
+                if ($surveyQuestion->question->type == "radio") {
+                    if ($answers[$surveyQuestion->id]['value'] == $child->condition) {
+                        $errorsBag = $this->validateMandatoryQuestion($child, $answers, $errorsBag, $comments);
+                    }
+                } else {
                     $errorsBag = $this->validateMandatoryQuestion($child, $answers, $errorsBag, $comments);
                 }
-            }
-            else{
-                $errorsBag = $this->validateMandatoryQuestion($child, $answers, $errorsBag, $comments);
             }
         }
         return $errorsBag;
